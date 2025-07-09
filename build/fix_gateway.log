@@ -1,0 +1,22 @@
+[2025-07-08 16:13:58.030] [DEBUG] Debug message from main
+[2025-07-08 16:13:58.030] [INFO ] FIX Gateway starting up...
+[2025-07-08 16:13:58.030] [WARN ] This is a warning message
+[2025-07-08 16:13:58.030] [ERROR] This is an error message
+[2025-07-08 16:13:58.030] [INFO ] Order received: Symbol=AAPL Qty=100
+[2025-07-08 16:13:58.030] [DEBUG] Connection established to localhost:8080
+[2025-07-08 16:13:58.030] [INFO ] Thread 0 message 0
+[2025-07-08 16:13:58.030] [INFO ] Thread 1 message 0
+[2025-07-08 16:13:58.030] [INFO ] Thread 2 message 0
+[2025-07-08 16:13:58.043] [INFO ] Thread 0 message 1
+[2025-07-08 16:13:58.043] [INFO ] Thread 1 message 1
+[2025-07-08 16:13:58.043] [INFO ] Thread 2 message 1
+[2025-07-08 16:13:58.054] [INFO ] Thread 1 message 2
+[2025-07-08 16:13:58.054] [INFO ] Thread 2 message 2
+[2025-07-08 16:13:58.056] [INFO ] Thread 0 message 2
+[2025-07-08 16:13:58.066] [INFO ] Thread 1 message 3
+[2025-07-08 16:13:58.066] [INFO ] Thread 2 message 3
+[2025-07-08 16:13:58.069] [INFO ] Thread 0 message 3
+[2025-07-08 16:13:58.078] [INFO ] Thread 1 message 4
+[2025-07-08 16:13:58.079] [INFO ] Thread 2 message 4
+[2025-07-08 16:13:58.079] [INFO ] Thread 0 message 4
+[2025-07-08 16:13:58.091] [INFO ] FIX Gateway shutdown complete
