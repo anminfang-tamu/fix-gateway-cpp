@@ -167,6 +167,7 @@ src/utils/clean: src/utils/CMakeFiles/utils.dir/clean
 # Target rules for target CMakeFiles/fix-gateway.dir
 
 # All Build rule for target.
+CMakeFiles/fix-gateway.dir/all: src/network/CMakeFiles/network.dir/all
 CMakeFiles/fix-gateway.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-gateway.dir/build.make CMakeFiles/fix-gateway.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-gateway.dir/build.make CMakeFiles/fix-gateway.dir/build
@@ -175,7 +176,7 @@ CMakeFiles/fix-gateway.dir/all: src/utils/CMakeFiles/utils.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fix-gateway.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fix-gateway.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/fix-gateway.dir/rule
