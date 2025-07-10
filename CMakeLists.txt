@@ -31,6 +31,7 @@ add_executable(fix-gateway
 
 # Link libraries in dependency order (bottom to top)
 target_link_libraries(fix-gateway
+    network
     utils
     Threads::Threads
 )

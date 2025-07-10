@@ -1,50 +1,64 @@
 #include "utils/logger.h"
+#include "network/tcp_connection.h"
+#include <iostream>
 #include <thread>
 #include <chrono>
-#include <vector>
-
-using namespace fix_gateway::utils;
 
 int main()
 {
-    // Configure logger
-    Logger &logger = Logger::getInstance();
-    logger.setLogFile("fix_gateway.log");
-    logger.setLogLevel(LogLevel::DEBUG);
+    // Initialize logger
+    LOG_INFO("=== FIX Gateway TCP Connection Test ===");
 
-    // Test different logging methods
-    LOG_DEBUG("Debug message from main");
-    LOG_INFO("FIX Gateway starting up...");
-    LOG_WARN("This is a warning message");
-    LOG_ERROR("This is an error message");
+    // Create TCP connection
+    fix_gateway::network::TcpConnection connection;
 
-    // Test stream-like interface
-    LOG(LogLevel::INFO) << "Order received: " << "Symbol=AAPL" << " Qty=" << 100;
-    LOG_FLUSH();
+    // Set up callbacks
+    connection.setDataCallback([](const std::vector<char> &data)
+                               {
+        std::string message(data.begin(), data.end());
+        LOG_INFO("Received data: " + message); });
 
-    LOG(LogLevel::DEBUG) << "Connection established to " << "localhost:8080";
-    LOG_FLUSH();
+    connection.setErrorCallback([](const std::string &error)
+                                { LOG_ERROR("Connection error: " + error); });
 
-    // Test thread safety with multiple threads
-    std::vector<std::thread> threads;
+    connection.setDisconnectCallback([]()
+                                     { LOG_WARN("Connection disconnected!"); });
 
-    for (int i = 0; i < 3; ++i)
+    LOG_INFO("TCP connection created with callbacks configured");
+
+    // Test connection attempt (this will fail since there's no server)
+    LOG_INFO("Attempting to connect to localhost:8080 (expected to fail)");
+
+    try
     {
-        threads.emplace_back([i]()
-                             {
-            for (int j = 0; j < 5; ++j) {
-                LOG_INFO("Thread " + std::to_string(i) + " message " + std::to_string(j));
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            } });
+        bool connected = connection.connect("localhost", 8080);
+        if (connected)
+        {
+            LOG_INFO("Connected successfully!");
+
+            // Start receive loop
+            connection.startReceiveLoop();
+
+            // Send a test message
+            connection.send("Hello FIX Server!");
+
+            // Keep alive for a bit
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+
+            // Disconnect
+            connection.disconnect();
+        }
+        else
+        {
+            LOG_INFO("Connection failed as expected (no server running)");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        LOG_ERROR("Exception during connection: " + std::string(e.what()));
     }
 
-    // Wait for all threads to complete
-    for (auto &t : threads)
-    {
-        t.join();
-    }
-
-    LOG_INFO("FIX Gateway shutdown complete");
+    LOG_INFO("=== TCP Connection Test Completed ===");
 
     return 0;
 }

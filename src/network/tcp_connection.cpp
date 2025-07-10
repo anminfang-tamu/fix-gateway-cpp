@@ -5,7 +5,13 @@
 #include <netinet/tcp.h>
 #include <netdb.h>
 #include <cstring>
+#include <cerrno>
 #include <stdexcept>
+#include <vector>
+#include <mutex>
+#include <thread>
+#include <chrono>
+#include <unistd.h>
 
 namespace fix_gateway::network
 {
@@ -157,4 +163,448 @@ namespace fix_gateway::network
         int result = ::connect(socket_fd_, (struct sockaddr *)&server_addr_, sizeof(server_addr_));
         return handleConnectionResult(result);
     }
+
+    bool TcpConnection::send(const std::string &message)
+    {
+        if (!connected_)
+        {
+            LOG_ERROR("Cannot send: not connected");
+            return false;
+        }
+
+        if (message.empty())
+        {
+            LOG_WARN("Attempting to send empty message");
+            return true;
+        }
+
+        ssize_t bytes_sent = sendRaw(message.c_str(), message.size());
+        if (bytes_sent < 0)
+        {
+            LOG_ERROR("Failed to send string message");
+            return false;
+        }
+
+        // Handle partial send
+        if (static_cast<size_t>(bytes_sent) < message.size())
+        {
+            return handlePartialSend(message.c_str(), message.size(), bytes_sent);
+        }
+
+        LOG_DEBUG("Sent " + std::to_string(bytes_sent) + " bytes");
+        return true;
+    }
+
+    bool TcpConnection::send(const std::vector<char> &data)
+    {
+        if (!connected_)
+        {
+            LOG_ERROR("Cannot send: not connected");
+            return false;
+        }
+
+        if (data.empty())
+        {
+            LOG_WARN("Attempting to send empty data");
+            return true;
+        }
+
+        ssize_t bytes_sent = sendRaw(data.data(), data.size());
+        if (bytes_sent < 0)
+        {
+            LOG_ERROR("Failed to send vector data");
+            return false;
+        }
+
+        // Handle partial send
+        if (static_cast<size_t>(bytes_sent) < data.size())
+        {
+            return handlePartialSend(data.data(), data.size(), bytes_sent);
+        }
+
+        LOG_DEBUG("Sent " + std::to_string(bytes_sent) + " bytes");
+        return true;
+    }
+
+    ssize_t TcpConnection::sendRaw(const void *data, size_t length)
+    {
+        if (socket_fd_ == INVALID_SOCKET)
+        {
+            LOG_ERROR("Invalid socket for sending");
+            return -1;
+        }
+
+        // Use send() with MSG_NOSIGNAL to avoid SIGPIPE on broken connections
+        ssize_t result = ::send(socket_fd_, data, length, MSG_NOSIGNAL);
+
+        if (result < 0)
+        {
+            // Log the specific error
+            handleSocketError(errno);
+            return -1;
+        }
+
+        return result;
+    }
+
+    bool TcpConnection::handlePartialSend(const void *data, size_t length, ssize_t bytesSent)
+    {
+        LOG_WARN("Partial send detected: " + std::to_string(bytesSent) + "/" + std::to_string(length) + " bytes sent");
+
+        const char *remaining_data = static_cast<const char *>(data) + bytesSent;
+        size_t remaining_length = length - bytesSent;
+
+        // Try to send the remaining data
+        while (remaining_length > 0)
+        {
+            ssize_t result = sendRaw(remaining_data, remaining_length);
+
+            if (result < 0)
+            {
+                LOG_ERROR("Failed to send remaining data");
+                return false;
+            }
+
+            if (result == 0)
+            {
+                LOG_ERROR("Connection closed during partial send");
+                connected_ = false;
+                return false;
+            }
+
+            remaining_data += result;
+            remaining_length -= result;
+
+            LOG_DEBUG("Sent additional " + std::to_string(result) + " bytes, " +
+                      std::to_string(remaining_length) + " remaining");
+        }
+
+        LOG_INFO("Successfully completed partial send");
+        return true;
+    }
+
+    void TcpConnection::handleSocketError(int error)
+    {
+        std::string error_msg;
+
+        switch (error)
+        {
+        case ECONNRESET:
+            error_msg = "Connection reset by peer";
+            connected_ = false;
+            break;
+        case EPIPE:
+            error_msg = "Broken pipe (connection closed)";
+            connected_ = false;
+            break;
+        case EWOULDBLOCK: // non-blocking socket and unix/linux may have different values for EWOULDBLOCK and EAGAIN
+#if EAGAIN != EWOULDBLOCK
+        case EAGAIN:
+#endif
+            error_msg = "Send would block (non-blocking socket)";
+            break;
+        case ENOTCONN:
+            error_msg = "Socket not connected";
+            connected_ = false;
+            break;
+        case EINTR:
+            error_msg = "Send interrupted by signal";
+            break;
+        default:
+            error_msg = "Socket error: " + std::string(strerror(error));
+            break;
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(error_mutex_);
+            last_error_ = error_msg;
+        }
+
+        LOG_ERROR("Socket error [" + std::to_string(error) + "]: " + error_msg);
+
+        // Call error callback if set
+        if (error_callback_)
+        {
+            error_callback_(error_msg);
+        }
+
+        // If connection is lost, call disconnect callback
+        if (!connected_ && disconnect_callback_)
+        {
+            disconnect_callback_();
+        }
+    }
+
+    void TcpConnection::startReceiveLoop()
+    {
+        if (receiving_)
+        {
+            LOG_WARN("Receive loop already running");
+            return;
+        }
+
+        if (!connected_)
+        {
+            LOG_ERROR("Cannot start receive loop: not connected");
+            return;
+        }
+
+        receiving_ = true;
+        receive_thread_ = std::thread(&TcpConnection::receiveLoop, this);
+        LOG_INFO("Receive loop started");
+    }
+
+    void TcpConnection::receiveLoop()
+    {
+        std::vector<char> buffer(BUFFER_SIZE);
+
+        LOG_DEBUG("Entering receive loop");
+
+        while (receiving_ && connected_)
+        {
+            // Receive data from socket
+            ssize_t bytes_received = ::recv(socket_fd_, buffer.data(), buffer.size(), MSG_DONTWAIT);
+
+            if (bytes_received > 0)
+            {
+                // Got data - process it
+                LOG_DEBUG("Received " + std::to_string(bytes_received) + " bytes");
+                handleIncomingData(buffer.data(), bytes_received);
+            }
+            else if (bytes_received == 0)
+            {
+                // Connection closed by peer
+                LOG_INFO("Connection closed by peer");
+                connected_ = false;
+                handleConnectionLost();
+                break;
+            }
+            else
+            {
+                // Error occurred - use our centralized error handler
+                int error = errno;
+                handleSocketError(error);
+
+                // Check if we should continue based on the error type
+                if (error == EWOULDBLOCK || error == EAGAIN)
+                {
+                    // No data available right now - normal for non-blocking sockets
+                    // Sleep briefly to avoid busy waiting
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    continue;
+                }
+                else if (error == EINTR)
+                {
+                    // Interrupted by signal - continue
+                    continue;
+                }
+                else
+                {
+                    // For all other errors (including connection lost), exit the loop
+                    // handleSocketError already handled state changes and callbacks
+                    break;
+                }
+            }
+        }
+
+        LOG_DEBUG("Exiting receive loop");
+        receiving_ = false;
+    }
+
+    void TcpConnection::stopReceiveLoop()
+    {
+        if (!receiving_)
+        {
+            LOG_DEBUG("Receive loop not running");
+            return;
+        }
+
+        LOG_INFO("Stopping receive loop");
+        receiving_ = false;
+
+        // Wait for the thread to finish
+        if (receive_thread_.joinable())
+        {
+            receive_thread_.join();
+            LOG_DEBUG("Receive thread joined successfully");
+        }
+    }
+
+    void TcpConnection::handleIncomingData(const char *data, size_t length)
+    {
+        if (length == 0 || data == nullptr)
+        {
+            return;
+        }
+
+        // Create a vector with the received data
+        std::vector<char> received_data(data, data + length);
+
+        // Store in receive buffer (for potential future processing)
+        {
+            std::lock_guard<std::mutex> lock(buffer_mutex_);
+            receive_buffer_.insert(receive_buffer_.end(), received_data.begin(), received_data.end());
+        }
+
+        // Call the data callback
+        onDataReceived(received_data);
+    }
+
+    void TcpConnection::onDataReceived(const std::vector<char> &data)
+    {
+        // Call the registered callback if set
+        {
+            std::lock_guard<std::mutex> lock(callback_mutex_);
+            if (data_callback_)
+            {
+                try
+                {
+                    data_callback_(data);
+                }
+                catch (const std::exception &e)
+                {
+                    LOG_ERROR("Exception in data callback: " + std::string(e.what()));
+                }
+                catch (...)
+                {
+                    LOG_ERROR("Unknown exception in data callback");
+                }
+            }
+            else
+            {
+                LOG_DEBUG("No data callback registered, " + std::to_string(data.size()) + " bytes discarded");
+            }
+        }
+    }
+
+    void TcpConnection::handleConnectionLost()
+    {
+        LOG_WARN("Handling connection lost");
+
+        connected_ = false;
+
+        // Call disconnect callback if set
+        {
+            std::lock_guard<std::mutex> lock(callback_mutex_);
+            if (disconnect_callback_)
+            {
+                try
+                {
+                    disconnect_callback_();
+                }
+                catch (const std::exception &e)
+                {
+                    LOG_ERROR("Exception in disconnect callback: " + std::string(e.what()));
+                }
+                catch (...)
+                {
+                    LOG_ERROR("Unknown exception in disconnect callback");
+                }
+            }
+        }
+    }
+
+    bool TcpConnection::isConnected() const
+    {
+        return connected_;
+    }
+
+    void TcpConnection::disconnect()
+    {
+        if (!connected_)
+        {
+            LOG_DEBUG("Already disconnected");
+            return;
+        }
+
+        LOG_INFO("Disconnecting...");
+
+        // Stop receiving first
+        stopReceiveLoop();
+
+        // Mark as disconnected
+        connected_ = false;
+
+        // Close socket
+        if (socket_fd_ != constants::INVALID_SOCKET)
+        {
+            if (::close(socket_fd_) < 0)
+            {
+                LOG_WARN("Error closing socket: " + std::string(strerror(errno)));
+            }
+            socket_fd_ = constants::INVALID_SOCKET;
+            LOG_DEBUG("Socket closed");
+        }
+
+        LOG_INFO("Disconnected successfully");
+    }
+
+    void TcpConnection::cleanup()
+    {
+        LOG_DEBUG("Cleaning up TCP connection");
+
+        // Stop receive loop and disconnect
+        stopReceiveLoop();
+
+        if (connected_)
+        {
+            disconnect();
+        }
+
+        // Clear buffers
+        {
+            std::lock_guard<std::mutex> lock(buffer_mutex_);
+            receive_buffer_.clear();
+        }
+
+        // Clear callbacks
+        {
+            std::lock_guard<std::mutex> lock(callback_mutex_);
+            data_callback_ = nullptr;
+            error_callback_ = nullptr;
+            disconnect_callback_ = nullptr;
+        }
+
+        LOG_DEBUG("TCP connection cleanup completed");
+    }
+
+    // Callback setters
+    void TcpConnection::setDataCallback(DataCallback callback)
+    {
+        std::lock_guard<std::mutex> lock(callback_mutex_);
+        data_callback_ = callback;
+        LOG_DEBUG("Data callback set");
+    }
+
+    void TcpConnection::setErrorCallback(ErrorCallback callback)
+    {
+        std::lock_guard<std::mutex> lock(callback_mutex_);
+        error_callback_ = callback;
+        LOG_DEBUG("Error callback set");
+    }
+
+    void TcpConnection::setDisconnectCallback(DisconnectCallback callback)
+    {
+        std::lock_guard<std::mutex> lock(callback_mutex_);
+        disconnect_callback_ = callback;
+        LOG_DEBUG("Disconnect callback set");
+    }
+
+    // Connection info getters
+    std::string TcpConnection::getRemoteHost() const
+    {
+        return host_;
+    }
+
+    int TcpConnection::getRemotePort() const
+    {
+        return port_;
+    }
+
+    std::string TcpConnection::getLastError() const
+    {
+        std::lock_guard<std::mutex> lock(error_mutex_);
+        return last_error_;
+    }
+
 }

@@ -4,6 +4,16 @@
 
 This is a modular FIX 4.4 gateway implementation in C++ designed for hedge fund trading operations. The gateway follows a layered architecture approach from TCP connections at the bottom to application logic at the top.
 
+> **📋 Development Roadmap**: This project follows a phased evolution plan from basic TCP connectivity to production-grade performance. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md) for the complete journey from current implementation to sub-10μs latency with core pinning and lock-free queues.
+
+## Current Implementation Status
+
+✅ **Completed**: TCP Connection Layer with thread-safe send/receive
+🚧 **In Progress**: Performance instrumentation and baseline measurement (Phase 1)
+📋 **Planned**: Async send architecture, lock-free queues, core pinning optimization
+
+**Performance Target**: Sub-10μs message latency suitable for hedge fund trading operations.
+
 ## Directory Structure
 
 ```
