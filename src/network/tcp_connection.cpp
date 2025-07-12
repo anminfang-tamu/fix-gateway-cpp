@@ -1,5 +1,7 @@
 #include "network/tcp_connection.h"
 #include "utils/logger.h"
+#include "utils/performance_timer.h"
+#include "utils/performance_counters.h"
 #include "common/constants.h"
 #include <fcntl.h>
 #include <netinet/tcp.h>
@@ -15,7 +17,8 @@
 
 namespace fix_gateway::network
 {
-    using namespace constants; // For cleaner constant usage
+    using namespace constants;      // For cleaner constant usage
+    using namespace utils::metrics; // For performance metrics
 
     TcpConnection::TcpConnection()
         : socket_fd_(INVALID_SOCKET), connected_(false), receiving_(false), port_(0) {}
@@ -166,9 +169,12 @@ namespace fix_gateway::network
 
     bool TcpConnection::send(const std::string &message)
     {
+        PERF_FUNCTION_TIMER(); // Measure total send latency
+
         if (!connected_)
         {
             LOG_ERROR("Cannot send: not connected");
+            PERF_COUNTER_INC(CONNECTION_ERRORS);
             return false;
         }
 
@@ -178,18 +184,37 @@ namespace fix_gateway::network
             return true;
         }
 
+        PERF_TIMER_START(send_operation);
+
         ssize_t bytes_sent = sendRaw(message.c_str(), message.size());
         if (bytes_sent < 0)
         {
             LOG_ERROR("Failed to send string message");
+            PERF_COUNTER_INC(CONNECTION_ERRORS);
             return false;
         }
 
         // Handle partial send
         if (static_cast<size_t>(bytes_sent) < message.size())
         {
-            return handlePartialSend(message.c_str(), message.size(), bytes_sent);
+            bool success = handlePartialSend(message.c_str(), message.size(), bytes_sent);
+            PERF_TIMER_END(send_operation);
+
+            if (success)
+            {
+                PERF_COUNTER_ADD(BYTES_SENT, message.size());
+                PERF_COUNTER_INC(MESSAGES_SENT);
+                PERF_RATE_RECORD(SEND_RATE);
+            }
+            return success;
         }
+
+        PERF_TIMER_END(send_operation);
+
+        // Record successful send metrics
+        PERF_COUNTER_ADD(BYTES_SENT, bytes_sent);
+        PERF_COUNTER_INC(MESSAGES_SENT);
+        PERF_RATE_RECORD(SEND_RATE);
 
         LOG_DEBUG("Sent " + std::to_string(bytes_sent) + " bytes");
         return true;
@@ -367,9 +392,18 @@ namespace fix_gateway::network
 
             if (bytes_received > 0)
             {
-                // Got data - process it
+                // Got data - process it with timing
+                PERF_TIMER_START(receive_processing);
+
                 LOG_DEBUG("Received " + std::to_string(bytes_received) + " bytes");
                 handleIncomingData(buffer.data(), bytes_received);
+
+                PERF_TIMER_END(receive_processing);
+
+                // Record receive metrics
+                PERF_COUNTER_ADD(BYTES_RECEIVED, bytes_received);
+                PERF_COUNTER_INC(MESSAGES_RECEIVED);
+                PERF_RATE_RECORD(RECEIVE_RATE);
             }
             else if (bytes_received == 0)
             {

@@ -199,6 +199,54 @@ logger.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/logger.cpp.s
 .PHONY : logger.cpp.s
 
+performance_counters.o: performance_counters.cpp.o
+.PHONY : performance_counters.o
+
+# target to build an object file
+performance_counters.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o
+.PHONY : performance_counters.cpp.o
+
+performance_counters.i: performance_counters.cpp.i
+.PHONY : performance_counters.i
+
+# target to preprocess a source file
+performance_counters.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_counters.cpp.i
+.PHONY : performance_counters.cpp.i
+
+performance_counters.s: performance_counters.cpp.s
+.PHONY : performance_counters.s
+
+# target to generate assembly for a file
+performance_counters.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_counters.cpp.s
+.PHONY : performance_counters.cpp.s
+
+performance_timer.o: performance_timer.cpp.o
+.PHONY : performance_timer.o
+
+# target to build an object file
+performance_timer.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o
+.PHONY : performance_timer.cpp.o
+
+performance_timer.i: performance_timer.cpp.i
+.PHONY : performance_timer.i
+
+# target to preprocess a source file
+performance_timer.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_timer.cpp.i
+.PHONY : performance_timer.cpp.i
+
+performance_timer.s: performance_timer.cpp.s
+.PHONY : performance_timer.s
+
+# target to generate assembly for a file
+performance_timer.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/performance_timer.cpp.s
+.PHONY : performance_timer.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -215,6 +263,12 @@ help:
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
+	@echo "... performance_counters.o"
+	@echo "... performance_counters.i"
+	@echo "... performance_counters.s"
+	@echo "... performance_timer.o"
+	@echo "... performance_timer.i"
+	@echo "... performance_timer.s"
 .PHONY : help
 
 

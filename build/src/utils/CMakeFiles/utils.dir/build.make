@@ -83,17 +83,49 @@ src/utils/CMakeFiles/utils.dir/logger.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/utils.dir/logger.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/utils/logger.cpp -o CMakeFiles/utils.dir/logger.cpp.s
 
+src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o: src/utils/CMakeFiles/utils.dir/flags.make
+src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o: /Users/anminfang/fix-gateway-cpp/src/utils/performance_timer.cpp
+src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o: src/utils/CMakeFiles/utils.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o -MF CMakeFiles/utils.dir/performance_timer.cpp.o.d -o CMakeFiles/utils.dir/performance_timer.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/utils/performance_timer.cpp
+
+src/utils/CMakeFiles/utils.dir/performance_timer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/utils.dir/performance_timer.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/utils/performance_timer.cpp > CMakeFiles/utils.dir/performance_timer.cpp.i
+
+src/utils/CMakeFiles/utils.dir/performance_timer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/utils.dir/performance_timer.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/utils/performance_timer.cpp -o CMakeFiles/utils.dir/performance_timer.cpp.s
+
+src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o: src/utils/CMakeFiles/utils.dir/flags.make
+src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o: /Users/anminfang/fix-gateway-cpp/src/utils/performance_counters.cpp
+src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o: src/utils/CMakeFiles/utils.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o -MF CMakeFiles/utils.dir/performance_counters.cpp.o.d -o CMakeFiles/utils.dir/performance_counters.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/utils/performance_counters.cpp
+
+src/utils/CMakeFiles/utils.dir/performance_counters.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/utils.dir/performance_counters.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/utils/performance_counters.cpp > CMakeFiles/utils.dir/performance_counters.cpp.i
+
+src/utils/CMakeFiles/utils.dir/performance_counters.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/utils.dir/performance_counters.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/utils/performance_counters.cpp -o CMakeFiles/utils.dir/performance_counters.cpp.s
+
 # Object files for target utils
 utils_OBJECTS = \
-"CMakeFiles/utils.dir/logger.cpp.o"
+"CMakeFiles/utils.dir/logger.cpp.o" \
+"CMakeFiles/utils.dir/performance_timer.cpp.o" \
+"CMakeFiles/utils.dir/performance_counters.cpp.o"
 
 # External object files for target utils
 utils_EXTERNAL_OBJECTS =
 
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/logger.cpp.o
+src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o
+src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/build.make
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libutils.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libutils.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && $(CMAKE_COMMAND) -P CMakeFiles/utils.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/utils.dir/link.txt --verbose=$(VERBOSE)
 
