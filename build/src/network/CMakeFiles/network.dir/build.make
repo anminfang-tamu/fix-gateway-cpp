@@ -97,19 +97,35 @@ src/network/CMakeFiles/network.dir/tcp_server.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/network.dir/tcp_server.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/network && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/network/tcp_server.cpp -o CMakeFiles/network.dir/tcp_server.cpp.s
 
+src/network/CMakeFiles/network.dir/async_sender.cpp.o: src/network/CMakeFiles/network.dir/flags.make
+src/network/CMakeFiles/network.dir/async_sender.cpp.o: /Users/anminfang/fix-gateway-cpp/src/network/async_sender.cpp
+src/network/CMakeFiles/network.dir/async_sender.cpp.o: src/network/CMakeFiles/network.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/network/CMakeFiles/network.dir/async_sender.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/network && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/network/CMakeFiles/network.dir/async_sender.cpp.o -MF CMakeFiles/network.dir/async_sender.cpp.o.d -o CMakeFiles/network.dir/async_sender.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/network/async_sender.cpp
+
+src/network/CMakeFiles/network.dir/async_sender.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/network.dir/async_sender.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/network && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/network/async_sender.cpp > CMakeFiles/network.dir/async_sender.cpp.i
+
+src/network/CMakeFiles/network.dir/async_sender.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/network.dir/async_sender.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/network && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/network/async_sender.cpp -o CMakeFiles/network.dir/async_sender.cpp.s
+
 # Object files for target network
 network_OBJECTS = \
 "CMakeFiles/network.dir/tcp_connection.cpp.o" \
-"CMakeFiles/network.dir/tcp_server.cpp.o"
+"CMakeFiles/network.dir/tcp_server.cpp.o" \
+"CMakeFiles/network.dir/async_sender.cpp.o"
 
 # External object files for target network
 network_EXTERNAL_OBJECTS =
 
 src/network/libnetwork.a: src/network/CMakeFiles/network.dir/tcp_connection.cpp.o
 src/network/libnetwork.a: src/network/CMakeFiles/network.dir/tcp_server.cpp.o
+src/network/libnetwork.a: src/network/CMakeFiles/network.dir/async_sender.cpp.o
 src/network/libnetwork.a: src/network/CMakeFiles/network.dir/build.make
 src/network/libnetwork.a: src/network/CMakeFiles/network.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libnetwork.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libnetwork.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/network && $(CMAKE_COMMAND) -P CMakeFiles/network.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/network && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/network.dir/link.txt --verbose=$(VERBOSE)
 

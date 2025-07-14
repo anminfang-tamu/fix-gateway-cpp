@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/anminfang/fix-gateway-cpp/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/Cellar/cmake/3.30.0/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -175,6 +185,19 @@ fix-gateway/fast:
 .PHONY : fix-gateway/fast
 
 #=============================================================================
+# Target rules for targets named common
+
+# Build rule for target.
+common: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common
+.PHONY : common
+
+# fast build rule for target.
+common/fast:
+	$(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/build
+.PHONY : common/fast
+
+#=============================================================================
 # Target rules for targets named network
 
 # Build rule for target.
@@ -239,6 +262,19 @@ utils/fast:
 	$(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/build
 .PHONY : utils/fast
 
+#=============================================================================
+# Target rules for targets named test_async_sender
+
+# Build rule for target.
+test_async_sender: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_async_sender
+.PHONY : test_async_sender
+
+# fast build rule for target.
+test_async_sender/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
+.PHONY : test_async_sender/fast
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -275,11 +311,14 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... application"
+	@echo "... common"
 	@echo "... fix-gateway"
 	@echo "... network"
 	@echo "... protocol"
 	@echo "... session"
+	@echo "... test_async_sender"
 	@echo "... utils"
 	@echo "... src/main.o"
 	@echo "... src/main.i"

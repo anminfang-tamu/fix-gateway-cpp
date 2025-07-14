@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/anminfang/fix-gateway-cpp/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/Cellar/cmake/3.30.0/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -175,6 +185,30 @@ network/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/build
 .PHONY : network/fast
 
+async_sender.o: async_sender.cpp.o
+.PHONY : async_sender.o
+
+# target to build an object file
+async_sender.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/async_sender.cpp.o
+.PHONY : async_sender.cpp.o
+
+async_sender.i: async_sender.cpp.i
+.PHONY : async_sender.i
+
+# target to preprocess a source file
+async_sender.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/async_sender.cpp.i
+.PHONY : async_sender.cpp.i
+
+async_sender.s: async_sender.cpp.s
+.PHONY : async_sender.s
+
+# target to generate assembly for a file
+async_sender.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/async_sender.cpp.s
+.PHONY : async_sender.cpp.s
+
 tcp_connection.o: tcp_connection.cpp.o
 .PHONY : tcp_connection.o
 
@@ -235,7 +269,11 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... network"
+	@echo "... async_sender.o"
+	@echo "... async_sender.i"
+	@echo "... async_sender.s"
 	@echo "... tcp_connection.o"
 	@echo "... tcp_connection.i"
 	@echo "... tcp_connection.s"

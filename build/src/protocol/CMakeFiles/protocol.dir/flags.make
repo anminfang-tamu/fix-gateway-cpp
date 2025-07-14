@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/anminfang/fix-gateway-cpp/include -I/Users/anminfang/fix-gateway-cpp/include/common
+CXX_INCLUDES = -I/Users/anminfang/fix-gateway-cpp/include -I/Users/anminfang/fix-gateway-cpp/include/common -I/Users/anminfang/fix-gateway-cpp/config
 
 CXX_FLAGSarm64 = -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
 

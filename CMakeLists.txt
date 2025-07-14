@@ -16,8 +16,10 @@ find_package(Threads REQUIRED)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/common)
+include_directories(${CMAKE_SOURCE_DIR}/config)
 
 # Add subdirectories for each module
+add_subdirectory(src/common)
 add_subdirectory(src/network)
 add_subdirectory(src/session)
 add_subdirectory(src/protocol)
@@ -33,6 +35,7 @@ add_executable(fix-gateway
 target_link_libraries(fix-gateway
     network
     utils
+    common
     Threads::Threads
 )
 

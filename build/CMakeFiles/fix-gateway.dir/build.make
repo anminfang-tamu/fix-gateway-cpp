@@ -94,6 +94,7 @@ fix-gateway: CMakeFiles/fix-gateway.dir/src/main.cpp.o
 fix-gateway: CMakeFiles/fix-gateway.dir/build.make
 fix-gateway: src/network/libnetwork.a
 fix-gateway: src/utils/libutils.a
+fix-gateway: src/common/libcommon.a
 fix-gateway: CMakeFiles/fix-gateway.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable fix-gateway"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fix-gateway.dir/link.txt --verbose=$(VERBOSE)
