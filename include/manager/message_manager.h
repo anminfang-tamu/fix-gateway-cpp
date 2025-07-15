@@ -13,11 +13,13 @@
 #include <unordered_map>
 #include <string>
 
-namespace fix_gateway::network
+namespace fix_gateway::manager
 {
     using PriorityQueue = fix_gateway::utils::PriorityQueue;
     using TcpConnection = fix_gateway::network::TcpConnection;
     using MessagePtr = fix_gateway::common::MessagePtr;
+    using AsyncSender = fix_gateway::network::AsyncSender;
+    using SenderStats = fix_gateway::network::SenderStats;
 
     /**
      * @brief Message manager with core-pinned architecture for Phase 4
@@ -52,11 +54,6 @@ namespace fix_gateway::network
             size_t high_queue_size = 2048;
             size_t medium_queue_size = 4096;
             size_t low_queue_size = 8192;
-
-            // TCP connection configuration
-            std::string server_host = "localhost";
-            int server_port = 8080;
-            std::chrono::seconds connection_timeout = std::chrono::seconds(30);
         };
 
         struct PerformanceStats
@@ -84,7 +81,8 @@ namespace fix_gateway::network
         };
 
     public:
-        explicit MessageManager(const CorePinningConfig &config = CorePinningConfig{});
+        explicit MessageManager(const CorePinningConfig &config);
+        explicit MessageManager(); // Default constructor
         ~MessageManager();
 
         // Lifecycle management
@@ -111,7 +109,7 @@ namespace fix_gateway::network
         bool areAllCoresConnected() const;
 
         // Connection management
-        bool connectToServer();
+        bool connectToServer(const std::string &host, int port);
         void disconnectFromServer();
 
     private:
@@ -170,4 +168,4 @@ namespace fix_gateway::network
         static bool isRealTimePrioritySupported();
     };
 
-} // namespace fix_gateway::network
+} // namespace fix_gateway::manager

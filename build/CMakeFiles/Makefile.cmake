@@ -12,6 +12,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.30.0/CMakeSystem.cmake"
   "/Users/anminfang/fix-gateway-cpp/src/application/CMakeLists.txt"
   "/Users/anminfang/fix-gateway-cpp/src/common/CMakeLists.txt"
+  "/Users/anminfang/fix-gateway-cpp/src/manager/CMakeLists.txt"
   "/Users/anminfang/fix-gateway-cpp/src/network/CMakeLists.txt"
   "/Users/anminfang/fix-gateway-cpp/src/protocol/CMakeLists.txt"
   "/Users/anminfang/fix-gateway-cpp/src/session/CMakeLists.txt"
@@ -58,6 +59,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "src/protocol/CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/application/CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/utils/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/manager/CMakeFiles/CMakeDirectoryInformation.cmake"
   "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
@@ -70,5 +72,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "src/protocol/CMakeFiles/protocol.dir/DependInfo.cmake"
   "src/application/CMakeFiles/application.dir/DependInfo.cmake"
   "src/utils/CMakeFiles/utils.dir/DependInfo.cmake"
+  "src/manager/CMakeFiles/manager.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_async_sender.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_message_manager.dir/DependInfo.cmake"
   )

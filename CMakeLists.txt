@@ -16,6 +16,7 @@ find_package(Threads REQUIRED)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/common)
+include_directories(${CMAKE_SOURCE_DIR}/include/manager)
 include_directories(${CMAKE_SOURCE_DIR}/config)
 
 # Add subdirectories for each module
@@ -25,6 +26,7 @@ add_subdirectory(src/session)
 add_subdirectory(src/protocol)
 add_subdirectory(src/application)
 add_subdirectory(src/utils)
+add_subdirectory(src/manager)
 
 # Main executable
 add_executable(fix-gateway
@@ -33,6 +35,7 @@ add_executable(fix-gateway
 
 # Link libraries in dependency order (bottom to top)
 target_link_libraries(fix-gateway
+    manager
     network
     utils
     common

@@ -52,6 +52,10 @@ namespace fix_gateway::network
         void setMaxRetries(size_t max_retries);
         void setBatchSize(size_t size);
 
+        // Thread management (for core pinning)
+        std::thread &getSenderThread();
+        bool isThreadJoinable() const;
+
         // Note: No sendAsync method - AsyncSender is a pure consumer
         // Messages are pushed directly to the priority queue by:
         // - gRPC handlers (for client orders)

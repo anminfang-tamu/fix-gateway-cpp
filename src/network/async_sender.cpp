@@ -275,4 +275,19 @@ namespace fix_gateway::network
         total_retried_.store(0);
     }
 
+    // Thread management (for core pinning)
+    std::thread &AsyncSender::getSenderThread()
+    {
+        if (!isThreadJoinable())
+        {
+            throw std::runtime_error("AsyncSender thread is not joinable - call start() first");
+        }
+        return sender_thread_;
+    }
+
+    bool AsyncSender::isThreadJoinable() const
+    {
+        return sender_thread_.joinable();
+    }
+
 } // namespace fix_gateway::network

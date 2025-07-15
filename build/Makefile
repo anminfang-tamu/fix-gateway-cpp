@@ -263,6 +263,19 @@ utils/fast:
 .PHONY : utils/fast
 
 #=============================================================================
+# Target rules for targets named manager
+
+# Build rule for target.
+manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 manager
+.PHONY : manager
+
+# fast build rule for target.
+manager/fast:
+	$(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
+.PHONY : manager/fast
+
+#=============================================================================
 # Target rules for targets named test_async_sender
 
 # Build rule for target.
@@ -274,6 +287,19 @@ test_async_sender: cmake_check_build_system
 test_async_sender/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
 .PHONY : test_async_sender/fast
+
+#=============================================================================
+# Target rules for targets named test_message_manager
+
+# Build rule for target.
+test_message_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_message_manager
+.PHONY : test_message_manager
+
+# fast build rule for target.
+test_message_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/build
+.PHONY : test_message_manager/fast
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -315,10 +341,12 @@ help:
 	@echo "... application"
 	@echo "... common"
 	@echo "... fix-gateway"
+	@echo "... manager"
 	@echo "... network"
 	@echo "... protocol"
 	@echo "... session"
 	@echo "... test_async_sender"
+	@echo "... test_message_manager"
 	@echo "... utils"
 	@echo "... src/main.o"
 	@echo "... src/main.i"

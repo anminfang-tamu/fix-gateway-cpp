@@ -92,6 +92,7 @@ fix__gateway_EXTERNAL_OBJECTS =
 
 fix-gateway: CMakeFiles/fix-gateway.dir/src/main.cpp.o
 fix-gateway: CMakeFiles/fix-gateway.dir/build.make
+fix-gateway: src/manager/libmanager.a
 fix-gateway: src/network/libnetwork.a
 fix-gateway: src/utils/libutils.a
 fix-gateway: src/common/libcommon.a

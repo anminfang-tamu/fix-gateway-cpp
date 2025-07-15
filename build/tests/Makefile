@@ -185,6 +185,20 @@ test_async_sender/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
 .PHONY : test_async_sender/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_message_manager.dir/rule:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_message_manager.dir/rule
+.PHONY : tests/CMakeFiles/test_message_manager.dir/rule
+
+# Convenience name for target.
+test_message_manager: tests/CMakeFiles/test_message_manager.dir/rule
+.PHONY : test_message_manager
+
+# fast build rule for target.
+test_message_manager/fast:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/build
+.PHONY : test_message_manager/fast
+
 test_async_sender.o: test_async_sender.cpp.o
 .PHONY : test_async_sender.o
 
@@ -209,6 +223,30 @@ test_async_sender.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/test_async_sender.cpp.s
 .PHONY : test_async_sender.cpp.s
 
+test_message_manager.o: test_message_manager.cpp.o
+.PHONY : test_message_manager.o
+
+# target to build an object file
+test_message_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/test_message_manager.cpp.o
+.PHONY : test_message_manager.cpp.o
+
+test_message_manager.i: test_message_manager.cpp.i
+.PHONY : test_message_manager.i
+
+# target to preprocess a source file
+test_message_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/test_message_manager.cpp.i
+.PHONY : test_message_manager.cpp.i
+
+test_message_manager.s: test_message_manager.cpp.s
+.PHONY : test_message_manager.s
+
+# target to generate assembly for a file
+test_message_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/test_message_manager.cpp.s
+.PHONY : test_message_manager.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -223,9 +261,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... test_async_sender"
+	@echo "... test_message_manager"
 	@echo "... test_async_sender.o"
 	@echo "... test_async_sender.i"
 	@echo "... test_async_sender.s"
+	@echo "... test_message_manager.o"
+	@echo "... test_message_manager.i"
+	@echo "... test_message_manager.s"
 .PHONY : help
 
 
