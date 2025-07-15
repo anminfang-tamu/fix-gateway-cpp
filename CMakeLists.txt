@@ -42,6 +42,17 @@ target_link_libraries(fix-gateway
     Threads::Threads
 )
 
+# Platform detection demo executable
+add_executable(platform-demo
+    src/platform_demo.cpp
+)
+
+target_link_libraries(platform-demo
+    utils
+    common
+    Threads::Threads
+)
+
 # Tests (optional)
 option(BUILD_TESTS "Build tests" OFF)
 if(BUILD_TESTS)
