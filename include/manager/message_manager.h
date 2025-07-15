@@ -137,7 +137,9 @@ namespace fix_gateway::manager
         void startAsyncSenders();
         void stopAsyncSenders();
 
+        // Thread management helpers
         bool pinThreadToCore(std::thread &thread, int core_id);
+        bool setThreadQoSClass(std::thread &thread, int core_id);
         bool setThreadRealTimePriority(std::thread &thread);
 
         Priority getMessagePriority(MessagePtr message) const;

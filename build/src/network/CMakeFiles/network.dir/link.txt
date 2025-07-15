@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libnetwork.a CMakeFiles/network.dir/tcp_connection.cpp.o CMakeFiles/network.dir/tcp_server.cpp.o CMakeFiles/network.dir/async_sender.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libnetwork.a

@@ -375,7 +375,7 @@ namespace fix_gateway::utils
 
             // Parse first line: cpu user nice system idle iowait irq softirq steal
             uint64_t user, nice, system, idle, iowait, irq, softirq, steal;
-            if (sscanf(line.c_str(), "cpu %llu %llu %llu %llu %llu %llu %llu %llu",
+            if (sscanf(line.c_str(), "cpu %lu %lu %lu %lu %lu %lu %lu %lu",
                        &user, &nice, &system, &idle, &iowait, &irq, &softirq, &steal) == 8)
             {
                 static uint64_t prev_idle = 0, prev_total = 0;
@@ -423,7 +423,7 @@ namespace fix_gateway::utils
             if (line.substr(0, 6) == "VmRSS:")
             {
                 uint64_t rss_kb;
-                if (sscanf(line.c_str(), "VmRSS: %llu kB", &rss_kb) == 1)
+                if (sscanf(line.c_str(), "VmRSS: %lu kB", &rss_kb) == 1)
                 {
                     std::lock_guard<std::mutex> lock(metrics_mutex_);
                     memory_usage_mb_ = rss_kb / 1024;

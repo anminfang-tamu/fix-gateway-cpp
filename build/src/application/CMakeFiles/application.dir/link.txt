@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libapplication.a CMakeFiles/application.dir/fix_gateway.cpp.o CMakeFiles/application.dir/message_handler.cpp.o CMakeFiles/application.dir/order_book_interface.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libapplication.a

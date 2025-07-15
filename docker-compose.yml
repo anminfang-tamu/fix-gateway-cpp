@@ -1,0 +1,144 @@
+version: "3.8"
+
+services:
+  # Trading Gateway with High Performance Configuration
+  fix-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fix-gateway-trading
+
+    # CPU and memory constraints for optimal performance
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 2G
+        reservations:
+          cpus: "4.0"
+          memory: 1G
+
+    # Pin container to specific CPU cores (0-3)
+    cpuset: "0-3"
+
+    # Required capabilities for thread pinning and real-time priority
+    cap_add:
+      - SYS_NICE # Required for real-time priority
+      - SYS_TIME # Required for high-precision timing
+      - IPC_LOCK # Required for memory locking
+
+    # Increase limits for real-time applications
+    ulimits:
+      rtprio: 99 # Real-time priority limit
+      memlock: -1 # Unlimited memory locking
+      nofile: 65536 # File descriptor limit
+
+    # Environment variables for trading system
+    environment:
+      - CORE_PINNING_ENABLED=true
+      - REALTIME_PRIORITY=true
+      - LOG_LEVEL=INFO
+      - FIX_PORT=8080
+      - EXCHANGE_HOST=exchange.example.com
+      - EXCHANGE_PORT=9876
+      - QUEUE_SIZE_CRITICAL=512
+      - QUEUE_SIZE_HIGH=1024
+      - QUEUE_SIZE_MEDIUM=2048
+      - QUEUE_SIZE_LOW=4096
+
+    # Network configuration
+    ports:
+      - "8080:8080" # FIX protocol port
+      - "8081:8081" # Management/monitoring port
+
+    # Volume mounts for configuration and logs
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs:rw
+      - /dev/shm:/dev/shm:rw # Shared memory for IPC
+
+    # Networking
+    networks:
+      - trading-network
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/fix-gateway", "--health-check"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+    # Dependencies
+    depends_on:
+      - monitoring
+      - message-broker
+
+  # Message Broker (Redis for caching and pub/sub)
+  message-broker:
+    image: redis:7-alpine
+    container_name: redis-broker
+    command: redis-server --appendonly yes --tcp-keepalive 60
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  # Monitoring and Metrics
+  monitoring:
+    image: prom/prometheus:latest
+    container_name: prometheus-monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  # Load Testing Container
+  load-tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fix-gateway-load-test
+    command: ["/usr/local/bin/test_message_manager"]
+    depends_on:
+      - fix-gateway
+    networks:
+      - trading-network
+    profiles:
+      - testing
+
+# Network configuration
+networks:
+  trading-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Persistent volumes
+volumes:
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local

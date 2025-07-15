@@ -3,11 +3,20 @@
 #include <iostream>
 #include <sstream>
 #include <unistd.h> // For getuid()
+#include <cstring>  // For strerror
 
 #ifdef __APPLE__
 #include <pthread.h>
 #include <mach/thread_policy.h>
 #include <mach/thread_act.h>
+#include <pthread/qos.h>
+#endif
+
+#ifdef __linux__
+#include <pthread.h>
+#include <sched.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 #endif
 
 namespace fix_gateway::manager
@@ -354,6 +363,20 @@ namespace fix_gateway::manager
     {
         std::cout << "[MessageManager] Starting AsyncSenders..." << std::endl;
 
+        // Print system information
+        int detected_cores = MessageManagerFactory::detectPerformanceCores();
+        std::cout << "[MessageManager] Detected " << detected_cores << " performance cores" << std::endl;
+
+#ifdef __APPLE__
+        std::cout << "[MessageManager] macOS detected - thread affinity support is limited" << std::endl;
+        std::cout << "[MessageManager] Will attempt affinity first, then fallback to QoS classes" << std::endl;
+#elif defined(__linux__)
+        std::cout << "[MessageManager] Linux detected - full thread affinity and RT priority support" << std::endl;
+        std::cout << "[MessageManager] Can pin threads to specific cores with pthread_setaffinity_np" << std::endl;
+#else
+        std::cout << "[MessageManager] Platform has limited thread control capabilities" << std::endl;
+#endif
+
         for (auto &[priority, sender] : async_senders_)
         {
             if (sender)
@@ -366,16 +389,20 @@ namespace fix_gateway::manager
                     int core_id = getCoreForPriority(priority);
                     std::thread &sender_thread = sender->getSenderThread();
 
+                    std::cout << "[MessageManager] Attempting to pin priority "
+                              << static_cast<int>(priority) << " thread to core " << core_id << std::endl;
+
                     bool pinned = pinThreadToCore(sender_thread, core_id);
                     if (pinned)
                     {
-                        std::cout << "[MessageManager] Pinned priority "
-                                  << static_cast<int>(priority) << " thread to core " << core_id << std::endl;
+                        std::cout << "[MessageManager] Successfully configured priority "
+                                  << static_cast<int>(priority) << " thread for core " << core_id << std::endl;
                     }
                     else
                     {
-                        std::cerr << "[MessageManager] Failed to pin priority "
-                                  << static_cast<int>(priority) << " thread to core " << core_id << std::endl;
+                        std::cout << "[MessageManager] Thread configuration failed for priority "
+                                  << static_cast<int>(priority) << " thread (core " << core_id
+                                  << ") - performance may be reduced" << std::endl;
                     }
 
                     // Set real-time priority if enabled
@@ -387,7 +414,17 @@ namespace fix_gateway::manager
                             std::cout << "[MessageManager] Set real-time priority for "
                                       << static_cast<int>(priority) << " thread" << std::endl;
                         }
+                        else
+                        {
+                            std::cout << "[MessageManager] Failed to set real-time priority for "
+                                      << static_cast<int>(priority) << " thread (try running as root)" << std::endl;
+                        }
                     }
+                }
+                else
+                {
+                    std::cout << "[MessageManager] Core pinning disabled for priority "
+                              << static_cast<int>(priority) << " thread" << std::endl;
                 }
             }
         }
@@ -415,7 +452,7 @@ namespace fix_gateway::manager
         // Platform-specific implementation
 #ifdef __APPLE__
         // macOS thread affinity (limited support)
-        thread_affinity_policy_data_t policy = {core_id};
+        thread_affinity_policy_data_t policy = {static_cast<integer_t>(core_id)};
         thread_port_t mach_thread = pthread_mach_thread_np(thread.native_handle());
 
         kern_return_t result = thread_policy_set(mach_thread, THREAD_AFFINITY_POLICY,
@@ -423,16 +460,114 @@ namespace fix_gateway::manager
 
         if (result != KERN_SUCCESS)
         {
+            // Get more detailed error information
+            const char *error_msg = "Unknown error";
+            switch (result)
+            {
+            case KERN_INVALID_ARGUMENT:
+                error_msg = "Invalid argument (core may not exist)";
+                break;
+            case KERN_INVALID_POLICY:
+                error_msg = "Invalid policy (affinity not supported)";
+                break;
+            case KERN_NOT_SUPPORTED:
+                error_msg = "Not supported on this system";
+                break;
+            case KERN_FAILURE:
+                error_msg = "General failure";
+                break;
+            case KERN_RESOURCE_SHORTAGE:
+                error_msg = "Resource shortage";
+                break;
+            default:
+                error_msg = "Unknown kern_return_t error";
+                break;
+            }
+
             std::cerr << "[MessageManager] Failed to set thread affinity to core "
-                      << core_id << std::endl;
+                      << core_id << " - " << error_msg << " (kern_return_t: " << result << ")" << std::endl;
+
+            // Try alternative approach: QoS class
+            std::cout << "[MessageManager] Attempting alternative QoS-based approach for core " << core_id << std::endl;
+            return setThreadQoSClass(thread, core_id);
+        }
+
+        std::cout << "[MessageManager] Successfully pinned thread to core " << core_id << std::endl;
+        return true;
+#elif defined(__linux__)
+        // Linux implementation using pthread_setaffinity_np
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(core_id, &cpuset);
+
+        pthread_t pthread_handle = thread.native_handle();
+        int result = pthread_setaffinity_np(pthread_handle, sizeof(cpu_set_t), &cpuset);
+
+        if (result != 0)
+        {
+            std::cerr << "[MessageManager] Failed to set thread affinity to core " << core_id
+                      << " - error: " << result << " (" << strerror(result) << ")" << std::endl;
             return false;
         }
 
-        std::cout << "[MessageManager] Pinned thread to core " << core_id << std::endl;
+        std::cout << "[MessageManager] Successfully pinned thread to core " << core_id << std::endl;
         return true;
 #else
-        // Linux implementation would go here
         std::cout << "[MessageManager] Thread pinning not implemented for this platform" << std::endl;
+        return false;
+#endif
+    }
+
+    bool MessageManager::setThreadQoSClass(std::thread &thread, int core_id)
+    {
+#ifdef __APPLE__
+        // Alternative approach using QoS classes for macOS
+        // This provides better scheduling hints than direct affinity
+
+        pthread_t pthread_handle = thread.native_handle();
+
+        // Set QoS class based on priority level
+        qos_class_t qos_class;
+        int relative_priority = 0;
+
+        // Map core assignments to QoS classes
+        switch (core_id)
+        {
+        case 0: // Critical priority
+            qos_class = QOS_CLASS_USER_INTERACTIVE;
+            relative_priority = QOS_MIN_RELATIVE_PRIORITY; // Highest priority
+            break;
+        case 1: // High priority
+            qos_class = QOS_CLASS_USER_INTERACTIVE;
+            relative_priority = -10;
+            break;
+        case 2: // Medium priority
+            qos_class = QOS_CLASS_USER_INITIATED;
+            relative_priority = 0;
+            break;
+        case 3: // Low priority
+            qos_class = QOS_CLASS_DEFAULT;
+            relative_priority = 0;
+            break;
+        default:
+            qos_class = QOS_CLASS_DEFAULT;
+            relative_priority = 0;
+            break;
+        }
+
+        int result = pthread_set_qos_class_self_np(qos_class, relative_priority);
+
+        if (result != 0)
+        {
+            std::cerr << "[MessageManager] Failed to set QoS class for core " << core_id
+                      << " - error: " << result << std::endl;
+            return false;
+        }
+
+        std::cout << "[MessageManager] Set QoS class for core " << core_id
+                  << " (QoS: " << qos_class << ", priority: " << relative_priority << ")" << std::endl;
+        return true;
+#else
         return false;
 #endif
     }
@@ -459,8 +594,28 @@ namespace fix_gateway::manager
                                                  THREAD_TIME_CONSTRAINT_POLICY_COUNT);
 
         return result == KERN_SUCCESS;
+#elif defined(__linux__)
+        // Linux real-time priority implementation
+        pthread_t pthread_handle = thread.native_handle();
+
+        // Set real-time scheduling policy
+        struct sched_param param;
+        param.sched_priority = 99; // Maximum RT priority (1-99)
+
+        int result = pthread_setschedparam(pthread_handle, SCHED_FIFO, &param);
+
+        if (result != 0)
+        {
+            std::cerr << "[MessageManager] Failed to set real-time priority - error: "
+                      << result << " (" << strerror(result) << ")" << std::endl;
+            std::cerr << "[MessageManager] Note: Real-time priority requires CAP_SYS_NICE capability" << std::endl;
+            return false;
+        }
+
+        std::cout << "[MessageManager] Set real-time priority (SCHED_FIFO, priority=99)" << std::endl;
+        return true;
 #else
-        // Linux implementation would go here
+        std::cout << "[MessageManager] Real-time priority not implemented for this platform" << std::endl;
         return false;
 #endif
     }
@@ -511,8 +666,9 @@ namespace fix_gateway::manager
         config.medium_core = 2;   // Third performance core
         config.low_core = 3;      // Fourth performance core
 
-        config.enable_core_pinning = true;
-        config.enable_real_time_priority = false; // Requires root
+        // macOS has limited thread affinity support - use QoS classes instead
+        config.enable_core_pinning = true;        // Will fallback to QoS if affinity fails
+        config.enable_real_time_priority = false; // Requires root and often fails
 
         // Optimized queue sizes for M1 Max
         config.critical_queue_size = 512; // Small for ultra-low latency
