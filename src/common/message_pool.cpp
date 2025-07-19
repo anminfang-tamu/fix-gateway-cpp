@@ -8,15 +8,6 @@ namespace fix_gateway::common
 {
     using namespace fix_gateway::utils;
 
-    // MessagePoolDeleter implementation
-    void MessagePoolDeleter::operator()(Message *msg) const
-    {
-        if (pool_ && msg)
-        {
-            pool_->deallocateRaw(msg);
-        }
-    }
-
     // MessagePool implementation
     MessagePool::MessagePool(size_t pool_size, const std::string &pool_name)
         : pool_size_(pool_size), pool_name_(pool_name)
@@ -63,7 +54,7 @@ namespace fix_gateway::common
         allocated_count_.store(0, std::memory_order_relaxed);
     }
 
-    PooledMessagePtr MessagePool::allocate()
+    Message *MessagePool::allocate()
     {
         if (is_shutdown_.load(std::memory_order_acquire))
         {
@@ -71,36 +62,31 @@ namespace fix_gateway::common
             return nullptr;
         }
 
-        Message *raw_msg = allocateRaw();
-        if (!raw_msg)
-        {
-            allocation_failures_.fetch_add(1, std::memory_order_relaxed);
-            return nullptr;
-        }
-
-        // Create shared_ptr with custom deleter
-        auto deleter = MessagePoolDeleter(this);
-        return PooledMessagePtr(raw_msg, deleter);
+        return allocateRaw();
     }
 
-    PooledMessagePtr MessagePool::allocate(const std::string &message_id,
-                                           const std::string &payload,
-                                           Priority priority,
-                                           MessageType message_type,
-                                           const std::string &session_id,
-                                           const std::string &destination)
+    Message *MessagePool::allocate(const std::string &message_id,
+                                   const std::string &payload,
+                                   Priority priority,
+                                   MessageType message_type,
+                                   const std::string &session_id,
+                                   const std::string &destination)
     {
-        auto msg_ptr = allocate();
-        if (!msg_ptr)
+        Message *msg = allocate();
+        if (!msg)
         {
             return nullptr;
         }
 
         // Reuse existing message object (more efficient than placement new)
-        Message *raw_msg = msg_ptr.get();
-        *raw_msg = Message(message_id, payload, priority, message_type, session_id, destination);
+        new (msg) Message(message_id, payload, priority, message_type, session_id, destination);
 
-        return msg_ptr;
+        return msg;
+    }
+
+    void MessagePool::deallocate(Message *msg)
+    {
+        deallocateRaw(msg);
     }
 
     void MessagePool::prewarm()
@@ -274,19 +260,24 @@ namespace fix_gateway::common
         return *instance_;
     }
 
-    PooledMessagePtr GlobalMessagePool::allocate()
+    Message *GlobalMessagePool::allocate()
     {
         return getInstance().allocate();
     }
 
-    PooledMessagePtr GlobalMessagePool::allocate(const std::string &message_id,
-                                                 const std::string &payload,
-                                                 Priority priority,
-                                                 MessageType message_type,
-                                                 const std::string &session_id,
-                                                 const std::string &destination)
+    Message *GlobalMessagePool::allocate(const std::string &message_id,
+                                         const std::string &payload,
+                                         Priority priority,
+                                         MessageType message_type,
+                                         const std::string &session_id,
+                                         const std::string &destination)
     {
         return getInstance().allocate(message_id, payload, priority, message_type, session_id, destination);
+    }
+
+    void GlobalMessagePool::deallocate(Message *msg)
+    {
+        getInstance().deallocate(msg);
     }
 
     void GlobalMessagePool::shutdown()

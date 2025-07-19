@@ -35,8 +35,8 @@ void testBasicPoolFunctionality()
     MessagePool pool(100, "test_pool");
 
     // Test allocation
-    auto msg1 = pool.allocate("test_1", "Hello World", Priority::HIGH, MessageType::ORDER, "session1", "dest1");
-    auto msg2 = pool.allocate("test_2", "Hello World", Priority::CRITICAL, MessageType::CANCEL, "session2", "dest2");
+    Message *msg1 = pool.allocate("test_1", "Hello World", Priority::HIGH, MessageType::ORDER, "session1", "dest1");
+    Message *msg2 = pool.allocate("test_2", "Hello World", Priority::CRITICAL, MessageType::CANCEL, "session2", "dest2");
 
     if (msg1 && msg2)
     {
@@ -57,9 +57,11 @@ void testBasicPoolFunctionality()
     std::cout << "   Available: " << stats.available_count << "\n";
     std::cout << "   Utilization: " << (stats.allocated_count * 100.0 / stats.total_capacity) << "%\n";
 
-    // Test deallocation (automatic with shared_ptr)
-    msg1.reset();
-    msg2.reset();
+    // Test manual deallocation (required for raw pointer interface)
+    if (msg1)
+        pool.deallocate(msg1);
+    if (msg2)
+        pool.deallocate(msg2);
 
     // Check stats after deallocation
     stats = pool.getStats();
@@ -75,17 +77,18 @@ void testPoolExhaustion()
 {
     std::cout << "\n=== Test 2: Pool Exhaustion Behavior ===\n";
 
-    MessagePool pool(5, "small_pool"); // Small pool for testing
-    std::vector<PooledMessagePtr> messages;
+    MessagePool pool(5, "small_pool"); // Small pool for testing exhaustion
 
-    // Allocate until pool is exhausted
-    for (size_t i = 0; i < 10; ++i)
+    std::vector<Message *> messages;
+    messages.reserve(10);
+
+    for (int i = 0; i < 10; ++i)
     {
-        auto msg = pool.allocate("test_" + std::to_string(i), "payload", Priority::LOW);
+        Message *msg = pool.allocate("msg_" + std::to_string(i), "Payload " + std::to_string(i), Priority::LOW);
         if (msg)
         {
             messages.push_back(msg);
-            std::cout << "✅ Allocated message " << i << " (pool usage: " << pool.allocated() << "/5)\n";
+            std::cout << "✅ Allocated message " << i << " (pool usage: " << pool.allocated() << "/" << pool.capacity() << ")\n";
         }
         else
         {
@@ -100,6 +103,12 @@ void testPoolExhaustion()
     std::cout << "   Allocated: " << stats.allocated_count << "\n";
     std::cout << "   Available: " << stats.available_count << "\n";
     std::cout << "   Allocation Failures: " << stats.allocation_failures << "\n";
+
+    // Manual cleanup
+    for (Message *msg : messages)
+    {
+        pool.deallocate(msg);
+    }
 }
 
 // Test 3: Global pool functionality
@@ -108,8 +117,8 @@ void testGlobalPool()
     std::cout << "\n=== Test 3: Global Pool Functionality ===\n";
 
     // Test global pool allocation
-    auto msg1 = GlobalMessagePool::allocate("global_1", "Global Message 1", Priority::HIGH);
-    auto msg2 = pool::createMessage("global_2", "Global Message 2", Priority::CRITICAL);
+    Message *msg1 = GlobalMessagePool::allocate("global_1", "Global Message 1", Priority::HIGH);
+    Message *msg2 = pool::createMessage("global_2", "Global Message 2", Priority::CRITICAL);
 
     if (msg1 && msg2)
     {
@@ -129,9 +138,15 @@ void testGlobalPool()
     std::cout << "   Capacity: " << stats.total_capacity << "\n";
     std::cout << "   Allocated: " << stats.allocated_count << "\n";
     std::cout << "   Available: " << stats.available_count << "\n";
+
+    // Manual cleanup
+    if (msg1)
+        GlobalMessagePool::deallocate(msg1);
+    if (msg2)
+        pool::deallocateMessage(msg2);
 }
 
-// Test 4: Performance comparison - Pool vs Dynamic allocation
+// Performance test: Dynamic allocation
 TestResults performanceTestDynamic(size_t num_messages)
 {
     TestResults results;
@@ -139,7 +154,7 @@ TestResults performanceTestDynamic(size_t num_messages)
     results.successful_allocations = 0;
     results.failed_allocations = 0;
 
-    std::vector<MessagePtr> messages;
+    std::vector<std::unique_ptr<Message>> messages;
     messages.reserve(num_messages);
 
     // Measure allocation time
@@ -147,15 +162,15 @@ TestResults performanceTestDynamic(size_t num_messages)
 
     for (size_t i = 0; i < num_messages; ++i)
     {
-        try
+        auto msg = std::make_unique<Message>("dyn_" + std::to_string(i),
+                                             "Dynamic payload " + std::to_string(i),
+                                             Priority::LOW, MessageType::ORDER);
+        if (msg)
         {
-            auto msg = Message::create("dynamic_" + std::to_string(i),
-                                       "Dynamic payload " + std::to_string(i),
-                                       Priority::LOW, MessageType::ORDER);
-            messages.push_back(msg);
+            messages.push_back(std::move(msg));
             results.successful_allocations++;
         }
-        catch (...)
+        else
         {
             results.failed_allocations++;
         }
@@ -187,7 +202,7 @@ TestResults performanceTestPool(size_t num_messages)
     MessagePool pool(num_messages + 100, "perf_test_pool"); // Slightly larger than needed
     pool.prewarm();
 
-    std::vector<PooledMessagePtr> messages;
+    std::vector<Message *> messages;
     messages.reserve(num_messages);
 
     // Measure allocation time
@@ -195,9 +210,9 @@ TestResults performanceTestPool(size_t num_messages)
 
     for (size_t i = 0; i < num_messages; ++i)
     {
-        auto msg = pool.allocate("pool_" + std::to_string(i),
-                                 "Pool payload " + std::to_string(i),
-                                 Priority::LOW, MessageType::ORDER);
+        Message *msg = pool.allocate("pool_" + std::to_string(i),
+                                     "Pool payload " + std::to_string(i),
+                                     Priority::LOW, MessageType::ORDER);
         if (msg)
         {
             messages.push_back(msg);
@@ -215,7 +230,11 @@ TestResults performanceTestPool(size_t num_messages)
     // Measure deallocation time
     auto start_dealloc = std::chrono::high_resolution_clock::now();
 
-    messages.clear();
+    // Manual deallocation for raw pointers
+    for (Message *msg : messages)
+    {
+        pool.deallocate(msg);
+    }
 
     auto end_dealloc = std::chrono::high_resolution_clock::now();
     results.deallocation_time_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end_dealloc - start_dealloc).count();
@@ -225,7 +244,8 @@ TestResults performanceTestPool(size_t num_messages)
     return results;
 }
 
-void runPerformanceComparison()
+// Test 4: Performance comparison
+void performanceTest()
 {
     std::cout << "\n=== Test 4: Performance Comparison ===\n";
 
@@ -278,51 +298,61 @@ void threadedAllocationTest(MessagePool &pool, size_t thread_id, size_t num_allo
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, 3);
 
+    std::vector<Message *> messages;
+    messages.reserve(num_allocations);
+
     for (size_t i = 0; i < num_allocations; ++i)
     {
-        std::string msg_id = "thread_" + std::to_string(thread_id) + "_msg_" + std::to_string(i);
         Priority priority = static_cast<Priority>(dis(gen));
+        std::string msg_id = "thread_" + std::to_string(thread_id) + "_msg_" + std::to_string(i);
 
-        auto msg = pool.allocate(msg_id, "Multi-threaded payload", priority, MessageType::ORDER);
+        Message *msg = pool.allocate(msg_id, "Test payload", priority, MessageType::ORDER);
 
         if (msg)
         {
+            messages.push_back(msg);
             local_success++;
-            // Simulate some work
-            std::this_thread::sleep_for(std::chrono::microseconds(1));
         }
         else
         {
             local_failures++;
         }
+
+        // Simulate some processing time
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+
+    // Manual cleanup
+    for (Message *msg : messages)
+    {
+        pool.deallocate(msg);
     }
 
     total_success.fetch_add(local_success, std::memory_order_relaxed);
     total_failures.fetch_add(local_failures, std::memory_order_relaxed);
 }
 
-void runMultiThreadedTest()
+void multithreadedTest()
 {
     std::cout << "\n=== Test 5: Multi-threaded Allocation Test ===\n";
 
     MessagePool pool(POOL_SIZE, "multithread_pool");
-    pool.prewarm();
-
     std::atomic<size_t> total_success{0};
     std::atomic<size_t> total_failures{0};
 
-    std::vector<std::thread> threads;
-
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Launch threads
+    std::vector<std::thread> threads;
+    threads.reserve(NUM_THREADS);
+
+    size_t messages_per_thread = NUM_MESSAGES / NUM_THREADS;
+
     for (size_t i = 0; i < NUM_THREADS; ++i)
     {
-        threads.emplace_back(threadedAllocationTest, std::ref(pool), i,
-                             NUM_MESSAGES / NUM_THREADS, std::ref(total_success), std::ref(total_failures));
+        threads.emplace_back(threadedAllocationTest, std::ref(pool), i, messages_per_thread,
+                             std::ref(total_success), std::ref(total_failures));
     }
 
-    // Wait for all threads to complete
     for (auto &thread : threads)
     {
         thread.join();
@@ -331,19 +361,16 @@ void runMultiThreadedTest()
     auto end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
 
-    // Print results
     std::cout << "🧵 Multi-threaded Test Results:\n";
     std::cout << "  Threads: " << NUM_THREADS << "\n";
-    std::cout << "  Messages per thread: " << (NUM_MESSAGES / NUM_THREADS) << "\n";
+    std::cout << "  Messages per thread: " << messages_per_thread << "\n";
     std::cout << "  Total messages: " << NUM_MESSAGES << "\n";
     std::cout << "  Successful allocations: " << total_success.load() << "\n";
     std::cout << "  Failed allocations: " << total_failures.load() << "\n";
     std::cout << "  Success rate: " << (total_success.load() * 100.0 / NUM_MESSAGES) << "%\n";
     std::cout << "  Duration: " << duration.count() << " ms\n";
-    std::cout << "  Throughput: " << (total_success.load() * 1000.0 / duration.count()) << " allocations/sec\n";
+    std::cout << "  Throughput: " << (total_success.load() * 1000 / duration.count()) << " allocations/sec\n";
 
-    // Pool statistics
-    auto stats = pool.getStats();
     std::cout << "\n📊 Final Pool Statistics:\n";
     std::cout << "  " << pool.toString() << "\n";
 }
@@ -356,28 +383,18 @@ int main()
 
     try
     {
-        // Run all tests
         testBasicPoolFunctionality();
         testPoolExhaustion();
         testGlobalPool();
-        runPerformanceComparison();
-        runMultiThreadedTest();
+        performanceTest();
+        multithreadedTest();
 
         std::cout << "\n🎉 All tests completed successfully!\n";
-
-        // Cleanup global pool
-        GlobalMessagePool::shutdown();
-
         return 0;
     }
     catch (const std::exception &e)
     {
-        std::cerr << "❌ Test failed with exception: " << e.what() << std::endl;
-        return 1;
-    }
-    catch (...)
-    {
-        std::cerr << "❌ Test failed with unknown exception" << std::endl;
+        std::cerr << "❌ Test failed with exception: " << e.what() << "\n";
         return 1;
     }
 }

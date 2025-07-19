@@ -9,26 +9,9 @@
 
 namespace fix_gateway::common
 {
-    // Forward declaration
-    class MessagePool;
-
-    // Custom deleter for MessagePool integration
-    class MessagePoolDeleter
-    {
-    public:
-        MessagePoolDeleter(MessagePool *pool = nullptr) : pool_(pool) {}
-        void operator()(Message *msg) const;
-
-    private:
-        MessagePool *pool_;
-    };
-
-    // MessagePtr using custom deleter for pool integration
-    using PooledMessagePtr = std::shared_ptr<Message>;
-
     // High-performance lock-free message pool for trading systems
-    // Uses atomic free list for O(1) allocation/deallocation
-    // Target: <100ns allocation latency
+    // Uses raw pointers and atomic free list for O(1) allocation/deallocation
+    // Target: <100ns allocation latency (eliminates shared_ptr overhead)
     class MessagePool
     {
     public:
@@ -60,14 +43,17 @@ namespace fix_gateway::common
         MessagePool(MessagePool &&) = delete;
         MessagePool &operator=(MessagePool &&) = delete;
 
-        // Core pool operations (lock-free O(1))
-        PooledMessagePtr allocate();
-        PooledMessagePtr allocate(const std::string &message_id,
-                                  const std::string &payload,
-                                  Priority priority = Priority::LOW,
-                                  MessageType message_type = MessageType::UNKNOWN,
-                                  const std::string &session_id = "",
-                                  const std::string &destination = "");
+        // Core pool operations (lock-free O(1) - raw pointers for maximum performance)
+        Message *allocate();
+        Message *allocate(const std::string &message_id,
+                          const std::string &payload,
+                          Priority priority = Priority::LOW,
+                          MessageType message_type = MessageType::UNKNOWN,
+                          const std::string &session_id = "",
+                          const std::string &destination = "");
+
+        // Manual deallocation (required for raw pointer interface)
+        void deallocate(Message *msg);
 
         // Pool management
         void prewarm();  // Pre-touch memory pages
@@ -125,23 +111,21 @@ namespace fix_gateway::common
         Message *allocateRaw();
         void deallocateRaw(Message *msg);
         void initializeFreeList();
-
-        // Friend class for deleter access
-        friend class MessagePoolDeleter;
     };
 
-    // Global message pool instance (singleton pattern)
+    // Global message pool instance (singleton pattern) - raw pointer interface
     class GlobalMessagePool
     {
     public:
         static MessagePool &getInstance(size_t pool_size = MessagePool::DEFAULT_POOL_SIZE);
-        static PooledMessagePtr allocate();
-        static PooledMessagePtr allocate(const std::string &message_id,
-                                         const std::string &payload,
-                                         Priority priority = Priority::LOW,
-                                         MessageType message_type = MessageType::UNKNOWN,
-                                         const std::string &session_id = "",
-                                         const std::string &destination = "");
+        static Message *allocate();
+        static Message *allocate(const std::string &message_id,
+                                 const std::string &payload,
+                                 Priority priority = Priority::LOW,
+                                 MessageType message_type = MessageType::UNKNOWN,
+                                 const std::string &session_id = "",
+                                 const std::string &destination = "");
+        static void deallocate(Message *msg);
         static void shutdown();
 
     private:
@@ -149,30 +133,36 @@ namespace fix_gateway::common
         static std::atomic<bool> initialized_;
     };
 
-    // Convenience factory functions
+    // Convenience factory functions - raw pointer interface
     namespace pool
     {
-        // Create message using global pool
-        inline PooledMessagePtr createMessage(const std::string &message_id,
-                                              const std::string &payload,
-                                              Priority priority = Priority::LOW,
-                                              MessageType message_type = MessageType::UNKNOWN,
-                                              const std::string &session_id = "",
-                                              const std::string &destination = "")
+        // Create message using global pool (raw pointer - caller must deallocate)
+        inline Message *createMessage(const std::string &message_id,
+                                      const std::string &payload,
+                                      Priority priority = Priority::LOW,
+                                      MessageType message_type = MessageType::UNKNOWN,
+                                      const std::string &session_id = "",
+                                      const std::string &destination = "")
         {
             return GlobalMessagePool::allocate(message_id, payload, priority, message_type, session_id, destination);
         }
 
-        // Create message with custom pool
-        inline PooledMessagePtr createMessage(MessagePool &pool,
-                                              const std::string &message_id,
-                                              const std::string &payload,
-                                              Priority priority = Priority::LOW,
-                                              MessageType message_type = MessageType::UNKNOWN,
-                                              const std::string &session_id = "",
-                                              const std::string &destination = "")
+        // Create message with custom pool (raw pointer - caller must deallocate)
+        inline Message *createMessage(MessagePool &pool,
+                                      const std::string &message_id,
+                                      const std::string &payload,
+                                      Priority priority = Priority::LOW,
+                                      MessageType message_type = MessageType::UNKNOWN,
+                                      const std::string &session_id = "",
+                                      const std::string &destination = "")
         {
             return pool.allocate(message_id, payload, priority, message_type, session_id, destination);
+        }
+
+        // Deallocate message using global pool
+        inline void deallocateMessage(Message *msg)
+        {
+            GlobalMessagePool::deallocate(msg);
         }
     }
 
