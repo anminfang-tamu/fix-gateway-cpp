@@ -7,13 +7,48 @@
 
 namespace fix_gateway::network
 {
-    AsyncSender::AsyncSender(std::shared_ptr<fix_gateway::utils::PriorityQueue> priority_queue,
-                             std::shared_ptr<fix_gateway::network::TcpConnection> tcp_connection)
-        : priority_queue_(priority_queue), tcp_connection_(tcp_connection), running_(false), shutdown_requested_(false), max_retries_(3), base_timeout_(std::chrono::milliseconds(100))
+    using MessagePtr = fix_gateway::common::MessagePtr;
+    using PriorityQueue = fix_gateway::utils::PriorityQueue;
+    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
+    using TcpConnection = fix_gateway::network::TcpConnection;
+
+    // Constructor for mutex-based queue (Phase 2)
+    AsyncSender::AsyncSender(std::shared_ptr<PriorityQueue> priority_queue,
+                             std::shared_ptr<TcpConnection> tcp_connection)
+        : priority_queue_(priority_queue),
+          lockfree_queue_(nullptr),
+          tcp_connection_(tcp_connection),
+          use_lockfree_queue_(false),
+          running_(false),
+          shutdown_requested_(false),
+          max_retries_(3),
+          base_timeout_(std::chrono::milliseconds(100))
     {
         if (!priority_queue_)
         {
             throw std::invalid_argument("PriorityQueue cannot be null");
+        }
+        if (!tcp_connection_)
+        {
+            throw std::invalid_argument("TcpConnection cannot be null");
+        }
+    }
+
+    // Constructor for lock-free queue (Phase 3)
+    AsyncSender::AsyncSender(std::shared_ptr<LockFreePriorityQueue> lockfree_queue,
+                             std::shared_ptr<TcpConnection> tcp_connection)
+        : priority_queue_(nullptr),
+          lockfree_queue_(lockfree_queue),
+          tcp_connection_(tcp_connection),
+          use_lockfree_queue_(true),
+          running_(false),
+          shutdown_requested_(false),
+          max_retries_(3),
+          base_timeout_(std::chrono::milliseconds(100))
+    {
+        if (!lockfree_queue_)
+        {
+            throw std::invalid_argument("LockFreePriorityQueue cannot be null");
         }
         if (!tcp_connection_)
         {
@@ -95,9 +130,9 @@ namespace fix_gateway::network
         stats.messages_in_flight = 0;     // TODO: Track in-flight messages
         stats.avg_send_latency_ns = 0.0;  // TODO: Implement latency tracking
         stats.avg_queue_latency_ns = 0.0;
-        stats.current_queue_depth = priority_queue_->size();
-        stats.peak_queue_depth = priority_queue_->getPeakSize();
-        stats.bytes_sent = 0; // TODO: Track bytes sent
+        stats.current_queue_depth = getQueueSize();
+        stats.peak_queue_depth = use_lockfree_queue_ ? 0 : priority_queue_->getPeakSize(); // Lock-free doesn't track peak
+        stats.bytes_sent = 0;                                                              // TODO: Track bytes sent
         stats.last_send_time = std::chrono::steady_clock::now();
 
         return stats;
@@ -105,7 +140,7 @@ namespace fix_gateway::network
 
     size_t AsyncSender::getQueueDepth() const
     {
-        return priority_queue_->size();
+        return getQueueSize();
     }
 
     bool AsyncSender::isConnected() const
@@ -126,6 +161,18 @@ namespace fix_gateway::network
 
     void AsyncSender::senderLoop()
     {
+        if (use_lockfree_queue_)
+        {
+            senderLoopLockFree();
+        }
+        else
+        {
+            senderLoopMutex();
+        }
+    }
+
+    void AsyncSender::senderLoopMutex()
+    {
         fix_gateway::common::MessagePtr message;
 
         while (running_.load())
@@ -133,7 +180,7 @@ namespace fix_gateway::network
             try
             {
                 // Try to get a message from the queue with timeout
-                if (priority_queue_->pop(message, std::chrono::milliseconds(10)))
+                if (popMessage(message, std::chrono::milliseconds(10)))
                 {
                     sendMessage(message);
                 }
@@ -146,13 +193,13 @@ namespace fix_gateway::network
             }
             catch (const std::exception &e)
             {
-                std::cerr << "AsyncSender error in main loop: " << e.what() << std::endl;
+                std::cerr << "AsyncSender error in mutex loop: " << e.what() << std::endl;
                 // Continue running despite errors
             }
         }
 
         // Drain remaining messages on shutdown
-        while (priority_queue_->tryPop(message))
+        while (tryPopMessage(message))
         {
             try
             {
@@ -166,7 +213,55 @@ namespace fix_gateway::network
         }
     }
 
-    void AsyncSender::sendMessage(fix_gateway::common::MessagePtr message)
+    void AsyncSender::senderLoopLockFree()
+    {
+        fix_gateway::common::MessagePtr message;
+
+        while (running_.load())
+        {
+            try
+            {
+                // Lock-free queue only supports tryPop - use busy wait with sleep
+                if (tryPopMessage(message))
+                {
+                    sendMessage(message);
+                }
+                else
+                {
+                    // No message available - sleep briefly to avoid busy waiting
+                    // This is much shorter than mutex timeout but still CPU-friendly
+                    std::this_thread::sleep_for(std::chrono::microseconds(100));
+                }
+
+                // Check for shutdown request
+                if (shutdown_requested_.load())
+                {
+                    break;
+                }
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << "AsyncSender error in lock-free loop: " << e.what() << std::endl;
+                // Continue running despite errors
+            }
+        }
+
+        // Drain remaining messages on shutdown
+        while (tryPopMessage(message))
+        {
+            try
+            {
+                sendMessage(message);
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << "AsyncSender error during shutdown drain: " << e.what() << std::endl;
+                break; // Stop draining on errors during shutdown
+            }
+        }
+    }
+
+    void AsyncSender::sendMessage(MessagePtr message)
     {
         if (!message)
         {
@@ -231,7 +326,7 @@ namespace fix_gateway::network
         }
     }
 
-    void AsyncSender::handleSendFailure(fix_gateway::common::MessagePtr message)
+    void AsyncSender::handleSendFailure(MessagePtr message)
     {
         // Log the failure
         std::cerr << "Failed to send message after " << max_retries_ << " retries. "
@@ -251,7 +346,7 @@ namespace fix_gateway::network
         return base_timeout_;
     }
 
-    void AsyncSender::updateStats(fix_gateway::common::MessagePtr message, bool success)
+    void AsyncSender::updateStats(MessagePtr message, bool success)
     {
         // TODO: Implement comprehensive statistics tracking:
         // - Message latency (queue time + send time)
@@ -288,6 +383,43 @@ namespace fix_gateway::network
     bool AsyncSender::isThreadJoinable() const
     {
         return sender_thread_.joinable();
+    }
+
+    // Queue interface abstraction
+    bool AsyncSender::popMessage(MessagePtr &message, std::chrono::milliseconds timeout)
+    {
+        if (use_lockfree_queue_)
+        {
+            return lockfree_queue_->tryPop(message);
+        }
+        else
+        {
+            return priority_queue_->pop(message, timeout);
+        }
+    }
+
+    bool AsyncSender::tryPopMessage(MessagePtr &message)
+    {
+        if (use_lockfree_queue_)
+        {
+            return lockfree_queue_->tryPop(message);
+        }
+        else
+        {
+            return priority_queue_->tryPop(message);
+        }
+    }
+
+    size_t AsyncSender::getQueueSize() const
+    {
+        if (use_lockfree_queue_)
+        {
+            return lockfree_queue_->size();
+        }
+        else
+        {
+            return priority_queue_->size();
+        }
     }
 
 } // namespace fix_gateway::network

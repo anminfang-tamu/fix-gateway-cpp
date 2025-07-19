@@ -20,10 +20,14 @@ namespace fix_gateway::common
           message_type_(message_type),
           session_id_(session_id),
           destination_(destination),
+          queue_entry_time_ns_(0),
+          send_time_ns_(0),
+          deadline_time_ns_(0),
           user_context_(nullptr),
           state_(MessageState::PENDING),
           retry_count_(0),
-          error_code_(0)
+          error_code_(0),
+          error_message_ptr_(nullptr)
     {
         initializeTimestamps();
     }
@@ -46,31 +50,42 @@ namespace fix_gateway::common
           message_type_(message_type),
           session_id_(session_id),
           destination_(destination),
-          deadline_time_(deadline),
+          queue_entry_time_ns_(0),
+          send_time_ns_(0),
+          deadline_time_ns_(deadline.time_since_epoch().count() ? timePointToNanos(deadline) : 0),
           user_context_(nullptr),
           state_(MessageState::PENDING),
           retry_count_(0),
-          error_code_(0)
+          error_code_(0),
+          error_message_ptr_(nullptr)
     {
         initializeTimestamps();
     }
 
     // Copy constructor
     Message::Message(const Message &other)
-        : user_context_(nullptr),
+        : queue_entry_time_ns_(0),
+          send_time_ns_(0),
+          deadline_time_ns_(0),
+          user_context_(nullptr),
           state_(MessageState::PENDING),
           retry_count_(0),
-          error_code_(0)
+          error_code_(0),
+          error_message_ptr_(nullptr)
     {
         copyFrom(other);
     }
 
     // Move constructor
     Message::Message(Message &&other) noexcept
-        : user_context_(nullptr),
+        : queue_entry_time_ns_(0),
+          send_time_ns_(0),
+          deadline_time_ns_(0),
+          user_context_(nullptr),
           state_(MessageState::PENDING),
           retry_count_(0),
-          error_code_(0)
+          error_code_(0),
+          error_message_ptr_(nullptr)
     {
         moveFrom(std::move(other));
     }
@@ -98,7 +113,12 @@ namespace fix_gateway::common
     // Destructor
     Message::~Message()
     {
-        // No dynamic resources to clean up
+        // Clean up atomic error message pointer
+        std::string *error_msg = error_message_ptr_.load(std::memory_order_relaxed);
+        if (error_msg)
+        {
+            delete error_msg;
+        }
     }
 
     // Factory methods
@@ -173,56 +193,75 @@ namespace fix_gateway::common
 
     std::chrono::steady_clock::time_point Message::getQueueEntryTime() const
     {
-        return queue_entry_time_;
+        uint64_t nanos = queue_entry_time_ns_.load(std::memory_order_acquire);
+        return nanos ? nanosToTimePoint(nanos) : std::chrono::steady_clock::time_point{};
     }
 
     std::chrono::steady_clock::time_point Message::getSendTime() const
     {
-        return send_time_;
+        uint64_t nanos = send_time_ns_.load(std::memory_order_acquire);
+        return nanos ? nanosToTimePoint(nanos) : std::chrono::steady_clock::time_point{};
     }
 
     std::chrono::steady_clock::time_point Message::getDeadlineTime() const
     {
-        return deadline_time_;
+        uint64_t nanos = deadline_time_ns_.load(std::memory_order_acquire);
+        return nanos ? nanosToTimePoint(nanos) : std::chrono::steady_clock::time_point{};
     }
 
     // Timing utilities
     std::chrono::nanoseconds Message::getQueueLatency() const
     {
-        if (queue_entry_time_.time_since_epoch().count() == 0)
+        uint64_t queue_nanos = queue_entry_time_ns_.load(std::memory_order_acquire);
+        if (queue_nanos == 0)
             return std::chrono::nanoseconds(0);
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(queue_entry_time_ - creation_time_);
+
+        uint64_t creation_nanos = timePointToNanos(creation_time_);
+        return std::chrono::nanoseconds(queue_nanos - creation_nanos);
     }
 
     std::chrono::nanoseconds Message::getSendLatency() const
     {
-        if (send_time_.time_since_epoch().count() == 0 || queue_entry_time_.time_since_epoch().count() == 0)
+        uint64_t send_nanos = send_time_ns_.load(std::memory_order_acquire);
+        uint64_t queue_nanos = queue_entry_time_ns_.load(std::memory_order_acquire);
+
+        if (send_nanos == 0 || queue_nanos == 0)
             return std::chrono::nanoseconds(0);
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(send_time_ - queue_entry_time_);
+
+        return std::chrono::nanoseconds(send_nanos - queue_nanos);
     }
 
     std::chrono::nanoseconds Message::getTotalLatency() const
     {
-        if (send_time_.time_since_epoch().count() == 0)
+        uint64_t send_nanos = send_time_ns_.load(std::memory_order_acquire);
+        if (send_nanos == 0)
             return std::chrono::nanoseconds(0);
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(send_time_ - creation_time_);
+
+        uint64_t creation_nanos = timePointToNanos(creation_time_);
+        return std::chrono::nanoseconds(send_nanos - creation_nanos);
     }
 
     bool Message::isExpired() const
     {
-        if (deadline_time_.time_since_epoch().count() == 0)
+        uint64_t deadline_nanos = deadline_time_ns_.load(std::memory_order_acquire);
+        if (deadline_nanos == 0)
             return false;
-        return std::chrono::steady_clock::now() > deadline_time_;
+
+        auto now = std::chrono::steady_clock::now();
+        return timePointToNanos(now) > deadline_nanos;
     }
 
     std::chrono::nanoseconds Message::getTimeToDeadline() const
     {
-        if (deadline_time_.time_since_epoch().count() == 0)
+        uint64_t deadline_nanos = deadline_time_ns_.load(std::memory_order_acquire);
+        if (deadline_nanos == 0)
             return std::chrono::nanoseconds::max();
-        auto now = std::chrono::steady_clock::now();
-        if (now > deadline_time_)
+
+        uint64_t now_nanos = timePointToNanos(std::chrono::steady_clock::now());
+        if (now_nanos > deadline_nanos)
             return std::chrono::nanoseconds(0);
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(deadline_time_ - now);
+
+        return std::chrono::nanoseconds(deadline_nanos - now_nanos);
     }
 
     // State management
@@ -272,10 +311,9 @@ namespace fix_gateway::common
         return error_code_.load(std::memory_order_relaxed);
     }
 
-    const std::string &Message::getErrorMessage() const
+    std::string Message::getErrorMessage() const
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        return error_message_;
+        return getErrorMessageAtomic();
     }
 
     void Message::incrementRetryCount()
@@ -286,52 +324,50 @@ namespace fix_gateway::common
     void Message::setError(int error_code, const std::string &error_message)
     {
         error_code_.store(error_code, std::memory_order_relaxed);
-        std::lock_guard<std::mutex> lock(mutex_);
-        error_message_ = error_message;
+        setErrorMessageAtomic(error_message);
     }
 
     void Message::clearError()
     {
         error_code_.store(0, std::memory_order_relaxed);
-        std::lock_guard<std::mutex> lock(mutex_);
-        error_message_.clear();
+        setErrorMessageAtomic("");
     }
 
-    // Timing setters
+    // Timing setters (lock-free atomic operations)
     void Message::setQueueEntryTime(const std::chrono::steady_clock::time_point &time)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        queue_entry_time_ = time;
+        uint64_t nanos = timePointToNanos(time);
+        queue_entry_time_ns_.store(nanos, std::memory_order_release);
     }
 
     void Message::setSendTime(const std::chrono::steady_clock::time_point &time)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        send_time_ = time;
+        uint64_t nanos = timePointToNanos(time);
+        send_time_ns_.store(nanos, std::memory_order_release);
     }
 
     void Message::setDeadlineTime(const std::chrono::steady_clock::time_point &time)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        deadline_time_ = time;
+        uint64_t nanos = timePointToNanos(time);
+        deadline_time_ns_.store(nanos, std::memory_order_release);
     }
 
     // Callback management
     void Message::setCompletionCallback(CompletionCallback callback)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(callback_mutex_);
         completion_callback_ = callback;
     }
 
     void Message::setErrorCallback(ErrorCallback callback)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(callback_mutex_);
         error_callback_ = callback;
     }
 
     void Message::setUserCallback(UserCallback callback, void *user_context)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(callback_mutex_);
         user_callback_ = callback;
         user_context_ = user_context;
     }
@@ -341,7 +377,7 @@ namespace fix_gateway::common
     {
         CompletionCallback callback;
         {
-            std::lock_guard<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(callback_mutex_);
             callback = completion_callback_;
         }
         if (callback)
@@ -354,7 +390,7 @@ namespace fix_gateway::common
     {
         ErrorCallback callback;
         {
-            std::lock_guard<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(callback_mutex_);
             callback = error_callback_;
         }
         if (callback)
@@ -368,7 +404,7 @@ namespace fix_gateway::common
         UserCallback callback;
         void *context;
         {
-            std::lock_guard<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(callback_mutex_);
             callback = user_callback_;
             context = user_context_;
         }
@@ -432,38 +468,38 @@ namespace fix_gateway::common
                sequence_number_ == other.sequence_number_;
     }
 
-    // Thread safety
+    // Thread safety (simplified for lock-free operations)
     void Message::lock() const
     {
-        mutex_.lock();
+        callback_mutex_.lock();
     }
 
     void Message::unlock() const
     {
-        mutex_.unlock();
+        callback_mutex_.unlock();
     }
 
     bool Message::tryLock() const
     {
-        return mutex_.try_lock();
+        return callback_mutex_.try_lock();
     }
 
     // Helper methods
     void Message::initializeTimestamps()
     {
         creation_time_ = std::chrono::steady_clock::now();
-        queue_entry_time_ = std::chrono::steady_clock::time_point{};
-        send_time_ = std::chrono::steady_clock::time_point{};
-        if (deadline_time_.time_since_epoch().count() == 0)
+        queue_entry_time_ns_.store(0, std::memory_order_relaxed);
+        send_time_ns_.store(0, std::memory_order_relaxed);
+        if (deadline_time_ns_.load(std::memory_order_relaxed) == 0)
         {
-            deadline_time_ = std::chrono::steady_clock::time_point{};
+            deadline_time_ns_.store(0, std::memory_order_relaxed);
         }
     }
 
     void Message::copyFrom(const Message &other)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        std::lock_guard<std::mutex> other_lock(other.mutex_);
+        std::lock_guard<std::mutex> lock(callback_mutex_);
+        std::lock_guard<std::mutex> other_lock(other.callback_mutex_);
 
         message_id_ = other.message_id_;
         sequence_number_ = other.sequence_number_;
@@ -474,9 +510,9 @@ namespace fix_gateway::common
         session_id_ = other.session_id_;
         destination_ = other.destination_;
         creation_time_ = other.creation_time_;
-        queue_entry_time_ = other.queue_entry_time_;
-        send_time_ = other.send_time_;
-        deadline_time_ = other.deadline_time_;
+        queue_entry_time_ns_.store(other.queue_entry_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        send_time_ns_.store(other.send_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        deadline_time_ns_.store(other.deadline_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         completion_callback_ = other.completion_callback_;
         error_callback_ = other.error_callback_;
         user_callback_ = other.user_callback_;
@@ -484,13 +520,16 @@ namespace fix_gateway::common
         state_.store(other.state_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         retry_count_.store(other.retry_count_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         error_code_.store(other.error_code_.load(std::memory_order_relaxed), std::memory_order_relaxed);
-        error_message_ = other.error_message_;
+
+        // Copy error message atomically
+        std::string error_msg = other.getErrorMessageAtomic();
+        setErrorMessageAtomic(error_msg);
     }
 
     void Message::moveFrom(Message &&other) noexcept
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        std::lock_guard<std::mutex> other_lock(other.mutex_);
+        std::lock_guard<std::mutex> lock(callback_mutex_);
+        std::lock_guard<std::mutex> other_lock(other.callback_mutex_);
 
         message_id_ = std::move(other.message_id_);
         sequence_number_ = std::move(other.sequence_number_);
@@ -501,9 +540,9 @@ namespace fix_gateway::common
         session_id_ = std::move(other.session_id_);
         destination_ = std::move(other.destination_);
         creation_time_ = other.creation_time_;
-        queue_entry_time_ = other.queue_entry_time_;
-        send_time_ = other.send_time_;
-        deadline_time_ = other.deadline_time_;
+        queue_entry_time_ns_.store(other.queue_entry_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        send_time_ns_.store(other.send_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
+        deadline_time_ns_.store(other.deadline_time_ns_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         completion_callback_ = std::move(other.completion_callback_);
         error_callback_ = std::move(other.error_callback_);
         user_callback_ = std::move(other.user_callback_);
@@ -511,7 +550,39 @@ namespace fix_gateway::common
         state_.store(other.state_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         retry_count_.store(other.retry_count_.load(std::memory_order_relaxed), std::memory_order_relaxed);
         error_code_.store(other.error_code_.load(std::memory_order_relaxed), std::memory_order_relaxed);
-        error_message_ = std::move(other.error_message_);
+
+        // Move error message atomically
+        std::string error_msg = other.getErrorMessageAtomic();
+        setErrorMessageAtomic(error_msg);
+        other.setErrorMessageAtomic(""); // Clear the source
+    }
+
+    // Lock-free timestamp conversion helpers
+    uint64_t Message::timePointToNanos(const std::chrono::steady_clock::time_point &tp)
+    {
+        return static_cast<uint64_t>(tp.time_since_epoch().count());
+    }
+
+    std::chrono::steady_clock::time_point Message::nanosToTimePoint(uint64_t nanos)
+    {
+        return std::chrono::steady_clock::time_point(std::chrono::steady_clock::duration(nanos));
+    }
+
+    // Error message management (lock-free)
+    void Message::setErrorMessageAtomic(const std::string &error_message)
+    {
+        std::string *new_msg = error_message.empty() ? nullptr : new std::string(error_message);
+        std::string *old_msg = error_message_ptr_.exchange(new_msg, std::memory_order_acq_rel);
+        if (old_msg)
+        {
+            delete old_msg;
+        }
+    }
+
+    std::string Message::getErrorMessageAtomic() const
+    {
+        std::string *msg_ptr = error_message_ptr_.load(std::memory_order_acquire);
+        return msg_ptr ? *msg_ptr : std::string();
     }
 
     std::string Message::generateSequenceNumber()

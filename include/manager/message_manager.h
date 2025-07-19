@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utils/priority_queue.h"
+#include "utils/lockfree_priority_queue.h"
 #include "network/tcp_connection.h"
 #include "network/async_sender.h"
 #include "common/message.h"
@@ -16,6 +17,7 @@
 namespace fix_gateway::manager
 {
     using PriorityQueue = fix_gateway::utils::PriorityQueue;
+    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
     using TcpConnection = fix_gateway::network::TcpConnection;
     using MessagePtr = fix_gateway::common::MessagePtr;
     using AsyncSender = fix_gateway::network::AsyncSender;
@@ -33,10 +35,18 @@ namespace fix_gateway::manager
      * - Core 1: HIGH priority AsyncSender (< 100μs target)
      * - Core 2: MEDIUM priority AsyncSender (< 1ms target)
      * - Core 3: LOW priority AsyncSender (< 10ms target)
+     *
+     * Phase 3 Enhancement: Lock-free queue support for sub-10μs latency
      */
     class MessageManager
     {
     public:
+        enum class QueueType
+        {
+            MUTEX_BASED, // Phase 2: STL priority_queue with mutex
+            LOCK_FREE    // Phase 3: Lock-free ring buffer implementation
+        };
+
         struct CorePinningConfig
         {
             // Core assignments
@@ -48,6 +58,9 @@ namespace fix_gateway::manager
             // Core pinning options
             bool enable_core_pinning = true;
             bool enable_real_time_priority = false; // Requires root on Linux/macOS
+
+            // Queue configuration (Phase 3)
+            QueueType queue_type = QueueType::MUTEX_BASED; // Default to mutex-based for compatibility
 
             // Queue sizes per priority
             size_t critical_queue_size = 1024;
@@ -78,6 +91,10 @@ namespace fix_gateway::manager
             // TCP connection status
             bool tcp_connected = false;
             std::chrono::steady_clock::time_point last_connection_time;
+
+            // Queue type info
+            QueueType queue_type;
+            std::string queue_type_string;
         };
 
     public:
@@ -112,6 +129,10 @@ namespace fix_gateway::manager
         bool connectToServer(const std::string &host, int port);
         void disconnectFromServer();
 
+        // Queue type info
+        QueueType getQueueType() const { return config_.queue_type; }
+        std::string getQueueTypeString() const;
+
     private:
         // Core configuration
         CorePinningConfig config_;
@@ -119,8 +140,9 @@ namespace fix_gateway::manager
         // Shared TCP connection (used by all AsyncSenders)
         std::shared_ptr<TcpConnection> tcp_connection_;
 
-        // Per-priority queues and senders
+        // Per-priority queues and senders - supports both mutex-based and lock-free
         std::unordered_map<Priority, std::shared_ptr<PriorityQueue>> priority_queues_;
+        std::unordered_map<Priority, std::shared_ptr<LockFreePriorityQueue>> lockfree_queues_;
         std::unordered_map<Priority, std::unique_ptr<AsyncSender>> async_senders_;
 
         // Core management
@@ -143,7 +165,10 @@ namespace fix_gateway::manager
         bool setThreadRealTimePriority(std::thread &thread);
 
         Priority getMessagePriority(MessagePtr message) const;
-        std::shared_ptr<PriorityQueue> getQueueForPriority(Priority priority) const;
+
+        // Queue interface abstraction
+        bool pushToQueue(Priority priority, MessagePtr message);
+        size_t getQueueSize(Priority priority) const;
 
         size_t getQueueSizeForPriority(Priority priority) const;
         int getCoreForPriority(Priority priority) const;
@@ -163,6 +188,10 @@ namespace fix_gateway::manager
         // Trading environment specific configs
         static MessageManager::CorePinningConfig createLowLatencyConfig();
         static MessageManager::CorePinningConfig createHighThroughputConfig();
+
+        // Phase 3: Lock-free configurations
+        static MessageManager::CorePinningConfig createLockFreeConfig();
+        static MessageManager::CorePinningConfig createLockFreeM1MaxConfig();
 
         // Hardware detection
         static int detectPerformanceCores();

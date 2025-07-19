@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libutils.a CMakeFiles/utils.dir/logger.cpp.o CMakeFiles/utils.dir/performance_timer.cpp.o CMakeFiles/utils.dir/performance_counters.cpp.o CMakeFiles/utils.dir/priority_queue.cpp.o CMakeFiles/utils.dir/lockfree_priority_queue.cpp.o CMakeFiles/utils.dir/platform_detector.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libutils.a

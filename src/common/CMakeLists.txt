@@ -1,6 +1,7 @@
 # Common library - shared data structures and utilities
 add_library(common STATIC
     message.cpp
+    message_pool.cpp
 )
 
 # Include directories

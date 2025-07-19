@@ -152,16 +152,8 @@ namespace fix_gateway::manager
         }
 
         Priority priority = getMessagePriority(message);
-        auto queue = getQueueForPriority(priority);
+        bool success = pushToQueue(priority, message);
 
-        if (!queue)
-        {
-            std::cerr << "[MessageManager] No queue found for priority: "
-                      << static_cast<int>(priority) << std::endl;
-            return false;
-        }
-
-        bool success = queue->push(message);
         if (!success)
         {
             std::cerr << "[MessageManager] Failed to route message to "
@@ -227,6 +219,10 @@ namespace fix_gateway::manager
             stats.last_connection_time = std::chrono::steady_clock::now();
         }
 
+        // Queue type information
+        stats.queue_type = config_.queue_type;
+        stats.queue_type_string = getQueueTypeString();
+
         return stats;
     }
 
@@ -260,20 +256,19 @@ namespace fix_gateway::manager
     std::vector<size_t> MessageManager::getQueueDepths() const
     {
         std::vector<size_t> depths;
-        depths.reserve(priority_queues_.size());
+        depths.reserve(4); // 4 priority levels
 
-        for (const auto &[priority, queue] : priority_queues_)
-        {
-            depths.push_back(queue ? queue->size() : 0);
-        }
+        depths.push_back(getQueueSize(Priority::CRITICAL));
+        depths.push_back(getQueueSize(Priority::HIGH));
+        depths.push_back(getQueueSize(Priority::MEDIUM));
+        depths.push_back(getQueueSize(Priority::LOW));
 
         return depths;
     }
 
     size_t MessageManager::getQueueDepthForPriority(Priority priority) const
     {
-        auto queue = getQueueForPriority(priority);
-        return queue ? queue->size() : 0;
+        return getQueueSize(priority);
     }
 
     bool MessageManager::areAllCoresConnected() const
@@ -335,28 +330,56 @@ namespace fix_gateway::manager
     void MessageManager::createQueuesAndSenders()
     {
         std::cout << "[MessageManager] Creating queues and senders..." << std::endl;
+        std::cout << "[MessageManager] Queue type: " << getQueueTypeString() << std::endl;
 
-        // Create priority queues
-        priority_queues_[Priority::CRITICAL] = std::make_shared<PriorityQueue>(
-            config_.critical_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "critical_queue");
-
-        priority_queues_[Priority::HIGH] = std::make_shared<PriorityQueue>(
-            config_.high_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "high_queue");
-
-        priority_queues_[Priority::MEDIUM] = std::make_shared<PriorityQueue>(
-            config_.medium_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "medium_queue");
-
-        priority_queues_[Priority::LOW] = std::make_shared<PriorityQueue>(
-            config_.low_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "low_queue");
-
-        // Create AsyncSenders with shared TCP connection
-        for (const auto &[priority, queue] : priority_queues_)
+        if (config_.queue_type == QueueType::MUTEX_BASED)
         {
-            async_senders_[priority] = std::make_unique<AsyncSender>(queue, tcp_connection_);
-        }
+            // Create mutex-based priority queues
+            priority_queues_[Priority::CRITICAL] = std::make_shared<PriorityQueue>(
+                config_.critical_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "critical_queue");
 
-        std::cout << "[MessageManager] Created " << priority_queues_.size()
-                  << " queues and " << async_senders_.size() << " senders" << std::endl;
+            priority_queues_[Priority::HIGH] = std::make_shared<PriorityQueue>(
+                config_.high_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "high_queue");
+
+            priority_queues_[Priority::MEDIUM] = std::make_shared<PriorityQueue>(
+                config_.medium_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "medium_queue");
+
+            priority_queues_[Priority::LOW] = std::make_shared<PriorityQueue>(
+                config_.low_queue_size, fix_gateway::utils::OverflowPolicy::DROP_OLDEST, "low_queue");
+
+            // Create AsyncSenders with mutex-based queues
+            for (const auto &[priority, queue] : priority_queues_)
+            {
+                async_senders_[priority] = std::make_unique<AsyncSender>(queue, tcp_connection_);
+            }
+
+            std::cout << "[MessageManager] Created " << priority_queues_.size()
+                      << " mutex-based queues and " << async_senders_.size() << " senders" << std::endl;
+        }
+        else // LOCK_FREE
+        {
+            // Create lock-free priority queues
+            lockfree_queues_[Priority::CRITICAL] = std::make_shared<LockFreePriorityQueue>(
+                config_.critical_queue_size, "critical_lockfree_queue");
+
+            lockfree_queues_[Priority::HIGH] = std::make_shared<LockFreePriorityQueue>(
+                config_.high_queue_size, "high_lockfree_queue");
+
+            lockfree_queues_[Priority::MEDIUM] = std::make_shared<LockFreePriorityQueue>(
+                config_.medium_queue_size, "medium_lockfree_queue");
+
+            lockfree_queues_[Priority::LOW] = std::make_shared<LockFreePriorityQueue>(
+                config_.low_queue_size, "low_lockfree_queue");
+
+            // Create AsyncSenders with lock-free queues
+            for (const auto &[priority, queue] : lockfree_queues_)
+            {
+                async_senders_[priority] = std::make_unique<AsyncSender>(queue, tcp_connection_);
+            }
+
+            std::cout << "[MessageManager] Created " << lockfree_queues_.size()
+                      << " lock-free queues and " << async_senders_.size() << " senders" << std::endl;
+        }
     }
 
     void MessageManager::startAsyncSenders()
@@ -625,10 +648,53 @@ namespace fix_gateway::manager
         return message ? message->getPriority() : Priority::LOW;
     }
 
-    std::shared_ptr<PriorityQueue> MessageManager::getQueueForPriority(Priority priority) const
+    // Queue interface abstraction methods
+    bool MessageManager::pushToQueue(Priority priority, MessagePtr message)
     {
-        auto it = priority_queues_.find(priority);
-        return (it != priority_queues_.end()) ? it->second : nullptr;
+        if (config_.queue_type == QueueType::MUTEX_BASED)
+        {
+            auto it = priority_queues_.find(priority);
+            if (it != priority_queues_.end() && it->second)
+            {
+                return it->second->push(message);
+            }
+        }
+        else // LOCK_FREE
+        {
+            auto it = lockfree_queues_.find(priority);
+            if (it != lockfree_queues_.end() && it->second)
+            {
+                return it->second->push(message);
+            }
+        }
+        return false;
+    }
+
+    size_t MessageManager::getQueueSize(Priority priority) const
+    {
+        if (config_.queue_type == QueueType::MUTEX_BASED)
+        {
+            auto it = priority_queues_.find(priority);
+            return (it != priority_queues_.end() && it->second) ? it->second->size() : 0;
+        }
+        else // LOCK_FREE
+        {
+            auto it = lockfree_queues_.find(priority);
+            return (it != lockfree_queues_.end() && it->second) ? it->second->size() : 0;
+        }
+    }
+
+    std::string MessageManager::getQueueTypeString() const
+    {
+        switch (config_.queue_type)
+        {
+        case QueueType::MUTEX_BASED:
+            return "MUTEX_BASED";
+        case QueueType::LOCK_FREE:
+            return "LOCK_FREE";
+        default:
+            return "UNKNOWN";
+        }
     }
 
     size_t MessageManager::getQueueSizeForPriority(Priority priority) const
@@ -747,6 +813,42 @@ namespace fix_gateway::manager
         config.high_queue_size = 4096;
         config.medium_queue_size = 8192;
         config.low_queue_size = 16384;
+
+        return config;
+    }
+
+    MessageManager::CorePinningConfig MessageManagerFactory::createLockFreeConfig()
+    {
+        auto config = createDefaultConfig();
+
+        // Enable lock-free queues
+        config.queue_type = MessageManager::QueueType::LOCK_FREE;
+
+        // Optimize queue sizes for lock-free (power of 2)
+        config.critical_queue_size = 512; // 2^9
+        config.high_queue_size = 1024;    // 2^10
+        config.medium_queue_size = 2048;  // 2^11
+        config.low_queue_size = 4096;     // 2^12
+
+        return config;
+    }
+
+    MessageManager::CorePinningConfig MessageManagerFactory::createLockFreeM1MaxConfig()
+    {
+        auto config = createM1MaxConfig(); // Start with M1 Max hardware config
+
+        // Enable lock-free queues
+        config.queue_type = MessageManager::QueueType::LOCK_FREE;
+
+        // Optimize for M1 Max with lock-free queues
+        config.critical_queue_size = 256; // 2^8 - Ultra low latency
+        config.high_queue_size = 512;     // 2^9 - High performance
+        config.medium_queue_size = 1024;  // 2^10 - Medium performance
+        config.low_queue_size = 2048;     // 2^11 - Background tasks
+
+        // Enable advanced features for maximum performance
+        config.enable_core_pinning = true;
+        config.enable_real_time_priority = true; // Requires root
 
         return config;
     }

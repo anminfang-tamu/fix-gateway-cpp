@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utils/priority_queue.h"
+#include "utils/lockfree_priority_queue.h"
 #include "network/tcp_connection.h"
 #include "common/message.h"
 
@@ -13,6 +14,7 @@ namespace fix_gateway::network
 {
     using MessagePtr = fix_gateway::common::MessagePtr;
     using PriorityQueue = fix_gateway::utils::PriorityQueue;
+    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
     using TcpConnection = fix_gateway::network::TcpConnection;
 
     struct SenderStats
@@ -33,8 +35,14 @@ namespace fix_gateway::network
     class AsyncSender
     {
     public:
+        // Constructor for mutex-based queue (Phase 2)
         AsyncSender(std::shared_ptr<PriorityQueue> priority_queue,
                     std::shared_ptr<TcpConnection> tcp_connection);
+
+        // Constructor for lock-free queue (Phase 3)
+        AsyncSender(std::shared_ptr<LockFreePriorityQueue> lockfree_queue,
+                    std::shared_ptr<TcpConnection> tcp_connection);
+
         ~AsyncSender();
 
         // Lifecycle management
@@ -67,9 +75,11 @@ namespace fix_gateway::network
         using ErrorCallback = std::function<void(MessagePtr, const std::string &)>;
         ErrorCallback error_callback_;
 
-        // Core components
+        // Core components - either mutex-based or lock-free
         std::shared_ptr<PriorityQueue> priority_queue_;
+        std::shared_ptr<LockFreePriorityQueue> lockfree_queue_;
         std::shared_ptr<TcpConnection> tcp_connection_;
+        bool use_lockfree_queue_;
 
         // Threading
         std::thread sender_thread_;
@@ -92,11 +102,18 @@ namespace fix_gateway::network
 
         // Private methods
         void senderLoop();
+        void senderLoopMutex();    // For mutex-based queue
+        void senderLoopLockFree(); // For lock-free queue
         void sendMessage(MessagePtr message);
         void handleSendFailure(MessagePtr message);
         std::chrono::milliseconds calculateTimeout() const;
         void updateStats(MessagePtr message, bool success);
         void resetStats();
+
+        // Queue interface abstraction
+        bool popMessage(MessagePtr &message, std::chrono::milliseconds timeout);
+        bool tryPopMessage(MessagePtr &message);
+        size_t getQueueSize() const;
     };
 
 } // namespace fix_gateway::network

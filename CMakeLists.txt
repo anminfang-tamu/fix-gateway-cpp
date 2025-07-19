@@ -53,12 +53,51 @@ target_link_libraries(platform-demo
     Threads::Threads
 )
 
+# Lock-free integration demo executable (Phase 3)
+add_executable(lockfree-demo
+    src/lockfree_demo.cpp
+)
+
+target_link_libraries(lockfree-demo
+    utils
+    common
+    manager
+    network
+    Threads::Threads
+)
+
+# Simple lock-free test executable (Phase 3)
+add_executable(simple-lockfree-test
+    src/simple_lockfree_test.cpp
+)
+
+target_link_libraries(simple-lockfree-test
+    utils
+    common
+    manager
+    network
+    Threads::Threads
+)
+
 # Tests (optional)
 option(BUILD_TESTS "Build tests" OFF)
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+# Message pool test executable (Phase 3)
+add_executable(message-pool-test
+    src/message_pool_test.cpp
+)
+
+target_link_libraries(message-pool-test
+    utils
+    common
+    manager
+    network
+    Threads::Threads
+)
 
 # Install targets
 install(TARGETS fix-gateway DESTINATION bin) 

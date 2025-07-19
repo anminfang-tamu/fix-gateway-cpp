@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libmanager.a CMakeFiles/manager.dir/message_manager.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libmanager.a
