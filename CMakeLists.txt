@@ -44,7 +44,7 @@ target_link_libraries(fix-gateway
 
 # Platform detection demo executable
 add_executable(platform-demo
-    src/platform_demo.cpp
+    demos/platform_demo.cpp
 )
 
 target_link_libraries(platform-demo
@@ -55,7 +55,7 @@ target_link_libraries(platform-demo
 
 # Lock-free integration demo executable (Phase 3)
 add_executable(lockfree-demo
-    src/lockfree_demo.cpp
+    demos/lockfree_demo.cpp
 )
 
 target_link_libraries(lockfree-demo
@@ -68,7 +68,7 @@ target_link_libraries(lockfree-demo
 
 # Simple lock-free test executable (Phase 3)
 add_executable(simple-lockfree-test
-    src/simple_lockfree_test.cpp
+    demos/simple_lockfree_test.cpp
 )
 
 target_link_libraries(simple-lockfree-test
@@ -88,7 +88,7 @@ endif()
 
 # Message pool test executable (Phase 3)
 add_executable(message-pool-test
-    src/message_pool_test.cpp
+    demos/message_pool_test.cpp
 )
 
 target_link_libraries(message-pool-test
@@ -96,6 +96,117 @@ target_link_libraries(message-pool-test
     common
     manager
     network
+    Threads::Threads
+)
+
+# FIX Engine demonstration executable 
+add_executable(fix-demo
+    demos/fix_demo.cpp
+)
+
+target_link_libraries(fix-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Memory performance benchmark executable
+add_executable(memory-perf-test
+    demos/memory_performance_test.cpp
+)
+
+target_link_libraries(memory-perf-test
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Quick performance comparison demo
+add_executable(quick-perf-demo
+    demos/quick_perf_demo.cpp
+)
+
+target_link_libraries(quick-perf-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Message pool integration demo
+add_executable(message-integration-demo
+    demos/message_integration_demo.cpp
+)
+
+target_link_libraries(message-integration-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Templated message pool demo
+add_executable(templated-pool-demo
+    demos/templated_pool_demo.cpp
+)
+
+target_link_libraries(templated-pool-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# ====================
+# DEMO EXECUTABLES  
+# ====================
+
+# Existing pool templated demo
+add_executable(existing-pool-templated-demo
+    demos/existing_pool_templated_demo.cpp
+)
+
+target_link_libraries(existing-pool-templated-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Message pool validation test
+add_executable(message-pool-validation-test
+    demos/message_pool_validation_test.cpp
+)
+
+target_link_libraries(message-pool-validation-test
+    utils
+    common
+    Threads::Threads
+)
+
+# Raw pointer performance demo
+add_executable(raw-pointer-perf-demo
+    demos/raw_pointer_perf_demo.cpp
+)
+
+target_link_libraries(raw-pointer-perf-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
+# Raw pointer API demo
+add_executable(raw-pointer-api-demo
+    demos/raw_pointer_api_demo.cpp
+)
+
+target_link_libraries(raw-pointer-api-demo
+    protocol
+    utils
+    common
     Threads::Threads
 )
 

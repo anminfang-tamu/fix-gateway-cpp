@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o"
-  "CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o.d"
+  "CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o"
+  "CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o.d"
   "message-pool-test"
   "message-pool-test.pdb"
 )

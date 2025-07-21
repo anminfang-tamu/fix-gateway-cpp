@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o"
-  "CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o.d"
+  "CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o"
+  "CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o.d"
   "platform-demo"
   "platform-demo.pdb"
 )

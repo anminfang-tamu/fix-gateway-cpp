@@ -69,28 +69,28 @@ include CMakeFiles/platform-demo.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/platform-demo.dir/flags.make
 
-CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o: CMakeFiles/platform-demo.dir/flags.make
-CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o: /Users/anminfang/fix-gateway-cpp/src/platform_demo.cpp
-CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o: CMakeFiles/platform-demo.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o -MF CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o.d -o CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/platform_demo.cpp
+CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o: CMakeFiles/platform-demo.dir/flags.make
+CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o: /Users/anminfang/fix-gateway-cpp/demos/platform_demo.cpp
+CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o: CMakeFiles/platform-demo.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o -MF CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o.d -o CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o -c /Users/anminfang/fix-gateway-cpp/demos/platform_demo.cpp
 
-CMakeFiles/platform-demo.dir/src/platform_demo.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/platform-demo.dir/src/platform_demo.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/platform_demo.cpp > CMakeFiles/platform-demo.dir/src/platform_demo.cpp.i
+CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/demos/platform_demo.cpp > CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.i
 
-CMakeFiles/platform-demo.dir/src/platform_demo.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/platform-demo.dir/src/platform_demo.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/platform_demo.cpp -o CMakeFiles/platform-demo.dir/src/platform_demo.cpp.s
+CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/demos/platform_demo.cpp -o CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.s
 
 # Object files for target platform-demo
 platform__demo_OBJECTS = \
-"CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o"
+"CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o"
 
 # External object files for target platform-demo
 platform__demo_EXTERNAL_OBJECTS =
 
-platform-demo: CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o
+platform-demo: CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o
 platform-demo: CMakeFiles/platform-demo.dir/build.make
 platform-demo: src/utils/libutils.a
 platform-demo: src/common/libcommon.a

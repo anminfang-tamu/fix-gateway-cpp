@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o"
-  "CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o.d"
+  "CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o"
+  "CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o.d"
   "lockfree-demo"
   "lockfree-demo.pdb"
 )

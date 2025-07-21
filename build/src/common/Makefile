@@ -199,30 +199,6 @@ message.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/message.cpp.s
 .PHONY : message.cpp.s
 
-message_pool.o: message_pool.cpp.o
-.PHONY : message_pool.o
-
-# target to build an object file
-message_pool.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/message_pool.cpp.o
-.PHONY : message_pool.cpp.o
-
-message_pool.i: message_pool.cpp.i
-.PHONY : message_pool.i
-
-# target to preprocess a source file
-message_pool.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/message_pool.cpp.i
-.PHONY : message_pool.cpp.i
-
-message_pool.s: message_pool.cpp.s
-.PHONY : message_pool.s
-
-# target to generate assembly for a file
-message_pool.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/message_pool.cpp.s
-.PHONY : message_pool.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -239,9 +215,6 @@ help:
 	@echo "... message.o"
 	@echo "... message.i"
 	@echo "... message.s"
-	@echo "... message_pool.o"
-	@echo "... message_pool.i"
-	@echo "... message_pool.s"
 .PHONY : help
 
 

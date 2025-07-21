@@ -69,28 +69,28 @@ include CMakeFiles/message-pool-test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/message-pool-test.dir/flags.make
 
-CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o: CMakeFiles/message-pool-test.dir/flags.make
-CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o: /Users/anminfang/fix-gateway-cpp/src/message_pool_test.cpp
-CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o: CMakeFiles/message-pool-test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o -MF CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o.d -o CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/message_pool_test.cpp
+CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o: CMakeFiles/message-pool-test.dir/flags.make
+CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o: /Users/anminfang/fix-gateway-cpp/demos/message_pool_test.cpp
+CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o: CMakeFiles/message-pool-test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o -MF CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o.d -o CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o -c /Users/anminfang/fix-gateway-cpp/demos/message_pool_test.cpp
 
-CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/message_pool_test.cpp > CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.i
+CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/demos/message_pool_test.cpp > CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.i
 
-CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/message_pool_test.cpp -o CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.s
+CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/demos/message_pool_test.cpp -o CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.s
 
 # Object files for target message-pool-test
 message__pool__test_OBJECTS = \
-"CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o"
+"CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o"
 
 # External object files for target message-pool-test
 message__pool__test_EXTERNAL_OBJECTS =
 
-message-pool-test: CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o
+message-pool-test: CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o
 message-pool-test: CMakeFiles/message-pool-test.dir/build.make
 message-pool-test: src/utils/libutils.a
 message-pool-test: src/common/libcommon.a

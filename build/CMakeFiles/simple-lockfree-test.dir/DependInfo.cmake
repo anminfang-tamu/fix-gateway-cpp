@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/anminfang/fix-gateway-cpp/src/simple_lockfree_test.cpp" "CMakeFiles/simple-lockfree-test.dir/src/simple_lockfree_test.cpp.o" "gcc" "CMakeFiles/simple-lockfree-test.dir/src/simple_lockfree_test.cpp.o.d"
+  "/Users/anminfang/fix-gateway-cpp/demos/simple_lockfree_test.cpp" "CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.o" "gcc" "CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

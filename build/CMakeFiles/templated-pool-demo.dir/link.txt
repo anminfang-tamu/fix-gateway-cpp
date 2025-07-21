@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/c++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl@1.1/lib "CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.o" -o templated-pool-demo  src/protocol/libprotocol.a src/utils/libutils.a src/common/libcommon.a

@@ -69,28 +69,28 @@ include CMakeFiles/lockfree-demo.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/lockfree-demo.dir/flags.make
 
-CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o: CMakeFiles/lockfree-demo.dir/flags.make
-CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o: /Users/anminfang/fix-gateway-cpp/src/lockfree_demo.cpp
-CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o: CMakeFiles/lockfree-demo.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o -MF CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o.d -o CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/lockfree_demo.cpp
+CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o: CMakeFiles/lockfree-demo.dir/flags.make
+CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o: /Users/anminfang/fix-gateway-cpp/demos/lockfree_demo.cpp
+CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o: CMakeFiles/lockfree-demo.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o -MF CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o.d -o CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o -c /Users/anminfang/fix-gateway-cpp/demos/lockfree_demo.cpp
 
-CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/lockfree_demo.cpp > CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.i
+CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/demos/lockfree_demo.cpp > CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.i
 
-CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/lockfree_demo.cpp -o CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.s
+CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/demos/lockfree_demo.cpp -o CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.s
 
 # Object files for target lockfree-demo
 lockfree__demo_OBJECTS = \
-"CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o"
+"CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o"
 
 # External object files for target lockfree-demo
 lockfree__demo_EXTERNAL_OBJECTS =
 
-lockfree-demo: CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o
+lockfree-demo: CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o
 lockfree-demo: CMakeFiles/lockfree-demo.dir/build.make
 lockfree-demo: src/utils/libutils.a
 lockfree-demo: src/common/libcommon.a

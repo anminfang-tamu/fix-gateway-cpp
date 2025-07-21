@@ -227,6 +227,123 @@ message-pool-test/fast:
 .PHONY : message-pool-test/fast
 
 #=============================================================================
+# Target rules for targets named fix-demo
+
+# Build rule for target.
+fix-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fix-demo
+.PHONY : fix-demo
+
+# fast build rule for target.
+fix-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/build
+.PHONY : fix-demo/fast
+
+#=============================================================================
+# Target rules for targets named memory-perf-test
+
+# Build rule for target.
+memory-perf-test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 memory-perf-test
+.PHONY : memory-perf-test
+
+# fast build rule for target.
+memory-perf-test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/build
+.PHONY : memory-perf-test/fast
+
+#=============================================================================
+# Target rules for targets named quick-perf-demo
+
+# Build rule for target.
+quick-perf-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 quick-perf-demo
+.PHONY : quick-perf-demo
+
+# fast build rule for target.
+quick-perf-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/build
+.PHONY : quick-perf-demo/fast
+
+#=============================================================================
+# Target rules for targets named message-integration-demo
+
+# Build rule for target.
+message-integration-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 message-integration-demo
+.PHONY : message-integration-demo
+
+# fast build rule for target.
+message-integration-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/build
+.PHONY : message-integration-demo/fast
+
+#=============================================================================
+# Target rules for targets named templated-pool-demo
+
+# Build rule for target.
+templated-pool-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 templated-pool-demo
+.PHONY : templated-pool-demo
+
+# fast build rule for target.
+templated-pool-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/build
+.PHONY : templated-pool-demo/fast
+
+#=============================================================================
+# Target rules for targets named existing-pool-templated-demo
+
+# Build rule for target.
+existing-pool-templated-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 existing-pool-templated-demo
+.PHONY : existing-pool-templated-demo
+
+# fast build rule for target.
+existing-pool-templated-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/build
+.PHONY : existing-pool-templated-demo/fast
+
+#=============================================================================
+# Target rules for targets named message-pool-validation-test
+
+# Build rule for target.
+message-pool-validation-test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 message-pool-validation-test
+.PHONY : message-pool-validation-test
+
+# fast build rule for target.
+message-pool-validation-test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/build
+.PHONY : message-pool-validation-test/fast
+
+#=============================================================================
+# Target rules for targets named raw-pointer-perf-demo
+
+# Build rule for target.
+raw-pointer-perf-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 raw-pointer-perf-demo
+.PHONY : raw-pointer-perf-demo
+
+# fast build rule for target.
+raw-pointer-perf-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/build
+.PHONY : raw-pointer-perf-demo/fast
+
+#=============================================================================
+# Target rules for targets named raw-pointer-api-demo
+
+# Build rule for target.
+raw-pointer-api-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 raw-pointer-api-demo
+.PHONY : raw-pointer-api-demo
+
+# fast build rule for target.
+raw-pointer-api-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/build
+.PHONY : raw-pointer-api-demo/fast
+
+#=============================================================================
 # Target rules for targets named common
 
 # Build rule for target.
@@ -317,29 +434,317 @@ manager/fast:
 	$(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
 .PHONY : manager/fast
 
-src/lockfree_demo.o: src/lockfree_demo.cpp.o
-.PHONY : src/lockfree_demo.o
+demos/existing_pool_templated_demo.o: demos/existing_pool_templated_demo.cpp.o
+.PHONY : demos/existing_pool_templated_demo.o
 
 # target to build an object file
-src/lockfree_demo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.o
-.PHONY : src/lockfree_demo.cpp.o
+demos/existing_pool_templated_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/demos/existing_pool_templated_demo.cpp.o
+.PHONY : demos/existing_pool_templated_demo.cpp.o
 
-src/lockfree_demo.i: src/lockfree_demo.cpp.i
-.PHONY : src/lockfree_demo.i
+demos/existing_pool_templated_demo.i: demos/existing_pool_templated_demo.cpp.i
+.PHONY : demos/existing_pool_templated_demo.i
 
 # target to preprocess a source file
-src/lockfree_demo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.i
-.PHONY : src/lockfree_demo.cpp.i
+demos/existing_pool_templated_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/demos/existing_pool_templated_demo.cpp.i
+.PHONY : demos/existing_pool_templated_demo.cpp.i
 
-src/lockfree_demo.s: src/lockfree_demo.cpp.s
-.PHONY : src/lockfree_demo.s
+demos/existing_pool_templated_demo.s: demos/existing_pool_templated_demo.cpp.s
+.PHONY : demos/existing_pool_templated_demo.s
 
 # target to generate assembly for a file
-src/lockfree_demo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/src/lockfree_demo.cpp.s
-.PHONY : src/lockfree_demo.cpp.s
+demos/existing_pool_templated_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/demos/existing_pool_templated_demo.cpp.s
+.PHONY : demos/existing_pool_templated_demo.cpp.s
+
+demos/fix_demo.o: demos/fix_demo.cpp.o
+.PHONY : demos/fix_demo.o
+
+# target to build an object file
+demos/fix_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/demos/fix_demo.cpp.o
+.PHONY : demos/fix_demo.cpp.o
+
+demos/fix_demo.i: demos/fix_demo.cpp.i
+.PHONY : demos/fix_demo.i
+
+# target to preprocess a source file
+demos/fix_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/demos/fix_demo.cpp.i
+.PHONY : demos/fix_demo.cpp.i
+
+demos/fix_demo.s: demos/fix_demo.cpp.s
+.PHONY : demos/fix_demo.s
+
+# target to generate assembly for a file
+demos/fix_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/demos/fix_demo.cpp.s
+.PHONY : demos/fix_demo.cpp.s
+
+demos/lockfree_demo.o: demos/lockfree_demo.cpp.o
+.PHONY : demos/lockfree_demo.o
+
+# target to build an object file
+demos/lockfree_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o
+.PHONY : demos/lockfree_demo.cpp.o
+
+demos/lockfree_demo.i: demos/lockfree_demo.cpp.i
+.PHONY : demos/lockfree_demo.i
+
+# target to preprocess a source file
+demos/lockfree_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.i
+.PHONY : demos/lockfree_demo.cpp.i
+
+demos/lockfree_demo.s: demos/lockfree_demo.cpp.s
+.PHONY : demos/lockfree_demo.s
+
+# target to generate assembly for a file
+demos/lockfree_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.s
+.PHONY : demos/lockfree_demo.cpp.s
+
+demos/memory_performance_test.o: demos/memory_performance_test.cpp.o
+.PHONY : demos/memory_performance_test.o
+
+# target to build an object file
+demos/memory_performance_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/demos/memory_performance_test.cpp.o
+.PHONY : demos/memory_performance_test.cpp.o
+
+demos/memory_performance_test.i: demos/memory_performance_test.cpp.i
+.PHONY : demos/memory_performance_test.i
+
+# target to preprocess a source file
+demos/memory_performance_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/demos/memory_performance_test.cpp.i
+.PHONY : demos/memory_performance_test.cpp.i
+
+demos/memory_performance_test.s: demos/memory_performance_test.cpp.s
+.PHONY : demos/memory_performance_test.s
+
+# target to generate assembly for a file
+demos/memory_performance_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/demos/memory_performance_test.cpp.s
+.PHONY : demos/memory_performance_test.cpp.s
+
+demos/message_integration_demo.o: demos/message_integration_demo.cpp.o
+.PHONY : demos/message_integration_demo.o
+
+# target to build an object file
+demos/message_integration_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/demos/message_integration_demo.cpp.o
+.PHONY : demos/message_integration_demo.cpp.o
+
+demos/message_integration_demo.i: demos/message_integration_demo.cpp.i
+.PHONY : demos/message_integration_demo.i
+
+# target to preprocess a source file
+demos/message_integration_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/demos/message_integration_demo.cpp.i
+.PHONY : demos/message_integration_demo.cpp.i
+
+demos/message_integration_demo.s: demos/message_integration_demo.cpp.s
+.PHONY : demos/message_integration_demo.s
+
+# target to generate assembly for a file
+demos/message_integration_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/demos/message_integration_demo.cpp.s
+.PHONY : demos/message_integration_demo.cpp.s
+
+demos/message_pool_test.o: demos/message_pool_test.cpp.o
+.PHONY : demos/message_pool_test.o
+
+# target to build an object file
+demos/message_pool_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.o
+.PHONY : demos/message_pool_test.cpp.o
+
+demos/message_pool_test.i: demos/message_pool_test.cpp.i
+.PHONY : demos/message_pool_test.i
+
+# target to preprocess a source file
+demos/message_pool_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.i
+.PHONY : demos/message_pool_test.cpp.i
+
+demos/message_pool_test.s: demos/message_pool_test.cpp.s
+.PHONY : demos/message_pool_test.s
+
+# target to generate assembly for a file
+demos/message_pool_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/demos/message_pool_test.cpp.s
+.PHONY : demos/message_pool_test.cpp.s
+
+demos/message_pool_validation_test.o: demos/message_pool_validation_test.cpp.o
+.PHONY : demos/message_pool_validation_test.o
+
+# target to build an object file
+demos/message_pool_validation_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/demos/message_pool_validation_test.cpp.o
+.PHONY : demos/message_pool_validation_test.cpp.o
+
+demos/message_pool_validation_test.i: demos/message_pool_validation_test.cpp.i
+.PHONY : demos/message_pool_validation_test.i
+
+# target to preprocess a source file
+demos/message_pool_validation_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/demos/message_pool_validation_test.cpp.i
+.PHONY : demos/message_pool_validation_test.cpp.i
+
+demos/message_pool_validation_test.s: demos/message_pool_validation_test.cpp.s
+.PHONY : demos/message_pool_validation_test.s
+
+# target to generate assembly for a file
+demos/message_pool_validation_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/demos/message_pool_validation_test.cpp.s
+.PHONY : demos/message_pool_validation_test.cpp.s
+
+demos/platform_demo.o: demos/platform_demo.cpp.o
+.PHONY : demos/platform_demo.o
+
+# target to build an object file
+demos/platform_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.o
+.PHONY : demos/platform_demo.cpp.o
+
+demos/platform_demo.i: demos/platform_demo.cpp.i
+.PHONY : demos/platform_demo.i
+
+# target to preprocess a source file
+demos/platform_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.i
+.PHONY : demos/platform_demo.cpp.i
+
+demos/platform_demo.s: demos/platform_demo.cpp.s
+.PHONY : demos/platform_demo.s
+
+# target to generate assembly for a file
+demos/platform_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/demos/platform_demo.cpp.s
+.PHONY : demos/platform_demo.cpp.s
+
+demos/quick_perf_demo.o: demos/quick_perf_demo.cpp.o
+.PHONY : demos/quick_perf_demo.o
+
+# target to build an object file
+demos/quick_perf_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/demos/quick_perf_demo.cpp.o
+.PHONY : demos/quick_perf_demo.cpp.o
+
+demos/quick_perf_demo.i: demos/quick_perf_demo.cpp.i
+.PHONY : demos/quick_perf_demo.i
+
+# target to preprocess a source file
+demos/quick_perf_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/demos/quick_perf_demo.cpp.i
+.PHONY : demos/quick_perf_demo.cpp.i
+
+demos/quick_perf_demo.s: demos/quick_perf_demo.cpp.s
+.PHONY : demos/quick_perf_demo.s
+
+# target to generate assembly for a file
+demos/quick_perf_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/demos/quick_perf_demo.cpp.s
+.PHONY : demos/quick_perf_demo.cpp.s
+
+demos/raw_pointer_api_demo.o: demos/raw_pointer_api_demo.cpp.o
+.PHONY : demos/raw_pointer_api_demo.o
+
+# target to build an object file
+demos/raw_pointer_api_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/demos/raw_pointer_api_demo.cpp.o
+.PHONY : demos/raw_pointer_api_demo.cpp.o
+
+demos/raw_pointer_api_demo.i: demos/raw_pointer_api_demo.cpp.i
+.PHONY : demos/raw_pointer_api_demo.i
+
+# target to preprocess a source file
+demos/raw_pointer_api_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/demos/raw_pointer_api_demo.cpp.i
+.PHONY : demos/raw_pointer_api_demo.cpp.i
+
+demos/raw_pointer_api_demo.s: demos/raw_pointer_api_demo.cpp.s
+.PHONY : demos/raw_pointer_api_demo.s
+
+# target to generate assembly for a file
+demos/raw_pointer_api_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/demos/raw_pointer_api_demo.cpp.s
+.PHONY : demos/raw_pointer_api_demo.cpp.s
+
+demos/raw_pointer_perf_demo.o: demos/raw_pointer_perf_demo.cpp.o
+.PHONY : demos/raw_pointer_perf_demo.o
+
+# target to build an object file
+demos/raw_pointer_perf_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/demos/raw_pointer_perf_demo.cpp.o
+.PHONY : demos/raw_pointer_perf_demo.cpp.o
+
+demos/raw_pointer_perf_demo.i: demos/raw_pointer_perf_demo.cpp.i
+.PHONY : demos/raw_pointer_perf_demo.i
+
+# target to preprocess a source file
+demos/raw_pointer_perf_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/demos/raw_pointer_perf_demo.cpp.i
+.PHONY : demos/raw_pointer_perf_demo.cpp.i
+
+demos/raw_pointer_perf_demo.s: demos/raw_pointer_perf_demo.cpp.s
+.PHONY : demos/raw_pointer_perf_demo.s
+
+# target to generate assembly for a file
+demos/raw_pointer_perf_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/demos/raw_pointer_perf_demo.cpp.s
+.PHONY : demos/raw_pointer_perf_demo.cpp.s
+
+demos/simple_lockfree_test.o: demos/simple_lockfree_test.cpp.o
+.PHONY : demos/simple_lockfree_test.o
+
+# target to build an object file
+demos/simple_lockfree_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.o
+.PHONY : demos/simple_lockfree_test.cpp.o
+
+demos/simple_lockfree_test.i: demos/simple_lockfree_test.cpp.i
+.PHONY : demos/simple_lockfree_test.i
+
+# target to preprocess a source file
+demos/simple_lockfree_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.i
+.PHONY : demos/simple_lockfree_test.cpp.i
+
+demos/simple_lockfree_test.s: demos/simple_lockfree_test.cpp.s
+.PHONY : demos/simple_lockfree_test.s
+
+# target to generate assembly for a file
+demos/simple_lockfree_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.s
+.PHONY : demos/simple_lockfree_test.cpp.s
+
+demos/templated_pool_demo.o: demos/templated_pool_demo.cpp.o
+.PHONY : demos/templated_pool_demo.o
+
+# target to build an object file
+demos/templated_pool_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.o
+.PHONY : demos/templated_pool_demo.cpp.o
+
+demos/templated_pool_demo.i: demos/templated_pool_demo.cpp.i
+.PHONY : demos/templated_pool_demo.i
+
+# target to preprocess a source file
+demos/templated_pool_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.i
+.PHONY : demos/templated_pool_demo.cpp.i
+
+demos/templated_pool_demo.s: demos/templated_pool_demo.cpp.s
+.PHONY : demos/templated_pool_demo.s
+
+# target to generate assembly for a file
+demos/templated_pool_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.s
+.PHONY : demos/templated_pool_demo.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -365,78 +770,6 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-gateway.dir/build.make CMakeFiles/fix-gateway.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
-src/message_pool_test.o: src/message_pool_test.cpp.o
-.PHONY : src/message_pool_test.o
-
-# target to build an object file
-src/message_pool_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.o
-.PHONY : src/message_pool_test.cpp.o
-
-src/message_pool_test.i: src/message_pool_test.cpp.i
-.PHONY : src/message_pool_test.i
-
-# target to preprocess a source file
-src/message_pool_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.i
-.PHONY : src/message_pool_test.cpp.i
-
-src/message_pool_test.s: src/message_pool_test.cpp.s
-.PHONY : src/message_pool_test.s
-
-# target to generate assembly for a file
-src/message_pool_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/src/message_pool_test.cpp.s
-.PHONY : src/message_pool_test.cpp.s
-
-src/platform_demo.o: src/platform_demo.cpp.o
-.PHONY : src/platform_demo.o
-
-# target to build an object file
-src/platform_demo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/src/platform_demo.cpp.o
-.PHONY : src/platform_demo.cpp.o
-
-src/platform_demo.i: src/platform_demo.cpp.i
-.PHONY : src/platform_demo.i
-
-# target to preprocess a source file
-src/platform_demo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/src/platform_demo.cpp.i
-.PHONY : src/platform_demo.cpp.i
-
-src/platform_demo.s: src/platform_demo.cpp.s
-.PHONY : src/platform_demo.s
-
-# target to generate assembly for a file
-src/platform_demo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/src/platform_demo.cpp.s
-.PHONY : src/platform_demo.cpp.s
-
-src/simple_lockfree_test.o: src/simple_lockfree_test.cpp.o
-.PHONY : src/simple_lockfree_test.o
-
-# target to build an object file
-src/simple_lockfree_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/src/simple_lockfree_test.cpp.o
-.PHONY : src/simple_lockfree_test.cpp.o
-
-src/simple_lockfree_test.i: src/simple_lockfree_test.cpp.i
-.PHONY : src/simple_lockfree_test.i
-
-# target to preprocess a source file
-src/simple_lockfree_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/src/simple_lockfree_test.cpp.i
-.PHONY : src/simple_lockfree_test.cpp.i
-
-src/simple_lockfree_test.s: src/simple_lockfree_test.cpp.s
-.PHONY : src/simple_lockfree_test.s
-
-# target to generate assembly for a file
-src/simple_lockfree_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/src/simple_lockfree_test.cpp.s
-.PHONY : src/simple_lockfree_test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -451,31 +784,67 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... application"
 	@echo "... common"
+	@echo "... existing-pool-templated-demo"
+	@echo "... fix-demo"
 	@echo "... fix-gateway"
 	@echo "... lockfree-demo"
 	@echo "... manager"
+	@echo "... memory-perf-test"
+	@echo "... message-integration-demo"
 	@echo "... message-pool-test"
+	@echo "... message-pool-validation-test"
 	@echo "... network"
 	@echo "... platform-demo"
 	@echo "... protocol"
+	@echo "... quick-perf-demo"
+	@echo "... raw-pointer-api-demo"
+	@echo "... raw-pointer-perf-demo"
 	@echo "... session"
 	@echo "... simple-lockfree-test"
+	@echo "... templated-pool-demo"
 	@echo "... utils"
-	@echo "... src/lockfree_demo.o"
-	@echo "... src/lockfree_demo.i"
-	@echo "... src/lockfree_demo.s"
+	@echo "... demos/existing_pool_templated_demo.o"
+	@echo "... demos/existing_pool_templated_demo.i"
+	@echo "... demos/existing_pool_templated_demo.s"
+	@echo "... demos/fix_demo.o"
+	@echo "... demos/fix_demo.i"
+	@echo "... demos/fix_demo.s"
+	@echo "... demos/lockfree_demo.o"
+	@echo "... demos/lockfree_demo.i"
+	@echo "... demos/lockfree_demo.s"
+	@echo "... demos/memory_performance_test.o"
+	@echo "... demos/memory_performance_test.i"
+	@echo "... demos/memory_performance_test.s"
+	@echo "... demos/message_integration_demo.o"
+	@echo "... demos/message_integration_demo.i"
+	@echo "... demos/message_integration_demo.s"
+	@echo "... demos/message_pool_test.o"
+	@echo "... demos/message_pool_test.i"
+	@echo "... demos/message_pool_test.s"
+	@echo "... demos/message_pool_validation_test.o"
+	@echo "... demos/message_pool_validation_test.i"
+	@echo "... demos/message_pool_validation_test.s"
+	@echo "... demos/platform_demo.o"
+	@echo "... demos/platform_demo.i"
+	@echo "... demos/platform_demo.s"
+	@echo "... demos/quick_perf_demo.o"
+	@echo "... demos/quick_perf_demo.i"
+	@echo "... demos/quick_perf_demo.s"
+	@echo "... demos/raw_pointer_api_demo.o"
+	@echo "... demos/raw_pointer_api_demo.i"
+	@echo "... demos/raw_pointer_api_demo.s"
+	@echo "... demos/raw_pointer_perf_demo.o"
+	@echo "... demos/raw_pointer_perf_demo.i"
+	@echo "... demos/raw_pointer_perf_demo.s"
+	@echo "... demos/simple_lockfree_test.o"
+	@echo "... demos/simple_lockfree_test.i"
+	@echo "... demos/simple_lockfree_test.s"
+	@echo "... demos/templated_pool_demo.o"
+	@echo "... demos/templated_pool_demo.i"
+	@echo "... demos/templated_pool_demo.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/message_pool_test.o"
-	@echo "... src/message_pool_test.i"
-	@echo "... src/message_pool_test.s"
-	@echo "... src/platform_demo.o"
-	@echo "... src/platform_demo.i"
-	@echo "... src/platform_demo.s"
-	@echo "... src/simple_lockfree_test.o"
-	@echo "... src/simple_lockfree_test.i"
-	@echo "... src/simple_lockfree_test.s"
 .PHONY : help
 
 

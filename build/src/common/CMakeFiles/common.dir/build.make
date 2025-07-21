@@ -83,33 +83,17 @@ src/common/CMakeFiles/common.dir/message.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/common.dir/message.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/common && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/common/message.cpp -o CMakeFiles/common.dir/message.cpp.s
 
-src/common/CMakeFiles/common.dir/message_pool.cpp.o: src/common/CMakeFiles/common.dir/flags.make
-src/common/CMakeFiles/common.dir/message_pool.cpp.o: /Users/anminfang/fix-gateway-cpp/src/common/message_pool.cpp
-src/common/CMakeFiles/common.dir/message_pool.cpp.o: src/common/CMakeFiles/common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/common/CMakeFiles/common.dir/message_pool.cpp.o"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/common && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/common/CMakeFiles/common.dir/message_pool.cpp.o -MF CMakeFiles/common.dir/message_pool.cpp.o.d -o CMakeFiles/common.dir/message_pool.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/common/message_pool.cpp
-
-src/common/CMakeFiles/common.dir/message_pool.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/common.dir/message_pool.cpp.i"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/common && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/common/message_pool.cpp > CMakeFiles/common.dir/message_pool.cpp.i
-
-src/common/CMakeFiles/common.dir/message_pool.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/common.dir/message_pool.cpp.s"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/common && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/common/message_pool.cpp -o CMakeFiles/common.dir/message_pool.cpp.s
-
 # Object files for target common
 common_OBJECTS = \
-"CMakeFiles/common.dir/message.cpp.o" \
-"CMakeFiles/common.dir/message_pool.cpp.o"
+"CMakeFiles/common.dir/message.cpp.o"
 
 # External object files for target common
 common_EXTERNAL_OBJECTS =
 
 src/common/libcommon.a: src/common/CMakeFiles/common.dir/message.cpp.o
-src/common/libcommon.a: src/common/CMakeFiles/common.dir/message_pool.cpp.o
 src/common/libcommon.a: src/common/CMakeFiles/common.dir/build.make
 src/common/libcommon.a: src/common/CMakeFiles/common.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libcommon.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libcommon.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/common && $(CMAKE_COMMAND) -P CMakeFiles/common.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/common && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/common.dir/link.txt --verbose=$(VERBOSE)
 
