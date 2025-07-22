@@ -396,7 +396,7 @@ namespace fix_gateway::network
                 PERF_TIMER_START(receive_processing);
 
                 LOG_DEBUG("Received " + std::to_string(bytes_received) + " bytes");
-                handleIncomingData(buffer.data(), bytes_received);
+                onDataReceived(buffer.data(), bytes_received);
 
                 PERF_TIMER_END(receive_processing);
 
@@ -464,27 +464,7 @@ namespace fix_gateway::network
         }
     }
 
-    void TcpConnection::handleIncomingData(const char *data, size_t length)
-    {
-        if (length == 0 || data == nullptr)
-        {
-            return;
-        }
-
-        // Create a vector with the received data
-        std::vector<char> received_data(data, data + length);
-
-        // Store in receive buffer (for potential future processing)
-        {
-            std::lock_guard<std::mutex> lock(buffer_mutex_);
-            receive_buffer_.insert(receive_buffer_.end(), received_data.begin(), received_data.end());
-        }
-
-        // Call the data callback
-        onDataReceived(received_data);
-    }
-
-    void TcpConnection::onDataReceived(const std::vector<char> &data)
+    void TcpConnection::onDataReceived(const char *data, size_t length)
     {
         // Call the registered callback if set
         {
@@ -493,7 +473,7 @@ namespace fix_gateway::network
             {
                 try
                 {
-                    data_callback_(data);
+                    data_callback_(data, length); // Pass both buffer and length
                 }
                 catch (const std::exception &e)
                 {
@@ -506,7 +486,7 @@ namespace fix_gateway::network
             }
             else
             {
-                LOG_DEBUG("No data callback registered, " + std::to_string(data.size()) + " bytes discarded");
+                LOG_DEBUG("No data callback registered, " + std::to_string(length) + " bytes discarded");
             }
         }
     }

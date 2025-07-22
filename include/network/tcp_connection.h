@@ -16,8 +16,8 @@ namespace fix_gateway::network
     class TcpConnection
     {
     public:
-        // Callback types for async communication
-        using DataCallback = std::function<void(const std::vector<char> &)>;
+        // Callback types for async communication - Zero-copy interface
+        using DataCallback = std::function<void(const char *, size_t)>;
         using ErrorCallback = std::function<void(const std::string &)>;
         using DisconnectCallback = std::function<void()>;
 
@@ -49,8 +49,7 @@ namespace fix_gateway::network
         // Step 4: Async Data Receiving
         void startReceiveLoop();
         void receiveLoop();
-        void handleIncomingData(const char *data, size_t length);
-        void onDataReceived(const std::vector<char> &data);
+        void onDataReceived(const char *data, size_t length);
 
         // Step 5: Connection Management
         bool isConnected() const;

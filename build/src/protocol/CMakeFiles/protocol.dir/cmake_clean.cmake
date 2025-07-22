@@ -3,8 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/protocol.dir/fix_builder.cpp.o.d"
   "CMakeFiles/protocol.dir/fix_message.cpp.o"
   "CMakeFiles/protocol.dir/fix_message.cpp.o.d"
-  "CMakeFiles/protocol.dir/fix_parser.cpp.o"
-  "CMakeFiles/protocol.dir/fix_parser.cpp.o.d"
+  "CMakeFiles/protocol.dir/stream_fix_parser.cpp.o"
+  "CMakeFiles/protocol.dir/stream_fix_parser.cpp.o.d"
   "libprotocol.a"
   "libprotocol.pdb"
 )

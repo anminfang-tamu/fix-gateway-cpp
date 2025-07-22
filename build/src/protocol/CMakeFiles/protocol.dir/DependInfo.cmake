@@ -10,7 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/anminfang/fix-gateway-cpp/src/protocol/fix_builder.cpp" "src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o" "gcc" "src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o.d"
   "/Users/anminfang/fix-gateway-cpp/src/protocol/fix_message.cpp" "src/protocol/CMakeFiles/protocol.dir/fix_message.cpp.o" "gcc" "src/protocol/CMakeFiles/protocol.dir/fix_message.cpp.o.d"
-  "/Users/anminfang/fix-gateway-cpp/src/protocol/fix_parser.cpp" "src/protocol/CMakeFiles/protocol.dir/fix_parser.cpp.o" "gcc" "src/protocol/CMakeFiles/protocol.dir/fix_parser.cpp.o.d"
+  "/Users/anminfang/fix-gateway-cpp/src/protocol/stream_fix_parser.cpp" "src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o" "gcc" "src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -344,6 +344,19 @@ raw-pointer-api-demo/fast:
 .PHONY : raw-pointer-api-demo/fast
 
 #=============================================================================
+# Target rules for targets named parser-buffer-demo
+
+# Build rule for target.
+parser-buffer-demo: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 parser-buffer-demo
+.PHONY : parser-buffer-demo
+
+# fast build rule for target.
+parser-buffer-demo/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/build
+.PHONY : parser-buffer-demo/fast
+
+#=============================================================================
 # Target rules for targets named common
 
 # Build rule for target.
@@ -746,6 +759,30 @@ demos/templated_pool_demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.s
 .PHONY : demos/templated_pool_demo.cpp.s
 
+examples/parser_buffer_demo.o: examples/parser_buffer_demo.cpp.o
+.PHONY : examples/parser_buffer_demo.o
+
+# target to build an object file
+examples/parser_buffer_demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/examples/parser_buffer_demo.cpp.o
+.PHONY : examples/parser_buffer_demo.cpp.o
+
+examples/parser_buffer_demo.i: examples/parser_buffer_demo.cpp.i
+.PHONY : examples/parser_buffer_demo.i
+
+# target to preprocess a source file
+examples/parser_buffer_demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/examples/parser_buffer_demo.cpp.i
+.PHONY : examples/parser_buffer_demo.cpp.i
+
+examples/parser_buffer_demo.s: examples/parser_buffer_demo.cpp.s
+.PHONY : examples/parser_buffer_demo.s
+
+# target to generate assembly for a file
+examples/parser_buffer_demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/examples/parser_buffer_demo.cpp.s
+.PHONY : examples/parser_buffer_demo.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -794,6 +831,7 @@ help:
 	@echo "... message-pool-test"
 	@echo "... message-pool-validation-test"
 	@echo "... network"
+	@echo "... parser-buffer-demo"
 	@echo "... platform-demo"
 	@echo "... protocol"
 	@echo "... quick-perf-demo"
@@ -842,6 +880,9 @@ help:
 	@echo "... demos/templated_pool_demo.o"
 	@echo "... demos/templated_pool_demo.i"
 	@echo "... demos/templated_pool_demo.s"
+	@echo "... examples/parser_buffer_demo.o"
+	@echo "... examples/parser_buffer_demo.i"
+	@echo "... examples/parser_buffer_demo.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

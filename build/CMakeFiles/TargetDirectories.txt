@@ -12,6 +12,7 @@
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/message-pool-validation-test.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/raw-pointer-perf-demo.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/raw-pointer-api-demo.dir
+/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/parser-buffer-demo.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/edit_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/rebuild_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/list_install_components.dir

@@ -223,29 +223,29 @@ fix_message.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_message.cpp.s
 .PHONY : fix_message.cpp.s
 
-fix_parser.o: fix_parser.cpp.o
-.PHONY : fix_parser.o
+stream_fix_parser.o: stream_fix_parser.cpp.o
+.PHONY : stream_fix_parser.o
 
 # target to build an object file
-fix_parser.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_parser.cpp.o
-.PHONY : fix_parser.cpp.o
+stream_fix_parser.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o
+.PHONY : stream_fix_parser.cpp.o
 
-fix_parser.i: fix_parser.cpp.i
-.PHONY : fix_parser.i
+stream_fix_parser.i: stream_fix_parser.cpp.i
+.PHONY : stream_fix_parser.i
 
 # target to preprocess a source file
-fix_parser.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_parser.cpp.i
-.PHONY : fix_parser.cpp.i
+stream_fix_parser.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.i
+.PHONY : stream_fix_parser.cpp.i
 
-fix_parser.s: fix_parser.cpp.s
-.PHONY : fix_parser.s
+stream_fix_parser.s: stream_fix_parser.cpp.s
+.PHONY : stream_fix_parser.s
 
 # target to generate assembly for a file
-fix_parser.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_parser.cpp.s
-.PHONY : fix_parser.cpp.s
+stream_fix_parser.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.s
+.PHONY : stream_fix_parser.cpp.s
 
 # Help Target
 help:
@@ -266,9 +266,9 @@ help:
 	@echo "... fix_message.o"
 	@echo "... fix_message.i"
 	@echo "... fix_message.s"
-	@echo "... fix_parser.o"
-	@echo "... fix_parser.i"
-	@echo "... fix_parser.s"
+	@echo "... stream_fix_parser.o"
+	@echo "... stream_fix_parser.i"
+	@echo "... stream_fix_parser.s"
 .PHONY : help
 
 

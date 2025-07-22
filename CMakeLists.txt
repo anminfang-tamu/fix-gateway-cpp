@@ -210,5 +210,17 @@ target_link_libraries(raw-pointer-api-demo
     Threads::Threads
 )
 
+# Parser buffer demo (from examples)
+add_executable(parser-buffer-demo
+    examples/parser_buffer_demo.cpp
+)
+
+target_link_libraries(parser-buffer-demo
+    protocol
+    utils
+    common
+    Threads::Threads
+)
+
 # Install targets
 install(TARGETS fix-gateway DESTINATION bin) 

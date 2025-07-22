@@ -77,6 +77,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/message-pool-validation-test.dir/DependInfo.cmake"
   "CMakeFiles/raw-pointer-perf-demo.dir/DependInfo.cmake"
   "CMakeFiles/raw-pointer-api-demo.dir/DependInfo.cmake"
+  "CMakeFiles/parser-buffer-demo.dir/DependInfo.cmake"
   "src/common/CMakeFiles/common.dir/DependInfo.cmake"
   "src/network/CMakeFiles/network.dir/DependInfo.cmake"
   "src/session/CMakeFiles/session.dir/DependInfo.cmake"

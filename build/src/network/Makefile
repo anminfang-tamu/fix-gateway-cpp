@@ -223,30 +223,6 @@ tcp_connection.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/tcp_connection.cpp.s
 .PHONY : tcp_connection.cpp.s
 
-tcp_server.o: tcp_server.cpp.o
-.PHONY : tcp_server.o
-
-# target to build an object file
-tcp_server.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/tcp_server.cpp.o
-.PHONY : tcp_server.cpp.o
-
-tcp_server.i: tcp_server.cpp.i
-.PHONY : tcp_server.i
-
-# target to preprocess a source file
-tcp_server.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/tcp_server.cpp.i
-.PHONY : tcp_server.cpp.i
-
-tcp_server.s: tcp_server.cpp.s
-.PHONY : tcp_server.s
-
-# target to generate assembly for a file
-tcp_server.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/tcp_server.cpp.s
-.PHONY : tcp_server.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -266,9 +242,6 @@ help:
 	@echo "... tcp_connection.o"
 	@echo "... tcp_connection.i"
 	@echo "... tcp_connection.s"
-	@echo "... tcp_server.o"
-	@echo "... tcp_server.i"
-	@echo "... tcp_server.s"
 .PHONY : help
 
 

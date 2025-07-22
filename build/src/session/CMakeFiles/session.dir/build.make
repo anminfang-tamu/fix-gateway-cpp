@@ -69,47 +69,31 @@ include src/session/CMakeFiles/session.dir/progress.make
 # Include the compile flags for this target's objects.
 include src/session/CMakeFiles/session.dir/flags.make
 
-src/session/CMakeFiles/session.dir/fix_session.cpp.o: src/session/CMakeFiles/session.dir/flags.make
-src/session/CMakeFiles/session.dir/fix_session.cpp.o: /Users/anminfang/fix-gateway-cpp/src/session/fix_session.cpp
-src/session/CMakeFiles/session.dir/fix_session.cpp.o: src/session/CMakeFiles/session.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/session/CMakeFiles/session.dir/fix_session.cpp.o"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/session/CMakeFiles/session.dir/fix_session.cpp.o -MF CMakeFiles/session.dir/fix_session.cpp.o.d -o CMakeFiles/session.dir/fix_session.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/session/fix_session.cpp
+src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o: src/session/CMakeFiles/session.dir/flags.make
+src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o: /Users/anminfang/fix-gateway-cpp/src/session/fix_session_manager.cpp
+src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o: src/session/CMakeFiles/session.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o -MF CMakeFiles/session.dir/fix_session_manager.cpp.o.d -o CMakeFiles/session.dir/fix_session_manager.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/session/fix_session_manager.cpp
 
-src/session/CMakeFiles/session.dir/fix_session.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/session.dir/fix_session.cpp.i"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/session/fix_session.cpp > CMakeFiles/session.dir/fix_session.cpp.i
+src/session/CMakeFiles/session.dir/fix_session_manager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/session.dir/fix_session_manager.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/session/fix_session_manager.cpp > CMakeFiles/session.dir/fix_session_manager.cpp.i
 
-src/session/CMakeFiles/session.dir/fix_session.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/session.dir/fix_session.cpp.s"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/session/fix_session.cpp -o CMakeFiles/session.dir/fix_session.cpp.s
-
-src/session/CMakeFiles/session.dir/session_manager.cpp.o: src/session/CMakeFiles/session.dir/flags.make
-src/session/CMakeFiles/session.dir/session_manager.cpp.o: /Users/anminfang/fix-gateway-cpp/src/session/session_manager.cpp
-src/session/CMakeFiles/session.dir/session_manager.cpp.o: src/session/CMakeFiles/session.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/session/CMakeFiles/session.dir/session_manager.cpp.o"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/session/CMakeFiles/session.dir/session_manager.cpp.o -MF CMakeFiles/session.dir/session_manager.cpp.o.d -o CMakeFiles/session.dir/session_manager.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/session/session_manager.cpp
-
-src/session/CMakeFiles/session.dir/session_manager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/session.dir/session_manager.cpp.i"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/session/session_manager.cpp > CMakeFiles/session.dir/session_manager.cpp.i
-
-src/session/CMakeFiles/session.dir/session_manager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/session.dir/session_manager.cpp.s"
-	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/session/session_manager.cpp -o CMakeFiles/session.dir/session_manager.cpp.s
+src/session/CMakeFiles/session.dir/fix_session_manager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/session.dir/fix_session_manager.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/session && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/session/fix_session_manager.cpp -o CMakeFiles/session.dir/fix_session_manager.cpp.s
 
 # Object files for target session
 session_OBJECTS = \
-"CMakeFiles/session.dir/fix_session.cpp.o" \
-"CMakeFiles/session.dir/session_manager.cpp.o"
+"CMakeFiles/session.dir/fix_session_manager.cpp.o"
 
 # External object files for target session
 session_EXTERNAL_OBJECTS =
 
-src/session/libsession.a: src/session/CMakeFiles/session.dir/fix_session.cpp.o
-src/session/libsession.a: src/session/CMakeFiles/session.dir/session_manager.cpp.o
+src/session/libsession.a: src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o
 src/session/libsession.a: src/session/CMakeFiles/session.dir/build.make
 src/session/libsession.a: src/session/CMakeFiles/session.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libsession.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library libsession.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/session && $(CMAKE_COMMAND) -P CMakeFiles/session.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/session && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/session.dir/link.txt --verbose=$(VERBOSE)
 

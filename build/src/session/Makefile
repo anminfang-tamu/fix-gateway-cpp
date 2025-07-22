@@ -175,53 +175,29 @@ session/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/build
 .PHONY : session/fast
 
-fix_session.o: fix_session.cpp.o
-.PHONY : fix_session.o
+fix_session_manager.o: fix_session_manager.cpp.o
+.PHONY : fix_session_manager.o
 
 # target to build an object file
-fix_session.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session.cpp.o
-.PHONY : fix_session.cpp.o
+fix_session_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session_manager.cpp.o
+.PHONY : fix_session_manager.cpp.o
 
-fix_session.i: fix_session.cpp.i
-.PHONY : fix_session.i
-
-# target to preprocess a source file
-fix_session.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session.cpp.i
-.PHONY : fix_session.cpp.i
-
-fix_session.s: fix_session.cpp.s
-.PHONY : fix_session.s
-
-# target to generate assembly for a file
-fix_session.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session.cpp.s
-.PHONY : fix_session.cpp.s
-
-session_manager.o: session_manager.cpp.o
-.PHONY : session_manager.o
-
-# target to build an object file
-session_manager.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/session_manager.cpp.o
-.PHONY : session_manager.cpp.o
-
-session_manager.i: session_manager.cpp.i
-.PHONY : session_manager.i
+fix_session_manager.i: fix_session_manager.cpp.i
+.PHONY : fix_session_manager.i
 
 # target to preprocess a source file
-session_manager.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/session_manager.cpp.i
-.PHONY : session_manager.cpp.i
+fix_session_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session_manager.cpp.i
+.PHONY : fix_session_manager.cpp.i
 
-session_manager.s: session_manager.cpp.s
-.PHONY : session_manager.s
+fix_session_manager.s: fix_session_manager.cpp.s
+.PHONY : fix_session_manager.s
 
 # target to generate assembly for a file
-session_manager.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/session_manager.cpp.s
-.PHONY : session_manager.cpp.s
+fix_session_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/fix_session_manager.cpp.s
+.PHONY : fix_session_manager.cpp.s
 
 # Help Target
 help:
@@ -236,12 +212,9 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... session"
-	@echo "... fix_session.o"
-	@echo "... fix_session.i"
-	@echo "... fix_session.s"
-	@echo "... session_manager.o"
-	@echo "... session_manager.i"
-	@echo "... session_manager.s"
+	@echo "... fix_session_manager.o"
+	@echo "... fix_session_manager.i"
+	@echo "... fix_session_manager.s"
 .PHONY : help
 
 
