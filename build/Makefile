@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /Users/anminfang/fix-gateway-cpp/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/opt/homebrew/Cellar/cmake/3.30.0/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -279,19 +289,6 @@ message-integration-demo/fast:
 .PHONY : message-integration-demo/fast
 
 #=============================================================================
-# Target rules for targets named templated-pool-demo
-
-# Build rule for target.
-templated-pool-demo: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 templated-pool-demo
-.PHONY : templated-pool-demo
-
-# fast build rule for target.
-templated-pool-demo/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/build
-.PHONY : templated-pool-demo/fast
-
-#=============================================================================
 # Target rules for targets named existing-pool-templated-demo
 
 # Build rule for target.
@@ -446,6 +443,45 @@ manager: cmake_check_build_system
 manager/fast:
 	$(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
 .PHONY : manager/fast
+
+#=============================================================================
+# Target rules for targets named test_async_sender
+
+# Build rule for target.
+test_async_sender: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_async_sender
+.PHONY : test_async_sender
+
+# fast build rule for target.
+test_async_sender/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
+.PHONY : test_async_sender/fast
+
+#=============================================================================
+# Target rules for targets named test_message_manager
+
+# Build rule for target.
+test_message_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_message_manager
+.PHONY : test_message_manager
+
+# fast build rule for target.
+test_message_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/build
+.PHONY : test_message_manager/fast
+
+#=============================================================================
+# Target rules for targets named test_stream_fix_parser
+
+# Build rule for target.
+test_stream_fix_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser
+.PHONY : test_stream_fix_parser
+
+# fast build rule for target.
+test_stream_fix_parser/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser.dir/build.make tests/CMakeFiles/test_stream_fix_parser.dir/build
+.PHONY : test_stream_fix_parser/fast
 
 demos/existing_pool_templated_demo.o: demos/existing_pool_templated_demo.cpp.o
 .PHONY : demos/existing_pool_templated_demo.o
@@ -735,30 +771,6 @@ demos/simple_lockfree_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.s
 .PHONY : demos/simple_lockfree_test.cpp.s
 
-demos/templated_pool_demo.o: demos/templated_pool_demo.cpp.o
-.PHONY : demos/templated_pool_demo.o
-
-# target to build an object file
-demos/templated_pool_demo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.o
-.PHONY : demos/templated_pool_demo.cpp.o
-
-demos/templated_pool_demo.i: demos/templated_pool_demo.cpp.i
-.PHONY : demos/templated_pool_demo.i
-
-# target to preprocess a source file
-demos/templated_pool_demo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.i
-.PHONY : demos/templated_pool_demo.cpp.i
-
-demos/templated_pool_demo.s: demos/templated_pool_demo.cpp.s
-.PHONY : demos/templated_pool_demo.s
-
-# target to generate assembly for a file
-demos/templated_pool_demo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/templated-pool-demo.dir/build.make CMakeFiles/templated-pool-demo.dir/demos/templated_pool_demo.cpp.s
-.PHONY : demos/templated_pool_demo.cpp.s
-
 examples/parser_buffer_demo.o: examples/parser_buffer_demo.cpp.o
 .PHONY : examples/parser_buffer_demo.o
 
@@ -819,6 +831,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... application"
 	@echo "... common"
 	@echo "... existing-pool-templated-demo"
@@ -839,7 +852,9 @@ help:
 	@echo "... raw-pointer-perf-demo"
 	@echo "... session"
 	@echo "... simple-lockfree-test"
-	@echo "... templated-pool-demo"
+	@echo "... test_async_sender"
+	@echo "... test_message_manager"
+	@echo "... test_stream_fix_parser"
 	@echo "... utils"
 	@echo "... demos/existing_pool_templated_demo.o"
 	@echo "... demos/existing_pool_templated_demo.i"
@@ -877,9 +892,6 @@ help:
 	@echo "... demos/simple_lockfree_test.o"
 	@echo "... demos/simple_lockfree_test.i"
 	@echo "... demos/simple_lockfree_test.s"
-	@echo "... demos/templated_pool_demo.o"
-	@echo "... demos/templated_pool_demo.i"
-	@echo "... demos/templated_pool_demo.s"
 	@echo "... examples/parser_buffer_demo.o"
 	@echo "... examples/parser_buffer_demo.i"
 	@echo "... examples/parser_buffer_demo.s"
