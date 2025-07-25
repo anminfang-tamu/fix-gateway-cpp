@@ -43,17 +43,18 @@ namespace fix_gateway::protocol
         // Enhanced parse result status with state machine integration
         enum class ParseStatus
         {
-            Success,              // Message parsed successfully
-            NeedMoreData,         // Incomplete message, need more bytes
-            InvalidFormat,        // Malformed FIX message
-            ChecksumError,        // Checksum validation failed
-            AllocationFailed,     // MessagePool allocation failed
-            MessageTooLarge,      // Message exceeds size limits
-            UnsupportedVersion,   // FIX version not supported
-            StateTransitionError, // Invalid state machine transition
-            FieldParseError,      // Error parsing specific field
-            RecoverySuccess,      // Successfully recovered from error
-            CorruptedData         // Data corruption detected
+            Success,               // Message parsed successfully
+            NeedMoreData,          // Incomplete message, need more bytes
+            FinishedParsingFields, // Finished parsing fields, need more bytes
+            InvalidFormat,         // Malformed FIX message
+            ChecksumError,         // Checksum validation failed
+            AllocationFailed,      // MessagePool allocation failed
+            MessageTooLarge,       // Message exceeds size limits
+            UnsupportedVersion,    // FIX version not supported
+            StateTransitionError,  // Invalid state machine transition
+            FieldParseError,       // Error parsing specific field
+            RecoverySuccess,       // Successfully recovered from error
+            CorruptedData          // Data corruption detected
         };
 
         // Parse result containing status and parsed message

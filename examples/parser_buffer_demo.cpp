@@ -1,6 +1,7 @@
 #include "protocol/stream_fix_parser.h"
 #include "protocol/fix_message.h"
 #include "common/message_pool.h"
+#include "utils/logger.h"
 #include <iostream>
 #include <iomanip>
 
@@ -258,6 +259,12 @@ void demonstrateBufferPointerParsing()
 
 int main()
 {
+    // Enable DEBUG level logging to see detailed parser state transitions
+    fix_gateway::utils::Logger::getInstance().setLogLevel(fix_gateway::utils::LogLevel::DEBUG);
+    fix_gateway::utils::Logger::getInstance().enableConsoleOutput(true);
+
+    std::cout << "Debug logging enabled - detailed parser information will be shown" << std::endl;
+
     try
     {
         demonstrateBufferPointerParsing();

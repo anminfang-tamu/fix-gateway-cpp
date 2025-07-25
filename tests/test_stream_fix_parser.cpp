@@ -2,6 +2,7 @@
 #include "protocol/fix_message.h"
 #include "protocol/fix_fields.h"
 #include "common/message_pool.h"
+#include "utils/logger.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -259,10 +260,11 @@ public:
         std::string complete_message = createValidFixMessage();
         printMessage(complete_message, "Complete message");
 
-        // Test 1: Parse in small chunks
+        // Test 1: Parse in small chunks using the parser's built-in partial message handling
         size_t chunk_size = 8;
         StreamFixParser::ParseResult final_result;
         bool parsing_complete = false;
+        size_t total_position = 0;
 
         for (size_t pos = 0; pos < complete_message.length() && !parsing_complete; pos += chunk_size)
         {
@@ -270,7 +272,22 @@ public:
             size_t current_chunk = std::min(chunk_size, remaining);
 
             std::cout << "Parsing chunk " << (pos / chunk_size + 1) << " (bytes " << pos << "-" << (pos + current_chunk - 1) << ")" << std::endl;
+            std::cout << "Chunk data: ";
+            for (size_t i = 0; i < current_chunk; i++)
+            {
+                char c = complete_message[pos + i];
+                if (c == '\x01')
+                {
+                    std::cout << "<SOH>";
+                }
+                else
+                {
+                    std::cout << c;
+                }
+            }
+            std::cout << std::endl;
 
+            // Pass each chunk to the parser - it will handle partial message accumulation internally
             auto result = parser_->parse(complete_message.data() + pos, current_chunk);
 
             std::cout << "  Status: " << static_cast<int>(result.status) << ", Consumed: " << result.bytes_consumed << std::endl;
@@ -285,11 +302,7 @@ public:
             else if (result.status == StreamFixParser::ParseStatus::NeedMoreData)
             {
                 std::cout << "  ⏳ Need more data, continuing..." << std::endl;
-                // Continue parsing - adjust position based on consumed bytes
-                if (result.bytes_consumed > 0)
-                {
-                    pos += result.bytes_consumed - chunk_size; // Adjust for the consumed bytes
-                }
+                // Parser handled partial data internally, just continue with next chunk
             }
             else
             {
@@ -304,6 +317,16 @@ public:
 
         if (final_result.parsed_message)
         {
+            // Verify the parsed message has correct fields
+            std::string msg_type, symbol;
+            ASSERT_TRUE(final_result.parsed_message->getField(FixFields::MsgType, msg_type), "Should have MsgType field");
+            ASSERT_EQ(std::string("D"), msg_type, "MsgType should be 'D'");
+
+            ASSERT_TRUE(final_result.parsed_message->getField(FixFields::Symbol, symbol), "Should have Symbol field");
+            ASSERT_EQ(std::string("AAPL"), symbol, "Symbol should be 'AAPL'");
+
+            std::cout << "✅ Verified parsed message: MsgType=" << msg_type << ", Symbol=" << symbol << std::endl;
+
             message_pool_->deallocate(final_result.parsed_message);
         }
 
@@ -569,6 +592,12 @@ public:
 
 int main()
 {
+    // Enable DEBUG level logging to see LOG_DEBUG statements
+    fix_gateway::utils::Logger::getInstance().setLogLevel(fix_gateway::utils::LogLevel::DEBUG);
+    fix_gateway::utils::Logger::getInstance().enableConsoleOutput(true);
+
+    std::cout << "Debug logging enabled - you will see detailed parser state transitions" << std::endl;
+
     StreamFixParserTest test_suite;
 
     bool success = test_suite.runAllTests();

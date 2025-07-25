@@ -14,6 +14,38 @@ namespace fix_gateway::protocol
     static constexpr const char *FIX_BEGIN_STRING = "8=FIX.4.4";
     static constexpr const char *FIX_CHECKSUM_TAG = "10=";
 
+    // Utility function to convert ParseState enum to string for debugging
+    static std::string parseStateToString(StreamFixParser::ParseState state)
+    {
+        switch (state)
+        {
+        case StreamFixParser::ParseState::IDLE:
+            return "IDLE";
+        case StreamFixParser::ParseState::PARSING_BEGIN_STRING:
+            return "PARSING_BEGIN_STRING";
+        case StreamFixParser::ParseState::PARSING_BODY_LENGTH:
+            return "PARSING_BODY_LENGTH";
+        case StreamFixParser::ParseState::PARSING_TAG:
+            return "PARSING_TAG";
+        case StreamFixParser::ParseState::EXPECTING_EQUALS:
+            return "EXPECTING_EQUALS";
+        case StreamFixParser::ParseState::PARSING_VALUE:
+            return "PARSING_VALUE";
+        case StreamFixParser::ParseState::EXPECTING_SOH:
+            return "EXPECTING_SOH";
+        case StreamFixParser::ParseState::PARSING_CHECKSUM:
+            return "PARSING_CHECKSUM";
+        case StreamFixParser::ParseState::MESSAGE_COMPLETE:
+            return "MESSAGE_COMPLETE";
+        case StreamFixParser::ParseState::ERROR_RECOVERY:
+            return "ERROR_RECOVERY";
+        case StreamFixParser::ParseState::CORRUPTED_SKIP:
+            return "CORRUPTED_SKIP";
+        default:
+            return "UNKNOWN_STATE";
+        }
+    }
+
     StreamFixParser::StreamFixParser(MessagePool<FixMessage> *message_pool)
         : message_pool_(message_pool),
           max_message_size_(8192),
@@ -96,7 +128,7 @@ namespace fix_gateway::protocol
             ParseResult result;
 
             // Handle partial messages from previous calls
-            if (hasPartialMessage())
+            if (hasPartialMessage() || length < 9)
             {
                 result = handlePartialMessage(buffer, length);
             }
@@ -171,7 +203,7 @@ namespace fix_gateway::protocol
         size_t total_consumed = 0;
 
         // Process buffer until complete message or need more data
-        while (total_consumed < length)
+        while (total_consumed <= length)
         {
             const char *current_buffer = buffer + total_consumed;
             size_t remaining_length = length - total_consumed;
@@ -179,63 +211,78 @@ namespace fix_gateway::protocol
             // Update buffer position in context
             context.buffer_position = total_consumed;
 
-            // Dispatch to appropriate state handler
-            switch (context.current_state)
+            // Store the previous state to detect transitions
+            ParseState previous_state = context.current_state;
+
+            // For MESSAGE_COMPLETE state, we don't need buffer data
+            if (context.current_state == ParseState::MESSAGE_COMPLETE && remaining_length == 0)
             {
-            case ParseState::IDLE:
-                result = handleIdleState(current_buffer, remaining_length, context);
-                break;
+                // Call handleMessageComplete with empty buffer
+                result = handleMessageComplete(nullptr, 0, context);
+            }
+            else
+            {
+                // Dispatch to appropriate state handler
+                switch (context.current_state)
+                {
+                case ParseState::IDLE:
+                    result = handleIdleState(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::PARSING_BEGIN_STRING:
-                result = handleParsingBeginString(current_buffer, remaining_length, context);
-                break;
+                case ParseState::PARSING_BEGIN_STRING:
+                    result = handleParsingBeginString(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::PARSING_BODY_LENGTH:
-                result = handleParsingBodyLength(current_buffer, remaining_length, context);
-                break;
+                case ParseState::PARSING_BODY_LENGTH:
+                    result = handleParsingBodyLength(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::PARSING_TAG:
-                result = handleParsingTag(current_buffer, remaining_length, context);
-                break;
+                case ParseState::PARSING_TAG:
+                    result = handleParsingTag(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::EXPECTING_EQUALS:
-                result = handleExpectingEquals(current_buffer, remaining_length, context);
-                break;
+                case ParseState::EXPECTING_EQUALS:
+                    result = handleExpectingEquals(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::PARSING_VALUE:
-                result = handleParsingValue(current_buffer, remaining_length, context);
-                break;
+                case ParseState::PARSING_VALUE:
+                    result = handleParsingValue(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::EXPECTING_SOH:
-                result = handleExpectingSOH(current_buffer, remaining_length, context);
-                break;
+                case ParseState::EXPECTING_SOH:
+                    result = handleExpectingSOH(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::PARSING_CHECKSUM:
-                result = handleParsingChecksum(current_buffer, remaining_length, context);
-                break;
+                case ParseState::PARSING_CHECKSUM:
+                    result = handleParsingChecksum(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::MESSAGE_COMPLETE:
-                result = handleMessageComplete(current_buffer, remaining_length, context);
-                break;
+                case ParseState::MESSAGE_COMPLETE:
+                    result = handleMessageComplete(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::ERROR_RECOVERY:
-                result = handleErrorRecovery(current_buffer, remaining_length, context);
-                break;
+                case ParseState::ERROR_RECOVERY:
+                    result = handleErrorRecovery(current_buffer, remaining_length, context);
+                    break;
 
-            case ParseState::CORRUPTED_SKIP:
-                result = handleCorruptedSkip(current_buffer, remaining_length, context);
-                break;
+                case ParseState::CORRUPTED_SKIP:
+                    result = handleCorruptedSkip(current_buffer, remaining_length, context);
+                    break;
 
-            default:
-                return {ParseStatus::StateTransitionError, total_consumed, nullptr,
-                        "Invalid parser state: " + std::to_string(static_cast<int>(context.current_state)),
-                        context.current_state, total_consumed};
+                default:
+                    return {ParseStatus::StateTransitionError, total_consumed, nullptr,
+                            "Invalid parser state: " + std::to_string(static_cast<int>(context.current_state)),
+                            context.current_state, total_consumed};
+                }
             }
 
             // Update total bytes consumed
             size_t bytes_consumed_this_iteration = result.bytes_consumed;
             total_consumed += result.bytes_consumed;
             result.bytes_consumed = total_consumed; // Update to total consumed
+
+            // Check if we made a state transition
+            bool state_changed = (context.current_state != previous_state);
 
             // Handle different result statuses
             if (result.status == ParseStatus::Success)
@@ -245,12 +292,12 @@ namespace fix_gateway::protocol
             else if (result.status == ParseStatus::NeedMoreData)
             {
                 // Only return NeedMoreData if we've consumed all available bytes
-                // or if no bytes were consumed in this iteration (truly need more data)
-                if (total_consumed >= length || bytes_consumed_this_iteration == 0)
+                // or if no bytes were consumed AND no state transition occurred (truly need more data)
+                if (total_consumed >= length || (bytes_consumed_this_iteration == 0 && !state_changed))
                 {
                     return result;
                 }
-                // Otherwise continue processing - we made progress and have more data
+                // Otherwise continue processing - we made progress (either consumed bytes or changed state)
             }
             else if (result.status == ParseStatus::RecoverySuccess)
             {
@@ -562,9 +609,13 @@ namespace fix_gateway::protocol
 
         // Append new data to partial buffer
         std::memcpy(partial_buffer_ + partial_buffer_size_, new_buffer, new_length);
+        partial_buffer_size_ += new_length;
 
-        // Try to parse the combined buffer
-        ParseResult result = parse(partial_buffer_, total_length);
+        // reset the parse context
+        parse_context_.reset();
+
+        // Dispatch directly into the core state machine to avoid recursion
+        ParseResult result = processStateMachine(partial_buffer_, partial_buffer_size_, parse_context_);
 
         if (result.status == ParseStatus::Success)
         {
@@ -634,6 +685,7 @@ namespace fix_gateway::protocol
         // Start looking for BeginString (8=FIX.4.4)
         if (length < 9) // Minimum size for "8=FIX.4.4"
         {
+            partial_buffer_size_ += length;
             return {ParseStatus::NeedMoreData, 0, nullptr, "Not enough data for BeginString",
                     ParseState::IDLE, 0};
         }
@@ -673,7 +725,7 @@ namespace fix_gateway::protocol
                     "Failed to transition to PARSING_BEGIN_STRING", ParseState::ERROR_RECOVERY, 0};
         }
 
-        return {ParseStatus::NeedMoreData, 0, nullptr, "BeginString located, transitioning to validation",
+        return {ParseStatus::NeedMoreData, begin_string_pos, nullptr, "BeginString located, transitioning to validation",
                 ParseState::PARSING_BEGIN_STRING, 0};
     }
 
@@ -996,12 +1048,26 @@ namespace fix_gateway::protocol
         // Calculate total bytes consumed (10=XXX\x01)
         size_t consumed = 3 + checksum_value_length + 1; // "10=" + value + SOH
 
+        // Checksum parsed successfully - transition to MESSAGE_COMPLETE state
+        if (!transitionToState(ParseState::MESSAGE_COMPLETE, context))
+        {
+            return {ParseStatus::StateTransitionError, consumed, nullptr,
+                    "Failed to transition to MESSAGE_COMPLETE", ParseState::ERROR_RECOVERY, consumed};
+        }
+
+        return {ParseStatus::FinishedParsingFields, consumed, nullptr,
+                "Checksum parsed, transitioning to MESSAGE_COMPLETE",
+                ParseState::MESSAGE_COMPLETE, 0};
+    }
+
+    StreamFixParser::ParseResult StreamFixParser::handleMessageComplete(const char *buffer, size_t length, ParseContext &context)
+    {
         // Message is complete - allocate and populate the final message
         FixMessage *message = message_pool_->allocate();
         if (!message)
         {
-            return {ParseStatus::AllocationFailed, consumed, nullptr, "MessagePool allocation failed",
-                    ParseState::ERROR_RECOVERY, consumed};
+            return {ParseStatus::AllocationFailed, 0, nullptr, "MessagePool allocation failed",
+                    ParseState::ERROR_RECOVERY, 0};
         }
 
         // Populate message with all parsed fields
@@ -1024,82 +1090,6 @@ namespace fix_gateway::protocol
         {
             message->setField(FixFields::MsgType, msg_type_field->second);
         }
-
-        // Optional: Validate checksum if enabled
-        if (validate_checksum_)
-        {
-            // Reconstruct message for checksum calculation (without checksum field)
-            std::string message_for_checksum = "8=FIX.4.4";
-            message_for_checksum += FIX_SOH;
-            message_for_checksum += "9=" + std::to_string(context.expected_body_length);
-            message_for_checksum += FIX_SOH;
-
-            // Add all parsed fields except checksum
-            for (const auto &field : context.parsed_fields)
-            {
-                if (field.first != FixFields::CheckSum)
-                {
-                    message_for_checksum += std::to_string(field.first) + "=" + field.second;
-                    message_for_checksum += FIX_SOH;
-                }
-            }
-
-            // Calculate expected checksum
-            uint8_t calculated_checksum = 0;
-            for (char c : message_for_checksum)
-            {
-                calculated_checksum += static_cast<uint8_t>(c);
-            }
-            calculated_checksum %= 256;
-
-            // Parse received checksum
-            int received_checksum = std::stoi(checksum_value);
-
-            // Validate checksums match
-            if (calculated_checksum != static_cast<uint8_t>(received_checksum))
-            {
-                message_pool_->deallocate(message);
-                return {ParseStatus::ChecksumError, consumed, nullptr,
-                        "Checksum validation failed: expected " + std::to_string(calculated_checksum) +
-                            ", received " + std::to_string(received_checksum),
-                        ParseState::ERROR_RECOVERY, consumed};
-            }
-        }
-
-        // Reset context for next message
-        context.reset();
-
-        return {ParseStatus::Success, consumed, message,
-                "Message parsed successfully with " + std::to_string(message->getFieldCount()) + " fields",
-                ParseState::IDLE, 0};
-    }
-
-    StreamFixParser::ParseResult StreamFixParser::handleMessageComplete(const char *buffer, size_t length, ParseContext &context)
-    {
-        // Allocate message from pool and populate it
-        FixMessage *message = message_pool_->allocate();
-        if (!message)
-        {
-            return {ParseStatus::AllocationFailed, 0, nullptr, "MessagePool allocation failed",
-                    ParseState::ERROR_RECOVERY, 0};
-        }
-
-        // Populate message with all parsed fields
-        for (const auto &field : context.parsed_fields)
-        {
-            message->setField(field.first, field.second);
-        }
-
-        // Set required header fields that were parsed in earlier states
-        message->setField(FixFields::BeginString, "FIX.4.4");
-        message->setField(FixFields::BodyLength, std::to_string(context.expected_body_length));
-        message->setField(FixFields::MsgType, context.msg_type);
-
-        // Store the total message length for statistics (needed for potential error returns)
-        size_t total_message_length = strlen(FIX_BEGIN_STRING) + 1 +                              // BeginString + SOH
-                                      std::to_string(context.expected_body_length).length() + 3 + // "9=" + length + SOH
-                                      context.expected_body_length +                              // Body
-                                      7;                                                          // "10=XXX" + SOH (checksum)
 
         // Optional: Validate checksum if enabled
         if (validate_checksum_)
@@ -1144,7 +1134,7 @@ namespace fix_gateway::protocol
                 if (calculated_checksum != static_cast<uint8_t>(received_checksum))
                 {
                     message_pool_->deallocate(message);
-                    return {ParseStatus::ChecksumError, total_message_length, nullptr,
+                    return {ParseStatus::ChecksumError, 0, nullptr,
                             "Checksum validation failed: expected " + std::to_string(calculated_checksum) +
                                 ", received " + std::to_string(received_checksum),
                             ParseState::ERROR_RECOVERY, 0};
@@ -1152,6 +1142,13 @@ namespace fix_gateway::protocol
             }
         }
 
+        // Calculate total message length for the return result
+        size_t total_message_length = strlen(FIX_BEGIN_STRING) + 1 +                              // BeginString + SOH
+                                      std::to_string(context.expected_body_length).length() + 3 + // "9=" + length + SOH
+                                      context.expected_body_length +                              // Body
+                                      7;                                                          // "10=XXX" + SOH (checksum)
+
+        // Reset context for next message
         context.reset();
 
         return {ParseStatus::Success, total_message_length, message,
