@@ -147,17 +147,17 @@ target_link_libraries(message-integration-demo
     Threads::Threads
 )
 
-# Templated message pool demo
-add_executable(templated-pool-demo
-    demos/templated_pool_demo.cpp
-)
+# Templated pool demo (COMMENTED OUT - missing header file)
+# add_executable(templated-pool-demo
+#     demos/templated_pool_demo.cpp
+# )
 
-target_link_libraries(templated-pool-demo
-    protocol
-    utils
-    common
-    Threads::Threads
-)
+# target_link_libraries(templated-pool-demo
+#     protocol
+#     utils
+#     common
+#     Threads::Threads
+# )
 
 # ====================
 # DEMO EXECUTABLES  

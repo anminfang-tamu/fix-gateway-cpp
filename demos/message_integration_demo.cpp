@@ -28,7 +28,7 @@ public:
                   << std::endl;
 
         // Initialize global message pool
-        auto &pool = GlobalMessagePool::getInstance(10000);
+        auto &pool = GlobalMessagePool<Message>::getInstance(10000);
         pool.prewarm();
 
         std::cout << "📊 Message Pool Status:" << std::endl;
@@ -41,7 +41,7 @@ public:
         testUnifiedApproach();
 
         // Cleanup
-        GlobalMessagePool::shutdown();
+        GlobalMessagePool<Message>::shutdown();
     }
 
 private:
@@ -92,7 +92,7 @@ private:
             fixContent += "54=1\001";                               // Side=Buy
 
             // Use existing optimized pool allocation with FIX payload
-            Message *pooledMsg = GlobalMessagePool::allocate(
+            Message *pooledMsg = GlobalMessagePool<Message>::allocate(
                 "ORDER_" + std::to_string(i),
                 fixContent, // FIX content as payload
                 Priority::HIGH,
@@ -105,7 +105,7 @@ private:
             (void)payload;
 
             // Return to pool for reuse
-            GlobalMessagePool::deallocate(pooledMsg);
+            GlobalMessagePool<Message>::deallocate(pooledMsg);
         }
 
         auto endTime = utils::PerformanceTimer::now();
@@ -127,16 +127,19 @@ private:
         // Simulated performance (this would be even faster)
         auto startTime = utils::PerformanceTimer::now();
 
-        for (int i = 0; i < ITERATIONS; ++i)
+        for (int i = 0; i < 100; ++i)
         {
             // Simulate optimized unified approach
-            Message *msg = GlobalMessagePool::allocate();
+            Message *msg = GlobalMessagePool<Message>::allocate(
+                "TEST_" + std::to_string(i), // message_id
+                "test_payload"               // payload
+            );
 
             // Simulate FIX field setting (would be direct field access)
             volatile auto msgId = "ORDER_" + std::to_string(i);
             (void)msgId;
 
-            GlobalMessagePool::deallocate(msg);
+            GlobalMessagePool<Message>::deallocate(msg);
         }
 
         auto endTime = utils::PerformanceTimer::now();
@@ -151,21 +154,26 @@ void demonstratePoolEfficiency()
 {
     std::cout << "\n=== Your Existing Pool is Already Optimized! ===" << std::endl;
 
-    auto &pool = GlobalMessagePool::getInstance(1000);
+    auto &pool = GlobalMessagePool<Message>::getInstance(1000);
 
     // Test raw allocation speed
+    std::vector<Message *> messages;
+    messages.reserve(1000);
+
     auto startTime = utils::PerformanceTimer::now();
 
-    std::vector<Message *> messages;
     for (int i = 0; i < 1000; ++i)
     {
-        Message *msg = GlobalMessagePool::allocate();
+        Message *msg = GlobalMessagePool<Message>::allocate(
+            "PERF_" + std::to_string(i), // message_id
+            "performance_test"           // payload
+        );
         messages.push_back(msg);
     }
 
     for (Message *msg : messages)
     {
-        GlobalMessagePool::deallocate(msg);
+        GlobalMessagePool<Message>::deallocate(msg);
     }
 
     auto endTime = utils::PerformanceTimer::now();
