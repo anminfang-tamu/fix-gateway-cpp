@@ -1,0 +1,193 @@
+StreamFixParser Performance Testing Suite
+CPU cores available: 10
+Page size: 4096 bytes
+Starting performance tests...
+=== StreamFixParser Performance Test Suite ===
+Testing high-performance FIX message parsing on Linux
+=====================================================
+Generated 1100 test messages
+✅ Performance test setup completed
+   Message pool size: 10000
+   Test messages generated: 1100
+   Results will be saved to: stream_fix_parser_performance_20250725_211447.txt
+
+--- Single-Threaded Throughput Test ---
+  Processed 10000 messages...
+  Processed 20000 messages...
+  Processed 30000 messages...
+  Processed 40000 messages...
+  Processed 50000 messages...
+  Processed 60000 messages...
+  Processed 70000 messages...
+  Processed 80000 messages...
+  Processed 90000 messages...
+
+📊 Single-Threaded Throughput Results:
+  Messages processed:         100000
+  Parse errors:                    0
+  Allocation failures:             0
+  Total bytes processed:    20845518 bytes
+  Throughput:               99662.12 msgs/sec
+  Throughput:                  19.81 MB/sec
+  Average latency:              9497 ns
+  Min latency:                  7250 ns
+  Max latency:               2667291 ns
+  P50 latency:                  7500 ns
+  P95 latency:                 24750 ns
+  P99 latency:                 26583 ns
+  Current memory:               6480 KB
+
+--- Partial Message Performance Test ---
+  Processed 1000 partial messages...
+  Processed 2000 partial messages...
+  Processed 3000 partial messages...
+  Processed 4000 partial messages...
+  Processed 5000 partial messages...
+  Processed 6000 partial messages...
+  Processed 7000 partial messages...
+  Processed 8000 partial messages...
+  Processed 9000 partial messages...
+
+📊 Partial Message Performance Results:
+  Messages processed:           2132
+  Parse errors:                 4365
+  Allocation failures:             0
+  Total bytes processed:     2084343 bytes
+  Throughput:                9088.64 msgs/sec
+  Throughput:                   8.47 MB/sec
+  Average latency:            108278 ns
+  Min latency:                   167 ns
+  Max latency:                828541 ns
+  P50 latency:                  1833 ns
+  P95 latency:                 47125 ns
+  P99 latency:                656250 ns
+
+--- Multi-Threaded Performance Test (2 threads) ---
+
+📊 Multi-Threaded Performance (2 threads) Results:
+  Messages processed:          50000
+  Parse errors:                    0
+  Allocation failures:             0
+  Total bytes processed:    10000000 bytes
+  Throughput:              190756.39 msgs/sec
+  Throughput:                  36.38 MB/sec
+  Average latency:              9788 ns
+  Min latency:                  7375 ns
+  Max latency:                103375 ns
+  P50 latency:                  7959 ns
+  P95 latency:                 26291 ns
+  P99 latency:                 27250 ns
+
+--- Multi-Threaded Performance Test (4 threads) ---
+
+📊 Multi-Threaded Performance (4 threads) Results:
+  Messages processed:         100000
+  Parse errors:                    0
+  Allocation failures:             0
+  Total bytes processed:    20000000 bytes
+  Throughput:              365135.41 msgs/sec
+  Throughput:                  69.64 MB/sec
+  Average latency:             10097 ns
+  Min latency:                  7375 ns
+  Max latency:               4017000 ns
+  P50 latency:                  8000 ns
+  P95 latency:                 26250 ns
+  P99 latency:                 27250 ns
+
+--- Multi-Threaded Performance Test (8 threads) ---
+
+📊 Multi-Threaded Performance (8 threads) Results:
+  Messages processed:         100000
+  Parse errors:                    0
+  Allocation failures:             0
+  Total bytes processed:    20000000 bytes
+  Throughput:              342573.44 msgs/sec
+  Throughput:                  65.34 MB/sec
+  Average latency:             20858 ns
+  Min latency:                  7333 ns
+  Max latency:               9304666 ns
+  P50 latency:                  8208 ns
+  P95 latency:                 26583 ns
+  P99 latency:                 43625 ns
+
+--- Sustained Load Test (30 seconds) ---
+  0s: 50000 messages processed
+  0s: 100000 messages processed
+  1s: 150000 messages processed
+  1s: 200000 messages processed
+  2s: 250000 messages processed
+  2s: 300000 messages processed
+  3s: 350000 messages processed
+  3s: 400000 messages processed
+  4s: 450000 messages processed
+  4s: 500000 messages processed
+  5s: 550000 messages processed
+  5s: 600000 messages processed
+  6s: 650000 messages processed
+  6s: 700000 messages processed
+  7s: 750000 messages processed
+  7s: 800000 messages processed
+  8s: 850000 messages processed
+  8s: 900000 messages processed
+  9s: 950000 messages processed
+  9s: 1000000 messages processed
+  10s: 1050000 messages processed
+  10s: 1100000 messages processed
+  11s: 1150000 messages processed
+  11s: 1200000 messages processed
+  12s: 1250000 messages processed
+  12s: 1300000 messages processed
+  13s: 1350000 messages processed
+  13s: 1400000 messages processed
+  14s: 1450000 messages processed
+  14s: 1500000 messages processed
+  15s: 1550000 messages processed
+  15s: 1600000 messages processed
+  16s: 1650000 messages processed
+  16s: 1700000 messages processed
+  17s: 1750000 messages processed
+  17s: 1800000 messages processed
+  18s: 1850000 messages processed
+  18s: 1900000 messages processed
+  19s: 1950000 messages processed
+  19s: 2000000 messages processed
+  20s: 2050000 messages processed
+  20s: 2100000 messages processed
+  21s: 2150000 messages processed
+  21s: 2200000 messages processed
+  22s: 2250000 messages processed
+  22s: 2300000 messages processed
+  23s: 2350000 messages processed
+  23s: 2400000 messages processed
+  24s: 2450000 messages processed
+  24s: 2500000 messages processed
+  25s: 2550000 messages processed
+  25s: 2600000 messages processed
+  26s: 2650000 messages processed
+  26s: 2700000 messages processed
+  27s: 2750000 messages processed
+  27s: 2800000 messages processed
+  28s: 2850000 messages processed
+  28s: 2900000 messages processed
+  29s: 2950000 messages processed
+  29s: 3000000 messages processed
+
+📊 Sustained Load Test Results:
+  Messages processed:        3036912
+  Parse errors:                    0
+  Allocation failures:             0
+  Total bytes processed:   634739804 bytes
+  Throughput:              101230.40 msgs/sec
+  Throughput:                  20.18 MB/sec
+  Average latency:              9319 ns
+  Min latency:                  7125 ns
+  Max latency:               2294209 ns
+  P50 latency:                  7500 ns
+  P95 latency:                 24875 ns
+  P99 latency:                 26458 ns
+📄 Results saved to: stream_fix_parser_performance_20250725_211447.txt
+
+=====================================================
+🎉 ALL PERFORMANCE TESTS COMPLETED SUCCESSFULLY!
+📊 Check the results file for detailed metrics
+=====================================================

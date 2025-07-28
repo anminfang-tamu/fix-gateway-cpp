@@ -70,7 +70,7 @@ namespace fix_gateway::protocol
         constexpr int CommType = 13;   // Commission type
     }
 
-    // FIX Message Types (MsgType field values)
+    // FIX Message Types (MsgType field values) - Runtime constants
     namespace MsgTypes
     {
         // Administrative Messages
@@ -97,6 +97,58 @@ namespace fix_gateway::protocol
         constexpr const char *MarketDataSnapshot = "W";
         constexpr const char *MarketDataIncrementalRefresh = "X";
         constexpr const char *MarketDataRequestReject = "Y";
+    }
+
+    // Compile-time enum for template specialization (maps to MsgTypes above)
+    enum class FixMsgType
+    {
+        HEARTBEAT,            // "0"
+        TEST_REQUEST,         // "1"
+        LOGON,                // "A"
+        LOGOUT,               // "5"
+        NEW_ORDER_SINGLE,     // "D"
+        ORDER_CANCEL_REQUEST, // "F"
+        EXECUTION_REPORT,     // "8"
+        // Add more as needed for template optimization
+    };
+
+    // Utility to convert between enum and runtime strings
+    namespace FixMsgTypeUtils
+    {
+        // Convert enum to FIX protocol string
+        constexpr const char *toString(FixMsgType msgType)
+        {
+            switch (msgType)
+            {
+            case FixMsgType::HEARTBEAT:
+                return MsgTypes::Heartbeat;
+            case FixMsgType::TEST_REQUEST:
+                return MsgTypes::TestRequest;
+            case FixMsgType::LOGON:
+                return MsgTypes::Logon;
+            case FixMsgType::LOGOUT:
+                return MsgTypes::Logout;
+            case FixMsgType::NEW_ORDER_SINGLE:
+                return MsgTypes::NewOrderSingle;
+            case FixMsgType::ORDER_CANCEL_REQUEST:
+                return MsgTypes::OrderCancelRequest;
+            case FixMsgType::EXECUTION_REPORT:
+                return MsgTypes::ExecutionReport;
+            default:
+                return "";
+            }
+        }
+
+        // Convert FIX protocol string to enum (for intelligent parsing)
+        FixMsgType fromString(const char *msgTypeStr);
+
+        // Check if message type has optimized template parser
+        constexpr bool hasOptimizedParser(FixMsgType msgType)
+        {
+            return msgType == FixMsgType::NEW_ORDER_SINGLE ||
+                   msgType == FixMsgType::EXECUTION_REPORT ||
+                   msgType == FixMsgType::HEARTBEAT;
+        }
     }
 
     // Order Side Values

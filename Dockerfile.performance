@@ -1,0 +1,184 @@
+# Performance Testing Docker Image for StreamFixParser
+FROM ubuntu:22.04 AS performance-builder
+
+# Install build and performance testing dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    libc6-dev \
+    libpthread-stubs0-dev \
+    pkg-config \
+    linux-tools-generic \
+    linux-tools-common \
+    time \
+    htop \
+    iotop \
+    sysstat \
+    procps \
+    util-linux \
+    numactl \
+    cpufrequtils \
+    stress-ng \
+    valgrind \
+    gdb \
+    strace \
+    lsof \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set work directory
+WORKDIR /app
+
+# Copy source code
+COPY . .
+
+# Build the application with maximum performance optimization
+RUN rm -rf build && mkdir -p build && cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -DNDEBUG -flto -ffast-math" \
+          -DBUILD_TESTS=ON \
+          .. && \
+    make -j$(nproc) && \
+    echo "Build completed successfully"
+
+# Verify performance test executable exists
+RUN ls -la /app/build/tests/test_stream_fix_parser_performance || (echo "Performance test executable not found!" && exit 1)
+
+# Performance Testing Stage
+FROM ubuntu:22.04
+
+# Install runtime and performance monitoring dependencies
+RUN apt-get update && apt-get install -y \
+    libstdc++6 \
+    libc6 \
+    libpthread-stubs0-dev \
+    linux-tools-generic \
+    linux-tools-common \
+    time \
+    htop \
+    iotop \
+    sysstat \
+    procps \
+    util-linux \
+    numactl \
+    cpufrequtils \
+    stress-ng \
+    bc \
+    coreutils \
+    grep \
+    gawk \
+    sed \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create performance testing user
+RUN useradd -m -s /bin/bash perftest && \
+    usermod -aG sudo perftest
+
+# Create directories
+RUN mkdir -p /app/performance_results /app/logs /app/config && \
+    chown -R perftest:perftest /app
+
+# Copy built applications and tests
+COPY --from=performance-builder /app/build/tests/test_stream_fix_parser_performance /usr/local/bin/
+COPY --from=performance-builder /app/build/tests/test_stream_fix_parser /usr/local/bin/
+COPY --from=performance-builder /app/run_performance_tests.sh /app/
+COPY --from=performance-builder /app/config/ /app/config/
+COPY --from=performance-builder /app/docs/ /app/docs/
+
+# Set proper permissions
+RUN chmod +x /usr/local/bin/* && \
+    chmod +x /app/run_performance_tests.sh && \
+    chown -R perftest:perftest /app
+
+# Create performance testing script wrapper
+RUN cat > /usr/local/bin/run_performance_suite.sh << 'EOF'
+#!/bin/bash
+
+echo "=== StreamFixParser Performance Testing in Docker ==="
+echo "Container: $(hostname)"
+echo "CPUs: $(nproc)"
+echo "Memory: $(free -h | grep Mem | awk '{print $2}')"
+echo "Kernel: $(uname -r)"
+echo ""
+
+# Set up performance environment
+echo "Setting up performance environment..."
+
+# Try to set CPU governor (may require privileged mode)
+if [ -w /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ]; then
+    echo "Setting CPU governor to performance..."
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        if [ -w "$cpu" ]; then
+            echo performance > "$cpu" 2>/dev/null || true
+        fi
+    done
+else
+    echo "Note: Cannot set CPU governor (need --privileged mode for optimal performance)"
+fi
+
+# Create results directory
+mkdir -p /app/performance_results
+
+# Set working directory
+cd /app
+
+# Run the performance tests
+echo "Starting performance test suite..."
+export BUILD_DIR="/usr/local/bin"
+export TEST_EXECUTABLE="test_stream_fix_parser_performance"
+export RESULTS_DIR="performance_results"
+
+# Run basic functionality test first
+echo "Running basic functionality test..."
+if /usr/local/bin/test_stream_fix_parser; then
+    echo "✅ Basic functionality test passed"
+else
+    echo "❌ Basic functionality test failed"
+    exit 1
+fi
+
+# Run performance tests
+echo "Running performance tests..."
+/usr/local/bin/test_stream_fix_parser_performance 2>&1 | tee performance_results/performance_test.log
+
+# Display results summary
+echo ""
+echo "=== Performance Test Results Summary ==="
+if [ -f performance_results/performance_test.log ]; then
+    echo "Test log created: performance_results/performance_test.log"
+    
+    # Extract key metrics if available
+    if grep -q "messages/second" performance_results/performance_test.log; then
+        echo ""
+        echo "Key Metrics:"
+        grep -E "(messages/second|MB/sec|Average latency|P95 latency|P99 latency)" performance_results/performance_test.log | head -10
+    fi
+fi
+
+# List result files
+echo ""
+echo "Generated files:"
+ls -la /app/performance_results/
+
+echo ""
+echo "Performance testing completed!"
+echo "Results are available in /app/performance_results/"
+EOF
+
+RUN chmod +x /usr/local/bin/run_performance_suite.sh
+
+# Switch to performance testing user
+USER perftest
+WORKDIR /app
+
+# Set environment variables for optimal performance
+ENV MALLOC_ARENA_MAX=4
+ENV MALLOC_MMAP_THRESHOLD=65536
+ENV OMP_NUM_THREADS=4
+
+# Health check for performance testing
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /usr/local/bin/test_stream_fix_parser --help || exit 1
+
+# Default command - run performance test suite
+CMD ["/usr/local/bin/run_performance_suite.sh"] 

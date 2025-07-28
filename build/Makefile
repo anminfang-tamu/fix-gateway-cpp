@@ -483,6 +483,32 @@ test_stream_fix_parser/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser.dir/build.make tests/CMakeFiles/test_stream_fix_parser.dir/build
 .PHONY : test_stream_fix_parser/fast
 
+#=============================================================================
+# Target rules for targets named test_stream_fix_parser_performance
+
+# Build rule for target.
+test_stream_fix_parser_performance: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_performance
+.PHONY : test_stream_fix_parser_performance
+
+# fast build rule for target.
+test_stream_fix_parser_performance/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_performance.dir/build.make tests/CMakeFiles/test_stream_fix_parser_performance.dir/build
+.PHONY : test_stream_fix_parser_performance/fast
+
+#=============================================================================
+# Target rules for targets named test_stream_fix_parser_2stage
+
+# Build rule for target.
+test_stream_fix_parser_2stage: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_2stage
+.PHONY : test_stream_fix_parser_2stage
+
+# fast build rule for target.
+test_stream_fix_parser_2stage/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build
+.PHONY : test_stream_fix_parser_2stage/fast
+
 demos/existing_pool_templated_demo.o: demos/existing_pool_templated_demo.cpp.o
 .PHONY : demos/existing_pool_templated_demo.o
 
@@ -855,6 +881,8 @@ help:
 	@echo "... test_async_sender"
 	@echo "... test_message_manager"
 	@echo "... test_stream_fix_parser"
+	@echo "... test_stream_fix_parser_2stage"
+	@echo "... test_stream_fix_parser_performance"
 	@echo "... utils"
 	@echo "... demos/existing_pool_templated_demo.o"
 	@echo "... demos/existing_pool_templated_demo.i"

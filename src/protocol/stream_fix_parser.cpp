@@ -100,13 +100,16 @@ namespace fix_gateway::protocol
 
     // =================================================================
     // ENHANCED MAIN PARSE FUNCTION - State Machine Implementation
+    // 2 stages:
+    // 1. Framing: Find complete messages
+    // 2. Message decode: Parse complete messages
     // =================================================================
 
-    StreamFixParser::ParseResult StreamFixParser::parse(const char *buffer, size_t length)
+    StreamFixParser::ParseResult StreamFixParser::parse(const char *buf, size_t len)
     {
-        if (!buffer || length == 0)
+        if (!buf || len == 0)
         {
-            return {ParseStatus::InvalidFormat, 0, nullptr, "Empty buffer", parse_context_.current_state, 0};
+            return {ParseStatus::InvalidFormat, 0, nullptr, "Empty buffer", ParseState::IDLE, 0};
         }
 
         // Start performance timing
@@ -122,64 +125,130 @@ namespace fix_gateway::protocol
             }
 
             // =================================================================
-            // STATE MACHINE ENTRY POINT
+            // STAGE 1: FRAMING - Handle partial buffer and find complete messages
             // =================================================================
 
-            ParseResult result;
-
-            // Handle partial messages from previous calls
-            if (hasPartialMessage() || length < 9)
+            // ❶ Prepend any leftover partial bytes
+            if (partial_buffer_size_ != 0)
             {
-                result = handlePartialMessage(buffer, length);
-            }
-            else
-            {
-                // Process with state machine
-                result = processStateMachine(buffer, length, parse_context_);
-            }
-
-            // =================================================================
-            // POST-PROCESSING AND STATISTICS
-            // =================================================================
-
-            // Update timing statistics
-            auto parse_end = std::chrono::high_resolution_clock::now();
-            auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                  parse_end - parse_start_time_)
-                                  .count();
-
-            // Update comprehensive statistics
-            updateStats(result.status, parse_time);
-
-            // Handle successful message completion
-            if (result.status == ParseStatus::Success)
-            {
-                // Reset error tracking on success
-                resetErrorRecovery();
-                recordPartialMessageHandled();
-            }
-            else if (result.status != ParseStatus::NeedMoreData)
-            {
-                // Handle error cases
-                updateErrorStats(result.status, result.final_state);
-
-                // Attempt error recovery if enabled
-                if (error_recovery_enabled_ && canRecoverFromError(result.status, result.final_state))
+                if (partial_buffer_size_ + len > PARTIAL_BUFFER_SIZE)
                 {
-                    ParseResult recovery_result = attemptErrorRecovery(buffer, length, parse_context_, result.error_detail);
-                    if (recovery_result.status == ParseStatus::RecoverySuccess)
+                    return {ParseStatus::MessageTooLarge, 0, nullptr,
+                            "Partial buffer overflow", ParseState::ERROR_RECOVERY, 0};
+                }
+
+                std::memcpy(partial_buffer_ + partial_buffer_size_, buf, len);
+                buf = partial_buffer_;
+                len += partial_buffer_size_;
+                partial_buffer_size_ = 0;
+            }
+
+            size_t cursor = 0;
+
+            while (cursor < len)
+            {
+                size_t msgStart, msgEnd;
+                ParseResult frameRes = findCompleteMessage(buf + cursor,      // src
+                                                           len - cursor,      // avail
+                                                           msgStart, msgEnd); // OUT
+
+                if (frameRes.status == ParseStatus::NeedMoreData)
+                {
+                    // Copy leftovers to partial_buffer_ for next call
+                    //
+                    // EXAMPLE: Why leftover = len - cursor
+                    //
+                    // Scenario 1: First message is incomplete
+                    // Buffer layout:
+                    // [0────────────49] len=50
+                    //  ^cursor=0
+                    //  └─ Incomplete FIX message (needs more data)
+                    //
+                    // leftover = len - cursor = 50 - 0 = 50 bytes
+                    // → Save entire buffer for next parse() call
+                    //
+                    // Scenario 2: Second message is incomplete
+                    // Buffer layout:
+                    // [0─────29][30──────49] len=50
+                    //  ^complete  ^cursor=30
+                    //  message    └─ Incomplete message (needs more data)
+                    //
+                    // leftover = len - cursor = 50 - 30 = 20 bytes
+                    // → Save only the incomplete portion starting at cursor
+                    //
+                    // The key insight: cursor tracks our current parsing position,
+                    // so (len - cursor) gives us exactly the unprocessed bytes
+                    // that need to be preserved for the next parse() call.
+
+                    size_t leftover = len - cursor;
+                    if (leftover > 0)
                     {
-                        result = recovery_result;
-                        recordErrorRecovery(true);
+                        std::memcpy(partial_buffer_, buf + cursor, leftover);
+                        partial_buffer_size_ = leftover;
                     }
-                    else
+                    return frameRes; // Not an error – we just wait for more data
+                }
+
+                if (frameRes.status != ParseStatus::Success)
+                {
+                    return frameRes; // Malformed header etc. – let caller decide
+                }
+
+                // =================================================================
+                // STAGE 2: MESSAGE DECODE - We now have ONE complete FIX message
+                // =================================================================
+
+                const char *msgPtr = buf + cursor + msgStart; // Usually msgStart == 0
+                size_t msgLen = msgEnd - msgStart;
+
+                ParseResult decodeRes = parseCompleteMessage(msgPtr, msgLen);
+                decodeRes.bytes_consumed = cursor + msgEnd; // Absolute position in original buffer
+
+                // Update statistics
+                auto parse_end = std::chrono::high_resolution_clock::now();
+                auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                      parse_end - parse_start_time_)
+                                      .count();
+
+                if (decodeRes.status == ParseStatus::Success)
+                {
+                    resetErrorRecovery();
+                    recordPartialMessageHandled();
+                    updateStats(decodeRes.status, parse_time);
+                }
+                else if (decodeRes.status != ParseStatus::NeedMoreData)
+                {
+                    updateErrorStats(decodeRes.status, decodeRes.final_state);
+                    updateStats(decodeRes.status, parse_time);
+
+                    // Attempt error recovery if enabled
+                    if (error_recovery_enabled_ && canRecoverFromError(decodeRes.status, decodeRes.final_state))
                     {
-                        recordErrorRecovery(false);
+                        ParseResult recovery_result = attemptErrorRecovery(msgPtr, msgLen, parse_context_, decodeRes.error_detail);
+                        if (recovery_result.status == ParseStatus::RecoverySuccess)
+                        {
+                            decodeRes = recovery_result;
+                            decodeRes.bytes_consumed = cursor + msgEnd;
+                            recordErrorRecovery(true);
+                        }
+                        else
+                        {
+                            recordErrorRecovery(false);
+                        }
                     }
                 }
+
+                // For single-message API, return immediately
+                return decodeRes;
+
+                // Note: For multi-message support, you would:
+                // cursor += msgEnd;
+                // if (decodeRes.status != Success) return decodeRes;
+                // otherwise continue loop to peel next message
             }
 
-            return result;
+            // We only get here if len == 0 after processing
+            return {ParseStatus::NeedMoreData, 0, nullptr, "No data to process", ParseState::IDLE, 0};
         }
         catch (const std::exception &e)
         {
@@ -444,17 +513,73 @@ namespace fix_gateway::protocol
         return {ParseStatus::Success, end_pos - start_pos, message, ""};
     }
 
+    StreamFixParser::ParseResult StreamFixParser::parseCompleteMessage(const char *buffer, size_t length)
+    {
+        if (!buffer || length == 0)
+        {
+            return {ParseStatus::InvalidFormat, 0, nullptr, "Empty complete message buffer", ParseState::IDLE, 0};
+        }
+
+        // =================================================================
+        // STAGE 2: INTELLIGENT MESSAGE PARSING
+        // =================================================================
+
+        // Start with intelligent parsing that can dispatch to optimized templates
+        ParseResult result = parseIntelligent(buffer, length);
+
+        // If intelligent parsing succeeded, we're done
+        if (result.status == ParseStatus::Success)
+        {
+            return result;
+        }
+
+        // =================================================================
+        // FALLBACK: LEGACY PARSING for complex/unusual messages
+        // =================================================================
+
+        // For messages that don't fit the optimized templates or have parsing issues,
+        // fall back to the legacy parseMessage method with message boundaries
+        size_t message_start = 0;
+        size_t message_end = length;
+
+        // The buffer should already contain a complete message, so we can parse directly
+        ParseResult fallback_result = parseMessage(buffer, message_start, message_end);
+
+        // Ensure bytes_consumed matches the complete message length
+        if (fallback_result.status == ParseStatus::Success)
+        {
+            fallback_result.bytes_consumed = length;
+            fallback_result.final_state = ParseState::IDLE; // Ready for next message
+        }
+
+        return fallback_result;
+    }
+
     // =================================================================
     // HELPER FUNCTIONS: Buffer pointer manipulation
     // =================================================================
 
     StreamFixParser::ParseResult StreamFixParser::findCompleteMessage(
         const char *buffer, size_t length, size_t &message_start, size_t &message_end)
-
-    // Index :  0  1  2  3  4  5  6  7  8   9  10 11 12  13 14  15 16  17 18  19 20 21 22 23 24 25 26
-    // Char  :  8  =  F  I  X  .  4  .  4  SOH 9  =  1   2  SOH 3  5   =  0  SOH 1  0  =  1  2  3  SOH
-    // 8=FIX.4.4\x019=12\x0135=D\x0110=123\x01
     {
+        // =================================================================
+        // STAGE 1: FRAMING - Find complete FIX message boundaries
+        // =================================================================
+        //
+        // Example FIX message structure:
+        // Index:  0  1  2  3  4  5  6  7  8   9  10 11 12  13 14  15 16  17 18  19 20 21 22 23 24 25 26
+        // Chars:  8  =  F  I  X  .  4  .  4  SOH 9  =  1   2  SOH 3  5   =  D  SOH 1  0  =  1  2  3  SOH
+        //         ^--- BeginString -----^     ^- BodyLength-^     ^---- Body ----^     ^-- Checksum --^
+
+        // Initialize output parameters
+        message_start = 0;
+        message_end = 0;
+
+        if (!buffer || length < 10) // Minimum: "8=FIX.4.4\x01" (10 bytes)
+        {
+            return {ParseStatus::NeedMoreData, 0, nullptr, "Buffer too small for FIX message", ParseState::IDLE, 0};
+        }
+
         // =================================================================
         // STEP 1: Find BeginString (8=FIX.4.4)
         // =================================================================
@@ -464,75 +589,102 @@ namespace fix_gateway::protocol
 
         if (begin_ptr == buffer + length)
         {
-            // No BeginString found - store as partial message
-            storePartialMessage(buffer, length);
-            return {ParseStatus::NeedMoreData, 0, nullptr, "BeginString not found"};
+            // No BeginString found - not necessarily an error, might need more data
+            return {ParseStatus::NeedMoreData, 0, nullptr, "BeginString not found", ParseState::IDLE, 0};
         }
 
         message_start = static_cast<size_t>(begin_ptr - buffer);
 
         // =================================================================
-        // STEP 2: Find BodyLength field (9=XXX)
+        // STEP 2: Validate and parse BodyLength field (9=XXX)
         // =================================================================
-
-        // begin_ptr is standing at 8=FIX.4.4
 
         const char *current_ptr = begin_ptr;
 
-        // Skip past BeginString field and find the first SOH
+        // Skip past BeginString field to find the SOH delimiter
         current_ptr = std::find(current_ptr, buffer + length, FIX_SOH);
         if (current_ptr == buffer + length)
         {
-            storePartialMessage(buffer + message_start, length - message_start);
-            return {ParseStatus::NeedMoreData, 0, nullptr, "Incomplete BeginString field"};
+            return {ParseStatus::NeedMoreData, 0, nullptr, "Incomplete BeginString field", ParseState::PARSING_BEGIN_STRING, 0};
         }
-        current_ptr++; // Skip SOH
+        current_ptr++; // Skip SOH, now should point to '9'
 
-        // now current_ptr should be standing at 9, if not, then the message is malformed
-        // look for BodyLength field (9=)
-        // check if the next 2 characters is still within the buffer and if they are '9' and '='
-        if (current_ptr + 2 >= buffer + length || current_ptr[0] != '9' || current_ptr[1] != '=')
+        // Verify we have enough bytes left for BodyLength field "9=X\x01" (minimum 4 bytes)
+        if (current_ptr + 4 > buffer + length)
         {
-            return {ParseStatus::InvalidFormat, static_cast<size_t>(current_ptr - buffer), nullptr, "BodyLength field not found after BeginString"};
+            return {ParseStatus::NeedMoreData, 0, nullptr, "Not enough data for BodyLength field", ParseState::PARSING_BODY_LENGTH, 0};
+        }
+
+        // Validate BodyLength field format "9="
+        if (current_ptr[0] != '9' || current_ptr[1] != '=')
+        {
+            return {ParseStatus::InvalidFormat, static_cast<size_t>(current_ptr - buffer), nullptr,
+                    "BodyLength field not found after BeginString", ParseState::ERROR_RECOVERY, 0};
         }
 
         // Parse body length value
         current_ptr += 2; // Skip "9="
         const char *body_length_start = current_ptr;
-        const char *body_length_end = std::find(current_ptr, buffer + length, FIX_SOH); // find the next SOH
+        const char *body_length_end = std::find(current_ptr, buffer + length, FIX_SOH);
 
         if (body_length_end == buffer + length)
         {
-            storePartialMessage(buffer + message_start, length - message_start);
-            return {ParseStatus::NeedMoreData, 0, nullptr, "Incomplete BodyLength field"};
+            return {ParseStatus::NeedMoreData, 0, nullptr, "Incomplete BodyLength value", ParseState::PARSING_BODY_LENGTH, 0};
         }
 
         // Convert body length to integer
-        // body_length_start is standing at 9, body_length_end is standing at the next SOH
         int body_length = 0;
         if (!parseInteger(body_length_start, static_cast<size_t>(body_length_end - body_length_start), body_length))
         {
-            return {ParseStatus::InvalidFormat, static_cast<size_t>(body_length_start - buffer), nullptr, "Invalid BodyLength value"};
+            return {ParseStatus::InvalidFormat, static_cast<size_t>(body_length_start - buffer), nullptr,
+                    "Invalid BodyLength value", ParseState::ERROR_RECOVERY, 0};
+        }
+
+        // Validate body length is reasonable
+        if (body_length <= 0 || body_length > static_cast<int>(max_message_size_))
+        {
+            return {ParseStatus::InvalidFormat, static_cast<size_t>(body_length_start - buffer), nullptr,
+                    "BodyLength value out of range: " + std::to_string(body_length), ParseState::ERROR_RECOVERY, 0};
         }
 
         // =================================================================
-        // STEP 3: Calculate message end position
+        // STEP 3: Calculate complete message boundaries
         // =================================================================
 
-        // Message structure: BeginString + SOH + BodyLength + SOH + [body_length bytes] + CheckSum + SOH
-        // message_start is standing at 8=FIX.4.4
-        size_t header_size = (body_length_end + 1) - (begin_ptr); // +1 for SOH after body length
-        message_end = message_start + header_size + body_length;
+        // Message structure: BeginString + SOH + BodyLength + SOH + [body_length bytes]
+        // The body_length includes everything from after BodyLength field to end of message (including checksum)
+        size_t header_size = (body_length_end + 1) - begin_ptr; // +1 for SOH after body length
+        message_end = message_start + header_size + static_cast<size_t>(body_length);
 
-        // Check if we have the complete message
+        // Verify we have the complete message
         if (message_end > length)
         {
-            storePartialMessage(buffer + message_start, length - message_start);
             return {ParseStatus::NeedMoreData, 0, nullptr,
-                    "Need " + std::to_string(message_end - length) + " more bytes"};
+                    "Need " + std::to_string(message_end - length) + " more bytes for complete message",
+                    ParseState::PARSING_TAG, 0};
         }
 
-        return {ParseStatus::Success, 0, nullptr, ""};
+        // =================================================================
+        // STEP 4: Basic sanity check - verify message ends with checksum
+        // =================================================================
+
+        if (message_end >= 7) // Ensure we have room for "10=XXX\x01"
+        {
+            const char *checksum_start = buffer + message_end - 7;
+
+            // Optional: Quick checksum field validation (10=XXX)
+            if (checksum_start >= buffer &&
+                checksum_start[0] == '1' && checksum_start[1] == '0' && checksum_start[2] == '=' &&
+                buffer[message_end - 1] == FIX_SOH)
+            {
+                // Message looks well-formed
+                return {ParseStatus::Success, 0, nullptr, "Complete message found", ParseState::IDLE, 0};
+            }
+        }
+
+        // Message boundary calculation succeeded, but structure might be malformed
+        // Let the parsing stage handle detailed validation
+        return {ParseStatus::Success, 0, nullptr, "Message boundaries determined", ParseState::IDLE, 0};
     }
 
     bool StreamFixParser::parseInteger(const char *buffer, size_t length, int &result)
@@ -1469,6 +1621,69 @@ namespace fix_gateway::protocol
     {
         // Skip corrupted data and try to find next message
         return handleErrorRecovery(buffer, length, context);
+    }
+
+} // namespace fix_gateway::protocol
+
+// =================================================================
+// TEMPLATE SPECIALIZATIONS - OPTIMIZED PARSING (Phase 2C)
+// =================================================================
+
+namespace fix_gateway::protocol
+{
+    // Helper function implementation
+    std::string_view StreamParserUtils::extractMsgType(const char *buffer, size_t length)
+    {
+        // Find "35=" pattern and extract value
+        const char *msg_type_pos = std::search(buffer, buffer + length, "35=", &"35="[3]);
+        if (msg_type_pos == buffer + length)
+        {
+            return std::string_view{}; // Not found
+        }
+
+        const char *value_start = msg_type_pos + 3; // Skip "35="
+        const char *soh_pos = static_cast<const char *>(memchr(value_start, '\001', (buffer + length) - value_start));
+        if (!soh_pos)
+        {
+            return std::string_view{};
+        }
+
+        return std::string_view{value_start, static_cast<size_t>(soh_pos - value_start)};
+    }
+
+    // Intelligent parsing implementation - framework for future optimization
+    StreamFixParser::ParseResult StreamFixParser::parseIntelligent(const char *buffer, size_t length)
+    {
+        std::string_view msg_type = StreamParserUtils::extractMsgType(buffer, length);
+
+        if (msg_type.empty())
+        {
+            return parse(buffer, length);
+        }
+
+        // Message type detection successful - dispatch to optimized parsers
+
+        // Template-optimized parsing for performance-critical message types
+        if (msg_type == "D") // NEW_ORDER_SINGLE
+        {
+            return OptimizedParser<FixMsgType::NEW_ORDER_SINGLE>::parseNewOrderSingle(this, buffer, length);
+        }
+
+        // TODO: Implement these template specializations for additional performance gains
+        // else if (msg_type == "8") // EXECUTION_REPORT
+        // {
+        //     return OptimizedParser<FixMsgType::EXECUTION_REPORT>::parseExecutionReport(this, buffer, length);
+        // }
+        // else if (msg_type == "0") // HEARTBEAT
+        // {
+        //     return OptimizedParser<FixMsgType::HEARTBEAT>::parseHeartbeat(this, buffer, length);
+        // }
+
+        // Fall back to legacy parseMessage for all other message types
+        // Note: Don't call parse() here to avoid infinite recursion
+        size_t message_start = 0;
+        size_t message_end = length;
+        return parseMessage(buffer, message_start, message_end);
     }
 
 } // namespace fix_gateway::protocol
