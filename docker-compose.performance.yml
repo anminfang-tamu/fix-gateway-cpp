@@ -1,0 +1,143 @@
+version: "3.8"
+
+services:
+  # StreamFixParser Performance Testing Container
+  fix-parser-performance:
+    build:
+      context: .
+      dockerfile: Dockerfile.performance
+    container_name: fix-parser-performance-test
+
+    # Use privileged mode for performance optimizations
+    privileged: true
+
+    # CPU and memory allocation for performance testing
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 4G
+        reservations:
+          cpus: "4.0"
+          memory: 2G
+
+    # Pin to specific CPU cores for consistent performance
+    cpuset: "0-3"
+
+    # Required capabilities for performance testing
+    cap_add:
+      - SYS_NICE # For real-time priority
+      - SYS_TIME # For high-precision timing
+      - IPC_LOCK # For memory locking
+      - SYS_PTRACE # For performance profiling
+      - SYS_ADMIN # For system-level performance tuning
+
+    # Increase limits for performance testing
+    ulimits:
+      rtprio: 99 # Real-time priority limit
+      memlock: -1 # Unlimited memory locking
+      nofile: 65536 # File descriptor limit
+      nproc: 65536 # Process limit
+
+    # Environment variables for performance testing
+    environment:
+      - PERFORMANCE_MODE=true
+      - CPU_CORES=4
+      - MEMORY_LIMIT=4G
+      - LOG_LEVEL=INFO
+      - NUMA_POLICY=bind
+      - CPU_GOVERNOR=performance
+
+    # Volume mounts for accessing results and system info
+    volumes:
+      - ./performance_results:/app/performance_results:rw
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /dev/shm:/dev/shm:rw
+
+    # Network configuration
+    networks:
+      - performance-network
+
+    # Restart policy
+    restart: "no" # Don't restart - let tests complete
+
+    # Enhanced logging for performance analysis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "5"
+
+    # Custom labels for identification
+    labels:
+      - "performance.test=streamfixparser"
+      - "environment=testing"
+
+  # System monitoring container
+  performance-monitor:
+    image: prom/node-exporter:latest
+    container_name: performance-monitor
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - performance-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Redis for caching performance test data (optional)
+  redis-cache:
+    image: redis:7-alpine
+    container_name: redis-performance-cache
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6380:6379"
+    networks:
+      - performance-network
+    restart: unless-stopped
+    profiles:
+      - caching
+
+  # Results analysis container
+  results-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile.performance
+    container_name: results-analyzer
+    command: ["/bin/bash", "-c", "while true; do sleep 3600; done"] # Keep alive for analysis
+    volumes:
+      - ./performance_results:/app/performance_results:ro
+      - ./analysis:/app/analysis:rw
+    networks:
+      - performance-network
+    profiles:
+      - analysis
+    depends_on:
+      - fix-parser-performance
+
+# Network configuration
+networks:
+  performance-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: perf_bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+# Named volumes for persistent data
+volumes:
+  performance-data:
+    driver: local
+  analysis-data:
+    driver: local

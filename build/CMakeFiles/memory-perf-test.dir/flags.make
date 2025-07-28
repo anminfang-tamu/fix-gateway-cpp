@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/anminfang/fix-gateway-cpp/include -I/Users/anminfang/fix-gateway-cpp/include/common -I/Users/anminfang/fix-gateway-cpp/include/manager -I/Users/anminfang/fix-gateway-cpp/config
 
-CXX_FLAGSarm64 = -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
+CXX_FLAGSarm64 = -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
 
-CXX_FLAGS = -O3 -DNDEBUG -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
+CXX_FLAGS = -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk
 
