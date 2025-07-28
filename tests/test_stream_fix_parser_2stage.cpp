@@ -99,10 +99,10 @@ namespace TestData
         "10=085\x01";              // CheckSum
 
     // Partial message (first part)
-    // Body bytes calculation for complete message: 35=D(5) + 49=SENDER(10) + 56=TARGET(10) + 34=125(7) + 11=ORDER002(12) + 55=AAPL(8) + 54=2(5) + 38=50(7) + 40=1(5) + 10=156(7) = 76 bytes
+    // Body bytes calculation for complete message: 35=D(5) + 49=SENDER(10) + 56=TARGET(10) + 34=125(7) + 11=ORDER002(12) + 55=AAPL(8) + 54=2(5) + 38=50(6) + 40=1(5) + 10=156(7) = 75 bytes
     const std::string PARTIAL_MESSAGE_PART1 =
         "8=FIX.4.4\x01" // BeginString
-        "9=76\x01"      // BodyLength (corrected from 80 to 76)
+        "9=75\x01"      // BodyLength (corrected from 76 to 75 - actual measured length)
         "35=D\x01"      // MsgType
         "49=SENDER\x01" // SenderCompID (message gets cut off here)
         "56=TAR";
@@ -357,6 +357,7 @@ public:
 
         ASSERT_EQ_STATUS(StreamFixParser::ParseStatus::NeedMoreData, result1.status,
                          "First part should request more data");
+
         ASSERT_TRUE(parser_.hasPartialMessage(), "Parser should have partial message stored");
 
         // Parse second part (should complete the message)
