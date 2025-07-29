@@ -1665,21 +1665,18 @@ namespace fix_gateway::protocol
 
         // Message type detection successful - dispatch to optimized parsers
 
-        // Template-optimized parsing for performance-critical message types
-        if (msg_type == "D") // NEW_ORDER_SINGLE
-        {
-            return OptimizedParser<FixMsgType::NEW_ORDER_SINGLE>::parseNewOrderSingle(this, buffer, length);
-        }
+        // Template-optimized parsing for performance-critical message types (INCOMING MESSAGES ONLY)
+        // Note: NEW_ORDER_SINGLE removed - we don't receive these from exchange/broker
 
-        // TODO: Implement these template specializations for additional performance gains
-        // else if (msg_type == "8") // EXECUTION_REPORT
-        // {
-        //     return OptimizedParser<FixMsgType::EXECUTION_REPORT>::parseExecutionReport(this, buffer, length);
-        // }
-        // else if (msg_type == "0") // HEARTBEAT
-        // {
-        //     return OptimizedParser<FixMsgType::HEARTBEAT>::parseHeartbeat(this, buffer, length);
-        // }
+        // Template-optimized parsing for incoming message types
+        if (msg_type == "8") // EXECUTION_REPORT
+        {
+            return OptimizedParser<FixMsgType::EXECUTION_REPORT>::parseExecutionReport(this, buffer, length);
+        }
+        else if (msg_type == "0") // HEARTBEAT
+        {
+            return OptimizedParser<FixMsgType::HEARTBEAT>::parseHeartbeat(this, buffer, length);
+        }
 
         // Fall back to legacy parseMessage for all other message types
         // Note: Don't call parse() here to avoid infinite recursion
