@@ -533,7 +533,7 @@ namespace fix_gateway::protocol
             const char *end_ptr = buffer + length;
 
             // current_ptr += 2; // Skip "9="
-            const char *body_length_start = current_ptr;
+            // const char *body_length_start = current_ptr;
             const char *body_length_end = static_cast<const char *>(memchr(current_ptr, '\001', end_ptr - current_ptr));
 
             if (!body_length_end)
