@@ -647,6 +647,8 @@ namespace fix_gateway::protocol
                     "BodyLength value out of range: " + std::to_string(body_length), ParseState::ERROR_RECOVERY, 0};
         }
 
+        parse_context_.expected_body_length = body_length;
+
         // =================================================================
         // STEP 3: Calculate complete message boundaries
         // =================================================================

@@ -511,25 +511,28 @@ namespace fix_gateway::protocol
             }
 
             // Quick BeginString validation (should start with "8=FIX.4.4")
-            if (std::strncmp(buffer, "8=FIX.4.4\001", 10) != 0)
-            {
-                return parser->parse(buffer, length); // Fall back to generic parser
-            }
+            // if (std::strncmp(buffer, "8=FIX.4.4\001", 10) != 0)
+            // {
+            //     return parser->parse(buffer, length); // Fall back to generic parser
+            // }
 
             // =================================================================
             // ZERO-COPY FIELD EXTRACTION: Direct pointer manipulation
             // =================================================================
 
-            const char *current_ptr = buffer + 10; // Skip "8=FIX.4.4\001"
-            const char *end_ptr = buffer + length;
+            // const char *current_ptr = buffer + 10; // Skip "8=FIX.4.4\001"
+            // const char *end_ptr = buffer + length;
 
             // Find and validate BodyLength (9=XXX)
-            if (current_ptr + 2 >= end_ptr || current_ptr[0] != '9' || current_ptr[1] != '=')
-            {
-                return parser->parse(buffer, length); // Fall back to generic parser
-            }
+            // if (current_ptr + 2 >= end_ptr || current_ptr[0] != '9' || current_ptr[1] != '=')
+            // {
+            //     return parser->parse(buffer, length); // Fall back to generic parser
+            // }
 
-            current_ptr += 2; // Skip "9="
+            const char *current_ptr = buffer + 12; // Skip "8=FIX.4.4\0019="
+            const char *end_ptr = buffer + length;
+
+            // current_ptr += 2; // Skip "9="
             const char *body_length_start = current_ptr;
             const char *body_length_end = static_cast<const char *>(memchr(current_ptr, '\001', end_ptr - current_ptr));
 
@@ -540,22 +543,22 @@ namespace fix_gateway::protocol
             }
 
             // Parse body length
-            int body_length = 0;
-            if (!parser->parseInteger(body_length_start, body_length_end - body_length_start, body_length))
-            {
-                return parser->parse(buffer, length); // Fall back to generic parser
-            }
+            // int body_length = 0;
+            // if (!parser->parseInteger(body_length_start, body_length_end - body_length_start, body_length))
+            // {
+            //     return parser->parse(buffer, length); // Fall back to generic parser
+            // }
 
             // Calculate expected message end
-            size_t header_size = (body_length_end + 1) - buffer;
-            size_t expected_end = header_size + body_length;
+            // size_t header_size = (body_length_end + 1) - buffer;
+            // size_t expected_end = header_size + body_length;
 
-            if (expected_end > length)
-            {
-                return {StreamFixParser::ParseStatus::NeedMoreData, 0, nullptr,
-                        "Need " + std::to_string(expected_end - length) + " more bytes for complete message",
-                        StreamFixParser::ParseState::PARSING_TAG, 0};
-            }
+            // if (expected_end > length)
+            // {
+            //     return {StreamFixParser::ParseStatus::NeedMoreData, 0, nullptr,
+            //             "Need " + std::to_string(expected_end - length) + " more bytes for complete message",
+            //             StreamFixParser::ParseState::PARSING_TAG, 0};
+            // }
 
             // =================================================================
             // ALLOCATE MESSAGE FROM POOL
@@ -570,15 +573,15 @@ namespace fix_gateway::protocol
 
             // Set header fields (known values for optimization)
             message->setField(FixFields::BeginString, "FIX.4.4");
-            message->setField(FixFields::BodyLength, std::to_string(body_length));
+            message->setField(FixFields::BodyLength, std::to_string(parser->parse_context_.expected_body_length));
             message->setField(FixFields::MsgType, "D"); // NEW_ORDER_SINGLE
 
             // =================================================================
             // OPTIMIZED FIELD PARSING: Priority fields first
             // =================================================================
 
-            current_ptr = body_length_end + 1;                // Start of message body
-            const char *body_end = buffer + expected_end - 7; // Exclude "10=XXX\001" checksum
+            current_ptr = body_length_end + 1;                                               // Start of message body
+            const char *body_end = buffer + parser->parse_context_.expected_body_length - 7; // Exclude "10=XXX\001" checksum
 
             // Critical fields for NEW_ORDER_SINGLE (parse in priority order)
             bool found_clordid = false, found_symbol = false, found_side = false;
@@ -679,12 +682,12 @@ namespace fix_gateway::protocol
 
             if (parser->isChecksumValidationEnabled())
             {
-                const char *checksum_start = buffer + expected_end - 7; // "10=XXX\001"
+                const char *checksum_start = buffer + parser->parse_context_.expected_body_length - 7; // "10=XXX\001"
 
                 if (checksum_start[0] != '1' || checksum_start[1] != '0' || checksum_start[2] != '=')
                 {
                     parser->getMessagePool()->deallocate(message);
-                    return {StreamFixParser::ParseStatus::ChecksumError, expected_end, nullptr,
+                    return {StreamFixParser::ParseStatus::ChecksumError, parser->parse_context_.expected_body_length, nullptr,
                             "Invalid checksum format", StreamFixParser::ParseState::ERROR_RECOVERY, 0};
                 }
 
@@ -694,7 +697,7 @@ namespace fix_gateway::protocol
 
                 // Calculate and validate checksum
                 uint8_t calculated_checksum = 0;
-                for (size_t i = 0; i < expected_end - 7; ++i)
+                for (size_t i = 0; i < parser->parse_context_.expected_body_length - 7; ++i)
                 {
                     calculated_checksum += static_cast<uint8_t>(buffer[i]);
                 }
@@ -704,14 +707,14 @@ namespace fix_gateway::protocol
                 if (calculated_checksum != static_cast<uint8_t>(received_checksum))
                 {
                     parser->getMessagePool()->deallocate(message);
-                    return {StreamFixParser::ParseStatus::ChecksumError, expected_end, nullptr,
+                    return {StreamFixParser::ParseStatus::ChecksumError, parser->parse_context_.expected_body_length, nullptr,
                             "Checksum validation failed", StreamFixParser::ParseState::ERROR_RECOVERY, 0};
                 }
             }
             else
             {
                 // Still store checksum field even if not validating
-                const char *checksum_start = buffer + expected_end - 4; // "XXX\001"
+                const char *checksum_start = buffer + parser->parse_context_.expected_body_length - 4; // "XXX\001"
                 std::string checksum_value(checksum_start, 3);
                 message->setField(FixFields::CheckSum, checksum_value);
             }
@@ -726,7 +729,7 @@ namespace fix_gateway::protocol
             // Update parser statistics using public accessor
             parser->updateParseStats(StreamFixParser::ParseStatus::Success, parse_time);
 
-            return {StreamFixParser::ParseStatus::Success, expected_end, message,
+            return {StreamFixParser::ParseStatus::Success, parser->parse_context_.expected_body_length, message,
                     "NEW_ORDER_SINGLE parsed via optimized template",
                     StreamFixParser::ParseState::IDLE, 0};
         }
