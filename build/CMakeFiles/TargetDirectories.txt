@@ -80,6 +80,7 @@
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_performance.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_2stage.dir
+/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_improved.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/edit_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/rebuild_cache.dir

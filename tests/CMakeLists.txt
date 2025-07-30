@@ -89,10 +89,28 @@ target_include_directories(test_stream_fix_parser_2stage PRIVATE
     ${CMAKE_SOURCE_DIR}
 )
 
+
+add_executable(test_stream_fix_parser_improved
+    test_stream_fix_parser_improved.cpp
+)
+
+target_link_libraries(test_stream_fix_parser_improved
+    protocol
+    common
+    utils
+    Threads::Threads
+)
+
+target_include_directories(test_stream_fix_parser_improved PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}
+)
+
 # Add test to CTest if available
 # Removed BUILD_TESTING condition to ensure tests are always built
 add_test(NAME async_sender_test COMMAND test_async_sender)
 add_test(NAME message_manager_test COMMAND test_message_manager)
 add_test(NAME stream_fix_parser_test COMMAND test_stream_fix_parser)
 add_test(NAME stream_fix_parser_performance_test COMMAND test_stream_fix_parser_performance)
-add_test(NAME stream_fix_parser_2stage_test COMMAND test_stream_fix_parser_2stage) 
+add_test(NAME stream_fix_parser_2stage_test COMMAND test_stream_fix_parser_2stage)
+add_test(NAME stream_fix_parser_improved_test COMMAND test_stream_fix_parser_improved)

@@ -509,6 +509,19 @@ test_stream_fix_parser_2stage/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build
 .PHONY : test_stream_fix_parser_2stage/fast
 
+#=============================================================================
+# Target rules for targets named test_stream_fix_parser_improved
+
+# Build rule for target.
+test_stream_fix_parser_improved: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_improved
+.PHONY : test_stream_fix_parser_improved
+
+# fast build rule for target.
+test_stream_fix_parser_improved/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/build
+.PHONY : test_stream_fix_parser_improved/fast
+
 demos/existing_pool_templated_demo.o: demos/existing_pool_templated_demo.cpp.o
 .PHONY : demos/existing_pool_templated_demo.o
 
@@ -882,6 +895,7 @@ help:
 	@echo "... test_message_manager"
 	@echo "... test_stream_fix_parser"
 	@echo "... test_stream_fix_parser_2stage"
+	@echo "... test_stream_fix_parser_improved"
 	@echo "... test_stream_fix_parser_performance"
 	@echo "... utils"
 	@echo "... demos/existing_pool_templated_demo.o"

@@ -144,6 +144,8 @@ namespace fix_gateway::protocol
             }
 
             size_t cursor = 0;
+            ParseResult lastSuccessResult; // Track last successful parse result
+            bool hasSuccessfulParse = false;
 
             while (cursor < len)
             {
@@ -191,7 +193,28 @@ namespace fix_gateway::protocol
 
                 if (frameRes.status != ParseStatus::Success)
                 {
-                    return frameRes; // Malformed header etc. – let caller decide
+                    // Handle framing errors locally with recovery if enabled
+                    if (error_recovery_enabled_ && canRecoverFromError(frameRes.status, frameRes.final_state))
+                    {
+                        // Attempt error recovery for framing errors
+                        ParseResult recovery_result = attemptErrorRecovery(buf + cursor, len - cursor, parse_context_, frameRes.error_detail);
+                        if (recovery_result.status == ParseStatus::RecoverySuccess)
+                        {
+                            // Recovery successful - update cursor and continue parsing
+                            cursor += recovery_result.bytes_consumed;
+                            recordErrorRecovery(true);
+                            continue; // Try to find next message
+                        }
+                        else
+                        {
+                            recordErrorRecovery(false);
+                        }
+                    }
+
+                    // Update error statistics for framing errors
+                    updateErrorStats(frameRes.status, frameRes.final_state);
+
+                    return frameRes; // Return error if recovery failed or not enabled
                 }
 
                 // =================================================================
@@ -202,7 +225,11 @@ namespace fix_gateway::protocol
                 size_t msgLen = msgEnd - msgStart;
 
                 ParseResult decodeRes = parseCompleteMessage(msgPtr, msgLen);
-                decodeRes.bytes_consumed = cursor + msgEnd; // Absolute position in original buffer
+
+                // CRITICAL FIX: Use actual bytes consumed by parser, not framing boundary
+                // decodeRes.bytes_consumed is already the correct message length from optimized parser
+                size_t actual_bytes_consumed = decodeRes.bytes_consumed;
+                decodeRes.bytes_consumed = cursor + actual_bytes_consumed; // Absolute position in original buffer
 
                 // Update statistics
                 auto parse_end = std::chrono::high_resolution_clock::now();
@@ -238,17 +265,35 @@ namespace fix_gateway::protocol
                     }
                 }
 
-                // For single-message API, return immediately
-                return decodeRes;
+                // Multi-message support: handle result and continue parsing
+                if (decodeRes.status != ParseStatus::Success)
+                {
+                    return decodeRes; // Return errors immediately
+                }
 
-                // Note: For multi-message support, you would:
-                // cursor += msgEnd;
-                // if (decodeRes.status != Success) return decodeRes;
-                // otherwise continue loop to peel next message
+                // Success: advance cursor to continue parsing additional messages in the same buffer
+                // CRITICAL FIX: Use actual bytes consumed by parser, not framing boundary
+                cursor += actual_bytes_consumed;
+
+                // Store the successful result for final return
+                lastSuccessResult = decodeRes;
+                lastSuccessResult.bytes_consumed = cursor; // Update total bytes consumed so far
+                hasSuccessfulParse = true;
+
+                // Continue loop to parse next message (if any)
             }
 
-            // We only get here if len == 0 after processing
-            return {ParseStatus::NeedMoreData, 0, nullptr, "No data to process", ParseState::IDLE, 0};
+            // Reached end of buffer - return result based on what we parsed
+            if (hasSuccessfulParse)
+            {
+                // Successfully parsed one or more messages - return the last successful result
+                return lastSuccessResult;
+            }
+            else
+            {
+                // No complete messages found in buffer
+                return {ParseStatus::NeedMoreData, cursor, nullptr, "No complete messages in buffer", ParseState::IDLE, 0};
+            }
         }
         catch (const std::exception &e)
         {
@@ -584,13 +629,33 @@ namespace fix_gateway::protocol
         // STEP 1: Find BeginString (8=FIX.4.4)
         // =================================================================
 
-        const char *begin_ptr = std::search(buffer, buffer + length,
-                                            FIX_BEGIN_STRING, FIX_BEGIN_STRING + strlen(FIX_BEGIN_STRING));
+        // First, look for "8=" pattern to detect potential BeginString
+        const char *tag_8_ptr = std::search(buffer, buffer + length, "8=", &"8="[2]);
 
-        if (begin_ptr == buffer + length)
+        if (tag_8_ptr == buffer + length)
         {
-            // No BeginString found - not necessarily an error, might need more data
-            return {ParseStatus::NeedMoreData, 0, nullptr, "BeginString not found", ParseState::IDLE, 0};
+            // No "8=" found - not necessarily an error, might need more data
+            return {ParseStatus::InvalidFormat, 0, nullptr, "Invalid BeginString found", ParseState::IDLE, 0};
+        }
+
+        // Found "8=" - now validate it's followed by "FIX.4.4"
+        const char *begin_ptr = tag_8_ptr;
+        size_t remaining_after_tag = length - (tag_8_ptr - buffer);
+
+        if (remaining_after_tag < strlen(FIX_BEGIN_STRING))
+        {
+            // Not enough data to validate full BeginString
+            return {ParseStatus::NeedMoreData, 0, nullptr, "Incomplete BeginString", ParseState::PARSING_BEGIN_STRING, 0};
+        }
+
+        // Check if it matches exactly "8=FIX.4.4"
+        if (std::strncmp(tag_8_ptr, FIX_BEGIN_STRING, strlen(FIX_BEGIN_STRING)) != 0)
+        {
+            // Found "8=" but it's not "8=FIX.4.4" - this is an invalid format
+            return {ParseStatus::InvalidFormat, static_cast<size_t>(tag_8_ptr - buffer), nullptr,
+                    "Invalid BeginString format - expected '8=FIX.4.4', found '" +
+                        std::string(tag_8_ptr, std::min(strlen(FIX_BEGIN_STRING), remaining_after_tag)) + "'",
+                    ParseState::ERROR_RECOVERY, 0};
         }
 
         message_start = static_cast<size_t>(begin_ptr - buffer);
@@ -987,6 +1052,9 @@ namespace fix_gateway::protocol
         // Store the parsed tag in context
         context.current_field_tag = field_tag;
 
+        // Set field start position for error reporting (position where this field started)
+        context.field_start_position = context.buffer_position;
+
         // Calculate bytes consumed (just the tag, not the '=')
         size_t consumed = tag_length;
 
@@ -1040,6 +1108,13 @@ namespace fix_gateway::protocol
     StreamFixParser::ParseResult StreamFixParser::handleParsingValue(const char *buffer, size_t length, ParseContext &context)
     {
         // In PARSING_VALUE state, we need to find the SOH delimiter and extract the field value
+
+        // Update field_start_position for error reporting consistency
+        // This tracks where the field value parsing starts (after the '=' sign)
+        if (context.field_start_position == 0)
+        {
+            context.field_start_position = context.buffer_position;
+        }
 
         // Look for SOH delimiter that marks the end of the field value
         const char *soh_pos = std::find(buffer, buffer + length, FIX_SOH);
@@ -1403,6 +1478,17 @@ namespace fix_gateway::protocol
 
     bool StreamFixParser::isCircuitBreakerActive() const
     {
+        // Check if circuit breaker should be automatically reset after cooling period
+        if (circuit_breaker_active_ &&
+            std::chrono::steady_clock::now() - circuit_breaker_last_reset_ > std::chrono::seconds(5))
+        {
+            // Cooling period has elapsed - reset circuit breaker
+            const_cast<StreamFixParser *>(this)->circuit_breaker_active_ = false;
+            const_cast<StreamFixParser *>(this)->parse_context_.consecutive_errors = 0;
+            const_cast<StreamFixParser *>(this)->circuit_breaker_last_reset_ = std::chrono::steady_clock::now();
+            return false;
+        }
+
         return circuit_breaker_active_ || shouldActivateCircuitBreaker(parse_context_);
     }
 
@@ -1660,7 +1746,10 @@ namespace fix_gateway::protocol
 
         if (msg_type.empty())
         {
-            return parse(buffer, length);
+            // Fall back to legacy parsing without recursion
+            size_t message_start = 0;
+            size_t message_end = length;
+            return parseMessage(buffer, message_start, message_end);
         }
 
         // Message type detection successful - dispatch to optimized parsers

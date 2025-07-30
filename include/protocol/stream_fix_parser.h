@@ -26,6 +26,30 @@ namespace fix_gateway::protocol
 
     // Zero-copy FIX parser optimized for high-frequency trading
     // Enhanced with state machine for production-grade partial packet handling
+    //
+    // =====================================================================
+    // THREAD SAFETY WARNING: This parser is NOT thread-safe
+    // =====================================================================
+    //
+    // The StreamFixParser maintains mutable state including:
+    // - parse_context_: Current parsing state and partial message data
+    // - partial_buffer_: Buffer for incomplete messages across parse() calls
+    // - stats_: Performance statistics (non-atomic counters)
+    // - circuit_breaker_*: Error recovery state
+    //
+    // SAFE USAGE PATTERNS:
+    // 1. One parser instance per TCP connection/session (recommended)
+    // 2. One parser instance per thread with explicit locking
+    // 3. Thread-local parser instances for high-throughput scenarios
+    //
+    // UNSAFE USAGE:
+    // - Sharing a single parser instance across multiple threads
+    // - Concurrent calls to parse() from different threads
+    // - Reading stats_ from one thread while parse() runs on another
+    //
+    // For multi-threaded applications, consider using atomic<uint64_t>
+    // for stats_ fields or implement external synchronization.
+    //
     class StreamFixParser
     {
     public:
@@ -393,12 +417,9 @@ namespace fix_gateway::protocol
 
         // Enhanced partial message processing
         ParseResult handlePartialMessage(const char *new_buffer, size_t new_length);
-        ParseResult combineBuffersAndParse(const char *new_buffer, size_t new_length);
 
         // Buffer management with state preservation
         void storePartialMessage(const char *buffer, size_t length);
-        void appendToPartialBuffer(const char *buffer, size_t length);
-        bool hasSpaceInPartialBuffer(size_t additional_bytes) const;
 
         // =================================================================
         // CORE PARSING IMPLEMENTATION (Enhanced)
@@ -450,7 +471,7 @@ namespace fix_gateway::protocol
         std::chrono::milliseconds error_recovery_timeout_;
 
         // Partial message handling (TCP fragmentation)
-        static constexpr size_t PARTIAL_BUFFER_SIZE = 16384; // 16KB buffer
+        static constexpr size_t PARTIAL_BUFFER_SIZE = 65536; // 64KB buffer
         char partial_buffer_[PARTIAL_BUFFER_SIZE];
         size_t partial_buffer_size_;
 
@@ -497,7 +518,7 @@ namespace fix_gateway::protocol
         static StreamFixParser::ParseResult parseExecutionReport(StreamFixParser *parser, const char *buffer, size_t length)
         {
             // Start performance timing
-            auto parse_start = std::chrono::high_resolution_clock::now();
+            // auto parse_start = std::chrono::high_resolution_clock::now();
 
             // =================================================================
             // FAST VALIDATION: Quick structural checks for EXECUTION_REPORT
@@ -507,6 +528,22 @@ namespace fix_gateway::protocol
             {
                 return {StreamFixParser::ParseStatus::InvalidFormat, 0, nullptr,
                         "Buffer too small for EXECUTION_REPORT", StreamFixParser::ParseState::IDLE, 0};
+            }
+
+            // Defensive checks: Ensure buffer is complete and properly terminated
+            if (buffer[length - 1] != '\001') // Must end with SOH
+            {
+                return {StreamFixParser::ParseStatus::NeedMoreData, 0, nullptr,
+                        "Incomplete EXECUTION_REPORT - missing SOH termination",
+                        StreamFixParser::ParseState::PARSING_TAG, 0};
+            }
+
+            // Basic structural validation: should start with "8=FIX.4.4"
+            if (length < 9 || std::strncmp(buffer, "8=FIX.4.4", 9) != 0)
+            {
+                return {StreamFixParser::ParseStatus::InvalidFormat, 0, nullptr,
+                        "Invalid EXECUTION_REPORT structure - missing BeginString",
+                        StreamFixParser::ParseState::ERROR_RECOVERY, 0};
             }
 
             // =================================================================
@@ -522,7 +559,6 @@ namespace fix_gateway::protocol
 
             // Set header fields (known values for optimization)
             message->setField(FixFields::BeginString, "FIX.4.4");
-            message->setField(FixFields::BodyLength, std::to_string(parser->parse_context_.expected_body_length));
             message->setField(FixFields::MsgType, "8"); // EXECUTION_REPORT
 
             // =================================================================
@@ -549,8 +585,11 @@ namespace fix_gateway::protocol
                         "Invalid BodyLength", StreamFixParser::ParseState::ERROR_RECOVERY, 0};
             }
 
-            current_ptr = body_length_end + 1;                                        // Start of message body
-            const char *body_end = buffer + (body_length_end - buffer) + body_length; // Calculate end based on parsed body length
+            // Set BodyLength field using the locally parsed value (not parse_context_)
+            message->setField(FixFields::BodyLength, std::to_string(body_length));
+
+            current_ptr = body_length_end + 1;                        // Start of message body
+            const char *body_end = body_length_end + 1 + body_length; // Calculate end based on parsed body length
 
             // Parse all fields in EXECUTION_REPORT
             while (current_ptr < body_end)
@@ -634,6 +673,7 @@ namespace fix_gateway::protocol
                 message->setField(FixFields::CheckSum, checksum_value);
 
                 // Calculate and validate checksum
+                // FIX checksum includes all bytes up to (but not including) the checksum field
                 uint8_t calculated_checksum = 0;
                 for (size_t i = 0; i < static_cast<size_t>(body_end - buffer); ++i)
                 {
@@ -661,11 +701,11 @@ namespace fix_gateway::protocol
             // SUCCESS: Update statistics and return
             // =================================================================
 
-            auto parse_end = std::chrono::high_resolution_clock::now();
-            auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(parse_end - parse_start).count();
+            // auto parse_end = std::chrono::high_resolution_clock::now();
+            // auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(parse_end - parse_start).count();
 
-            // Update parser statistics using public accessor
-            parser->updateParseStats(StreamFixParser::ParseStatus::Success, parse_time);
+            // // Update parser statistics using public accessor
+            // parser->updateParseStats(StreamFixParser::ParseStatus::Success, parse_time);
 
             // Calculate total message length: header + body + checksum
             size_t total_message_length = static_cast<size_t>(body_end - buffer) + 7; // +7 for "10=XXX\001"
@@ -682,7 +722,7 @@ namespace fix_gateway::protocol
         static StreamFixParser::ParseResult parseHeartbeat(StreamFixParser *parser, const char *buffer, size_t length)
         {
             // Start performance timing
-            auto parse_start = std::chrono::high_resolution_clock::now();
+            // auto parse_start = std::chrono::high_resolution_clock::now();
 
             // =================================================================
             // FAST VALIDATION: Quick structural checks for HEARTBEAT
@@ -692,6 +732,22 @@ namespace fix_gateway::protocol
             {
                 return {StreamFixParser::ParseStatus::InvalidFormat, 0, nullptr,
                         "Buffer too small for HEARTBEAT", StreamFixParser::ParseState::IDLE, 0};
+            }
+
+            // Defensive checks: Ensure buffer is complete and properly terminated
+            if (buffer[length - 1] != '\001') // Must end with SOH
+            {
+                return {StreamFixParser::ParseStatus::NeedMoreData, 0, nullptr,
+                        "Incomplete HEARTBEAT - missing SOH termination",
+                        StreamFixParser::ParseState::PARSING_TAG, 0};
+            }
+
+            // Basic structural validation: should start with "8=FIX.4.4"
+            if (length < 9 || std::strncmp(buffer, "8=FIX.4.4", 9) != 0)
+            {
+                return {StreamFixParser::ParseStatus::InvalidFormat, 0, nullptr,
+                        "Invalid HEARTBEAT structure - missing BeginString",
+                        StreamFixParser::ParseState::ERROR_RECOVERY, 0};
             }
 
             // =================================================================
@@ -707,7 +763,6 @@ namespace fix_gateway::protocol
 
             // Set header fields (known values for optimization)
             message->setField(FixFields::BeginString, "FIX.4.4");
-            message->setField(FixFields::BodyLength, std::to_string(parser->parse_context_.expected_body_length));
             message->setField(FixFields::MsgType, "0"); // HEARTBEAT
 
             // =================================================================
@@ -734,8 +789,11 @@ namespace fix_gateway::protocol
                         "Invalid BodyLength", StreamFixParser::ParseState::ERROR_RECOVERY, 0};
             }
 
-            current_ptr = body_length_end + 1;                                        // Start of message body
-            const char *body_end = buffer + (body_length_end - buffer) + body_length; // Calculate end based on parsed body length
+            // Set BodyLength field using the locally parsed value (not parse_context_)
+            message->setField(FixFields::BodyLength, std::to_string(body_length));
+
+            current_ptr = body_length_end + 1;                        // Start of message body
+            const char *body_end = body_length_end + 1 + body_length; // Calculate end based on parsed body length
 
             // HEARTBEAT typically only has session-level fields (no body content)
             // Parse any fields that might be present
@@ -810,6 +868,7 @@ namespace fix_gateway::protocol
                 message->setField(FixFields::CheckSum, checksum_value);
 
                 // Calculate and validate checksum
+                // FIX checksum includes all bytes up to (but not including) the checksum field
                 uint8_t calculated_checksum = 0;
                 for (size_t i = 0; i < static_cast<size_t>(body_end - buffer); ++i)
                 {
@@ -837,11 +896,11 @@ namespace fix_gateway::protocol
             // SUCCESS: Update statistics and return
             // =================================================================
 
-            auto parse_end = std::chrono::high_resolution_clock::now();
-            auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(parse_end - parse_start).count();
+            // auto parse_end = std::chrono::high_resolution_clock::now();
+            // auto parse_time = std::chrono::duration_cast<std::chrono::nanoseconds>(parse_end - parse_start).count();
 
-            // Update parser statistics using public accessor
-            parser->updateParseStats(StreamFixParser::ParseStatus::Success, parse_time);
+            // // Update parser statistics using public accessor
+            // parser->updateParseStats(StreamFixParser::ParseStatus::Success, parse_time);
 
             // Calculate total message length: header + body + checksum
             size_t total_message_length = static_cast<size_t>(body_end - buffer) + 7; // +7 for "10=XXX\001"
