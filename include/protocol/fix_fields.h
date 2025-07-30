@@ -142,11 +142,10 @@ namespace fix_gateway::protocol
         // Convert FIX protocol string to enum (for intelligent parsing)
         FixMsgType fromString(const char *msgTypeStr);
 
-        // Check if message type has optimized template parser
+        // Check if message type has optimized template parser (INCOMING MESSAGES ONLY)
         constexpr bool hasOptimizedParser(FixMsgType msgType)
         {
-            return msgType == FixMsgType::NEW_ORDER_SINGLE ||
-                   msgType == FixMsgType::EXECUTION_REPORT ||
+            return msgType == FixMsgType::EXECUTION_REPORT ||
                    msgType == FixMsgType::HEARTBEAT;
         }
     }

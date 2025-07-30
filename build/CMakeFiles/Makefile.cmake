@@ -91,4 +91,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "tests/CMakeFiles/test_stream_fix_parser.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_performance.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_2stage.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_stream_fix_parser_improved.dir/DependInfo.cmake"
   )

@@ -241,6 +241,20 @@ test_stream_fix_parser_2stage/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build
 .PHONY : test_stream_fix_parser_2stage/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule
+.PHONY : tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule
+
+# Convenience name for target.
+test_stream_fix_parser_improved: tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule
+.PHONY : test_stream_fix_parser_improved
+
+# fast build rule for target.
+test_stream_fix_parser_improved/fast:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/build
+.PHONY : test_stream_fix_parser_improved/fast
+
 test_async_sender.o: test_async_sender.cpp.o
 .PHONY : test_async_sender.o
 
@@ -337,6 +351,30 @@ test_stream_fix_parser_2stage.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/test_stream_fix_parser_2stage.cpp.s
 .PHONY : test_stream_fix_parser_2stage.cpp.s
 
+test_stream_fix_parser_improved.o: test_stream_fix_parser_improved.cpp.o
+.PHONY : test_stream_fix_parser_improved.o
+
+# target to build an object file
+test_stream_fix_parser_improved.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/test_stream_fix_parser_improved.cpp.o
+.PHONY : test_stream_fix_parser_improved.cpp.o
+
+test_stream_fix_parser_improved.i: test_stream_fix_parser_improved.cpp.i
+.PHONY : test_stream_fix_parser_improved.i
+
+# target to preprocess a source file
+test_stream_fix_parser_improved.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/test_stream_fix_parser_improved.cpp.i
+.PHONY : test_stream_fix_parser_improved.cpp.i
+
+test_stream_fix_parser_improved.s: test_stream_fix_parser_improved.cpp.s
+.PHONY : test_stream_fix_parser_improved.s
+
+# target to generate assembly for a file
+test_stream_fix_parser_improved.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/test_stream_fix_parser_improved.cpp.s
+.PHONY : test_stream_fix_parser_improved.cpp.s
+
 test_stream_fix_parser_performance.o: test_stream_fix_parser_performance.cpp.o
 .PHONY : test_stream_fix_parser_performance.o
 
@@ -378,6 +416,7 @@ help:
 	@echo "... test_message_manager"
 	@echo "... test_stream_fix_parser"
 	@echo "... test_stream_fix_parser_2stage"
+	@echo "... test_stream_fix_parser_improved"
 	@echo "... test_stream_fix_parser_performance"
 	@echo "... test_async_sender.o"
 	@echo "... test_async_sender.i"
@@ -391,6 +430,9 @@ help:
 	@echo "... test_stream_fix_parser_2stage.o"
 	@echo "... test_stream_fix_parser_2stage.i"
 	@echo "... test_stream_fix_parser_2stage.s"
+	@echo "... test_stream_fix_parser_improved.o"
+	@echo "... test_stream_fix_parser_improved.i"
+	@echo "... test_stream_fix_parser_improved.s"
 	@echo "... test_stream_fix_parser_performance.o"
 	@echo "... test_stream_fix_parser_performance.i"
 	@echo "... test_stream_fix_parser_performance.s"
