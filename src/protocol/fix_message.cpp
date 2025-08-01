@@ -210,6 +210,31 @@ namespace fix_gateway::protocol
         return seqNum;
     }
 
+    // Ultra-fast message type classification
+    FixMsgType FixMessage::getMsgTypeEnum() const
+    {
+        // Check if already cached
+        if (msgTypeCached_)
+        {
+            return cachedMsgType_;
+        }
+
+        // Get message type string pointer (no allocation)
+        const std::string *msgTypePtr = getFieldPtr(FixFields::MsgType);
+        if (!msgTypePtr)
+        {
+            cachedMsgType_ = FixMsgType::UNKNOWN;
+            msgTypeCached_ = true;
+            return cachedMsgType_;
+        }
+
+        // Convert string to enum using ultra-fast character comparison
+        cachedMsgType_ = FixMsgTypeUtils::fromString(msgTypePtr->c_str());
+        msgTypeCached_ = true;
+
+        return cachedMsgType_;
+    }
+
     // Session-level field setters
     void FixMessage::setSenderCompID(const std::string &senderID)
     {
@@ -480,6 +505,10 @@ namespace fix_gateway::protocol
         checksumValid_ = false;
         lengthValid_ = false;
         cachedString_.clear();
+
+        // Invalidate message type cache (Option 3 optimization)
+        msgTypeCached_ = false;
+        cachedMsgType_ = FixMsgType::UNKNOWN;
     }
 
     void FixMessage::touchModified()

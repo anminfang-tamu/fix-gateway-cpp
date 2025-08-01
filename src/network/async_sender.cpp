@@ -9,7 +9,7 @@ namespace fix_gateway::network
 {
     using MessagePtr = fix_gateway::common::MessagePtr;
     using PriorityQueue = fix_gateway::utils::PriorityQueue;
-    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
+    using LockFreeQueue = fix_gateway::utils::LockFreeQueue<MessagePtr>;
     using TcpConnection = fix_gateway::network::TcpConnection;
 
     // Constructor for mutex-based queue (Phase 2)
@@ -35,7 +35,7 @@ namespace fix_gateway::network
     }
 
     // Constructor for lock-free queue (Phase 3)
-    AsyncSender::AsyncSender(std::shared_ptr<LockFreePriorityQueue> lockfree_queue,
+    AsyncSender::AsyncSender(std::shared_ptr<LockFreeQueue> lockfree_queue,
                              std::shared_ptr<TcpConnection> tcp_connection)
         : priority_queue_(nullptr),
           lockfree_queue_(lockfree_queue),
@@ -48,7 +48,7 @@ namespace fix_gateway::network
     {
         if (!lockfree_queue_)
         {
-            throw std::invalid_argument("LockFreePriorityQueue cannot be null");
+            throw std::invalid_argument("LockFreeQueue cannot be null");
         }
         if (!tcp_connection_)
         {

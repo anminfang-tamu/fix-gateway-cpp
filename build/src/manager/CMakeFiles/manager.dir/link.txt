@@ -1,2 +1,2 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libmanager.a CMakeFiles/manager.dir/message_manager.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ar qc libmanager.a CMakeFiles/manager.dir/inbound_message_manager.cpp.o CMakeFiles/manager.dir/outbound_message_manager.cpp.o CMakeFiles/manager.dir/message_router.cpp.o
 /Library/Developer/CommandLineTools/usr/bin/ranlib libmanager.a

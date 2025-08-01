@@ -14,7 +14,7 @@ namespace fix_gateway::network
 {
     using MessagePtr = fix_gateway::common::MessagePtr;
     using PriorityQueue = fix_gateway::utils::PriorityQueue;
-    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
+    using LockFreeQueue = fix_gateway::utils::LockFreeQueue<MessagePtr>;
     using TcpConnection = fix_gateway::network::TcpConnection;
 
     struct SenderStats
@@ -40,7 +40,7 @@ namespace fix_gateway::network
                     std::shared_ptr<TcpConnection> tcp_connection);
 
         // Constructor for lock-free queue (Phase 3)
-        AsyncSender(std::shared_ptr<LockFreePriorityQueue> lockfree_queue,
+        AsyncSender(std::shared_ptr<LockFreeQueue> lockfree_queue,
                     std::shared_ptr<TcpConnection> tcp_connection);
 
         ~AsyncSender();
@@ -77,7 +77,7 @@ namespace fix_gateway::network
 
         // Core components - either mutex-based or lock-free
         std::shared_ptr<PriorityQueue> priority_queue_;
-        std::shared_ptr<LockFreePriorityQueue> lockfree_queue_;
+        std::shared_ptr<LockFreeQueue> lockfree_queue_;
         std::shared_ptr<TcpConnection> tcp_connection_;
         bool use_lockfree_queue_;
 

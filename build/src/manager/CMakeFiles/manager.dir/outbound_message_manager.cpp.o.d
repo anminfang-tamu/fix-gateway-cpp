@@ -1,6 +1,6 @@
-src/manager/CMakeFiles/manager.dir/message_manager.cpp.o: \
-  /Users/anminfang/fix-gateway-cpp/src/manager/message_manager.cpp \
-  /Users/anminfang/fix-gateway-cpp/include/manager/message_manager.h \
+src/manager/CMakeFiles/manager.dir/outbound_message_manager.cpp.o: \
+  /Users/anminfang/fix-gateway-cpp/src/manager/outbound_message_manager.cpp \
+  /Users/anminfang/fix-gateway-cpp/include/manager/outbound_message_manager.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/priority_queue.h \
   /Users/anminfang/fix-gateway-cpp/include/common/message.h \
   /Users/anminfang/fix-gateway-cpp/config/priority_config.h \

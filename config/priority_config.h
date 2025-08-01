@@ -2,8 +2,8 @@
 
 enum class Priority
 {
-    LOW,
-    MEDIUM,
-    HIGH,
-    CRITICAL
+    CRITICAL = 1,
+    HIGH = 2,
+    MEDIUM = 3,
+    LOW = 4,
 };

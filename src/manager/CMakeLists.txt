@@ -2,7 +2,9 @@
 
 # Create manager library
 add_library(manager
-    message_manager.cpp
+    inbound_message_manager.cpp
+    outbound_message_manager.cpp
+    message_router.cpp
 )
 
 # Link dependencies

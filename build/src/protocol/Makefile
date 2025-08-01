@@ -209,6 +209,30 @@ fix_builder.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.s
 .PHONY : fix_builder.cpp.s
 
+fix_fields.o: fix_fields.cpp.o
+.PHONY : fix_fields.o
+
+# target to build an object file
+fix_fields.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o
+.PHONY : fix_fields.cpp.o
+
+fix_fields.i: fix_fields.cpp.i
+.PHONY : fix_fields.i
+
+# target to preprocess a source file
+fix_fields.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.i
+.PHONY : fix_fields.cpp.i
+
+fix_fields.s: fix_fields.cpp.s
+.PHONY : fix_fields.s
+
+# target to generate assembly for a file
+fix_fields.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.s
+.PHONY : fix_fields.cpp.s
+
 fix_message.o: fix_message.cpp.o
 .PHONY : fix_message.o
 
@@ -274,6 +298,9 @@ help:
 	@echo "... fix_builder.o"
 	@echo "... fix_builder.i"
 	@echo "... fix_builder.s"
+	@echo "... fix_fields.o"
+	@echo "... fix_fields.i"
+	@echo "... fix_fields.s"
 	@echo "... fix_message.o"
 	@echo "... fix_message.i"
 	@echo "... fix_message.s"

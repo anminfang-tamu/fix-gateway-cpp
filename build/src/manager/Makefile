@@ -185,29 +185,77 @@ manager/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
 .PHONY : manager/fast
 
-message_manager.o: message_manager.cpp.o
-.PHONY : message_manager.o
+inbound_message_manager.o: inbound_message_manager.cpp.o
+.PHONY : inbound_message_manager.o
 
 # target to build an object file
-message_manager.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.o
-.PHONY : message_manager.cpp.o
+inbound_message_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.o
+.PHONY : inbound_message_manager.cpp.o
 
-message_manager.i: message_manager.cpp.i
-.PHONY : message_manager.i
+inbound_message_manager.i: inbound_message_manager.cpp.i
+.PHONY : inbound_message_manager.i
 
 # target to preprocess a source file
-message_manager.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.i
-.PHONY : message_manager.cpp.i
+inbound_message_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.i
+.PHONY : inbound_message_manager.cpp.i
 
-message_manager.s: message_manager.cpp.s
-.PHONY : message_manager.s
+inbound_message_manager.s: inbound_message_manager.cpp.s
+.PHONY : inbound_message_manager.s
 
 # target to generate assembly for a file
-message_manager.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.s
-.PHONY : message_manager.cpp.s
+inbound_message_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.s
+.PHONY : inbound_message_manager.cpp.s
+
+message_router.o: message_router.cpp.o
+.PHONY : message_router.o
+
+# target to build an object file
+message_router.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.o
+.PHONY : message_router.cpp.o
+
+message_router.i: message_router.cpp.i
+.PHONY : message_router.i
+
+# target to preprocess a source file
+message_router.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.i
+.PHONY : message_router.cpp.i
+
+message_router.s: message_router.cpp.s
+.PHONY : message_router.s
+
+# target to generate assembly for a file
+message_router.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.s
+.PHONY : message_router.cpp.s
+
+outbound_message_manager.o: outbound_message_manager.cpp.o
+.PHONY : outbound_message_manager.o
+
+# target to build an object file
+outbound_message_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/outbound_message_manager.cpp.o
+.PHONY : outbound_message_manager.cpp.o
+
+outbound_message_manager.i: outbound_message_manager.cpp.i
+.PHONY : outbound_message_manager.i
+
+# target to preprocess a source file
+outbound_message_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/outbound_message_manager.cpp.i
+.PHONY : outbound_message_manager.cpp.i
+
+outbound_message_manager.s: outbound_message_manager.cpp.s
+.PHONY : outbound_message_manager.s
+
+# target to generate assembly for a file
+outbound_message_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/outbound_message_manager.cpp.s
+.PHONY : outbound_message_manager.cpp.s
 
 # Help Target
 help:
@@ -223,9 +271,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... manager"
-	@echo "... message_manager.o"
-	@echo "... message_manager.i"
-	@echo "... message_manager.s"
+	@echo "... inbound_message_manager.o"
+	@echo "... inbound_message_manager.i"
+	@echo "... inbound_message_manager.s"
+	@echo "... message_router.o"
+	@echo "... message_router.i"
+	@echo "... message_router.s"
+	@echo "... outbound_message_manager.o"
+	@echo "... outbound_message_manager.i"
+	@echo "... outbound_message_manager.s"
 .PHONY : help
 
 

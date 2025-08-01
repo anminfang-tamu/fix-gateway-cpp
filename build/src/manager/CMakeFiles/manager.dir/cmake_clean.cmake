@@ -1,6 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/manager.dir/message_manager.cpp.o"
-  "CMakeFiles/manager.dir/message_manager.cpp.o.d"
+  "CMakeFiles/manager.dir/inbound_message_manager.cpp.o"
+  "CMakeFiles/manager.dir/inbound_message_manager.cpp.o.d"
+  "CMakeFiles/manager.dir/message_router.cpp.o"
+  "CMakeFiles/manager.dir/message_router.cpp.o.d"
+  "CMakeFiles/manager.dir/outbound_message_manager.cpp.o"
+  "CMakeFiles/manager.dir/outbound_message_manager.cpp.o.d"
   "libmanager.a"
   "libmanager.pdb"
 )

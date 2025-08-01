@@ -185,30 +185,6 @@ utils/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/build
 .PHONY : utils/fast
 
-lockfree_priority_queue.o: lockfree_priority_queue.cpp.o
-.PHONY : lockfree_priority_queue.o
-
-# target to build an object file
-lockfree_priority_queue.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.o
-.PHONY : lockfree_priority_queue.cpp.o
-
-lockfree_priority_queue.i: lockfree_priority_queue.cpp.i
-.PHONY : lockfree_priority_queue.i
-
-# target to preprocess a source file
-lockfree_priority_queue.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.i
-.PHONY : lockfree_priority_queue.cpp.i
-
-lockfree_priority_queue.s: lockfree_priority_queue.cpp.s
-.PHONY : lockfree_priority_queue.s
-
-# target to generate assembly for a file
-lockfree_priority_queue.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.s
-.PHONY : lockfree_priority_queue.cpp.s
-
 logger.o: logger.cpp.o
 .PHONY : logger.o
 
@@ -343,9 +319,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... utils"
-	@echo "... lockfree_priority_queue.o"
-	@echo "... lockfree_priority_queue.i"
-	@echo "... lockfree_priority_queue.s"
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"

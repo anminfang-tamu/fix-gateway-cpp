@@ -1,4 +1,4 @@
-#include "manager/message_manager.h"
+#include "manager/outbound_message_manager.h"
 #include "common/message.h"
 #include <iostream>
 #include <chrono>
@@ -15,15 +15,15 @@ void testMessageManagerBasicFunctionality()
     std::cout << "\n=== Testing MessageManager Basic Functionality ===" << std::endl;
 
     // Test factory configurations
-    auto m1_config = MessageManagerFactory::createM1MaxConfig();
-    auto default_config = MessageManagerFactory::createDefaultConfig();
-    auto low_latency_config = MessageManagerFactory::createLowLatencyConfig();
-    auto high_throughput_config = MessageManagerFactory::createHighThroughputConfig();
+    auto m1_config = OutboundMessageManagerFactory::createM1MaxConfig();
+    auto default_config = OutboundMessageManagerFactory::createDefaultConfig();
+    auto low_latency_config = OutboundMessageManagerFactory::createLowLatencyConfig();
+    auto high_throughput_config = OutboundMessageManagerFactory::createHighThroughputConfig();
 
     std::cout << "✅ Factory configurations created successfully" << std::endl;
 
     // Test MessageManager creation
-    MessageManager manager(m1_config);
+    OutboundMessageManager manager(m1_config);
     std::cout << "✅ MessageManager created with M1 Max config" << std::endl;
 
     // Test status before start
@@ -36,10 +36,10 @@ void testMessageManagerLifecycle()
 {
     std::cout << "\n=== Testing MessageManager Lifecycle ===" << std::endl;
 
-    auto config = MessageManagerFactory::createDefaultConfig();
+    auto config = OutboundMessageManagerFactory::createDefaultConfig();
     config.enable_core_pinning = false; // Disable for testing
 
-    MessageManager manager(config);
+    OutboundMessageManager manager(config);
 
     // Test start
     manager.start();
@@ -61,10 +61,10 @@ void testMessageRouting()
 {
     std::cout << "\n=== Testing Message Routing ===" << std::endl;
 
-    auto config = MessageManagerFactory::createDefaultConfig();
+    auto config = OutboundMessageManagerFactory::createDefaultConfig();
     config.enable_core_pinning = false; // Disable for testing
 
-    MessageManager manager(config);
+    OutboundMessageManager manager(config);
     manager.start();
 
     // Create messages with different priorities
@@ -102,10 +102,10 @@ void testPerformanceStats()
 {
     std::cout << "\n=== Testing Performance Stats ===" << std::endl;
 
-    auto config = MessageManagerFactory::createDefaultConfig();
+    auto config = OutboundMessageManagerFactory::createDefaultConfig();
     config.enable_core_pinning = false;
 
-    MessageManager manager(config);
+    OutboundMessageManager manager(config);
     manager.start();
 
     // Route some messages
@@ -141,9 +141,9 @@ void testCorePinningCapabilities()
     std::cout << "\n=== Testing Core Pinning Capabilities ===" << std::endl;
 
     // Test hardware detection
-    int perf_cores = MessageManagerFactory::detectPerformanceCores();
-    auto optimal_assignment = MessageManagerFactory::getOptimalCoreAssignment();
-    bool rt_supported = MessageManagerFactory::isRealTimePrioritySupported();
+    int perf_cores = OutboundMessageManagerFactory::detectPerformanceCores();
+    auto optimal_assignment = OutboundMessageManagerFactory::getOptimalCoreAssignment();
+    bool rt_supported = OutboundMessageManagerFactory::isRealTimePrioritySupported();
 
     std::cout << "🖥️  Hardware Detection:" << std::endl;
     std::cout << "   Performance cores: " << perf_cores << std::endl;
@@ -156,11 +156,11 @@ void testCorePinningCapabilities()
     std::cout << "   Real-time priority supported: " << (rt_supported ? "Yes" : "No") << std::endl;
 
     // Test core pinning config
-    auto config = MessageManagerFactory::createM1MaxConfig();
+    auto config = OutboundMessageManagerFactory::createM1MaxConfig();
     config.enable_core_pinning = true;
     config.enable_real_time_priority = false; // Don't require root for test
 
-    MessageManager manager(config);
+    OutboundMessageManager manager(config);
     std::cout << "✅ Core-pinned MessageManager created" << std::endl;
 
     // Start with core pinning (will show pinning attempts in logs)
@@ -179,7 +179,7 @@ void testTcpConnectionManagement()
 {
     std::cout << "\n=== Testing TCP Connection Management ===" << std::endl;
 
-    MessageManager manager;
+    OutboundMessageManager manager;
     manager.start();
 
     // Test connection attempt (will fail since no server is running)
@@ -206,15 +206,15 @@ void testConfigurationOptions()
     struct ConfigTest
     {
         std::string name;
-        MessageManager::CorePinningConfig config;
+        OutboundMessageManager::CorePinningConfig config;
     };
 
     std::vector<ConfigTest> configs = {
-        {"M1 Max", MessageManagerFactory::createM1MaxConfig()},
-        {"Intel", MessageManagerFactory::createIntelConfig()},
-        {"Default", MessageManagerFactory::createDefaultConfig()},
-        {"Low Latency", MessageManagerFactory::createLowLatencyConfig()},
-        {"High Throughput", MessageManagerFactory::createHighThroughputConfig()}};
+        {"M1 Max", OutboundMessageManagerFactory::createM1MaxConfig()},
+        {"Intel", OutboundMessageManagerFactory::createIntelConfig()},
+        {"Default", OutboundMessageManagerFactory::createDefaultConfig()},
+        {"Low Latency", OutboundMessageManagerFactory::createLowLatencyConfig()},
+        {"High Throughput", OutboundMessageManagerFactory::createHighThroughputConfig()}};
 
     for (const auto &test : configs)
     {
@@ -225,7 +225,7 @@ void testConfigurationOptions()
         std::cout << "   Real-time priority: " << (test.config.enable_real_time_priority ? "Enabled" : "Disabled") << std::endl;
 
         // Test that MessageManager can be created with each config
-        MessageManager manager(test.config);
+        OutboundMessageManager manager(test.config);
         std::cout << "   ✅ MessageManager created successfully" << std::endl;
     }
 }

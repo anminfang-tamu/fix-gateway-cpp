@@ -1,6 +1,6 @@
 CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o: \
   /Users/anminfang/fix-gateway-cpp/demos/lockfree_demo.cpp \
-  /Users/anminfang/fix-gateway-cpp/include/manager/message_manager.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/outbound_message_manager.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/priority_queue.h \
   /Users/anminfang/fix-gateway-cpp/include/common/message.h \
   /Users/anminfang/fix-gateway-cpp/config/priority_config.h \

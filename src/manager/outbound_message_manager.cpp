@@ -1,4 +1,4 @@
-#include "message_manager.h"
+#include "outbound_message_manager.h"
 #include "utils/logger.h"
 #include <iostream>
 #include <sstream>
@@ -22,7 +22,7 @@
 namespace fix_gateway::manager
 {
     // Constructor with config
-    MessageManager::MessageManager(const CorePinningConfig &config)
+    OutboundMessageManager::OutboundMessageManager(const CorePinningConfig &config)
         : config_(config),
           running_(false),
           shutdown_requested_(false)
@@ -41,7 +41,7 @@ namespace fix_gateway::manager
     }
 
     // Default constructor
-    MessageManager::MessageManager()
+    OutboundMessageManager::OutboundMessageManager()
         : running_(false),
           shutdown_requested_(false)
     {
@@ -67,7 +67,7 @@ namespace fix_gateway::manager
     }
 
     // Destructor
-    MessageManager::~MessageManager()
+    OutboundMessageManager::~OutboundMessageManager()
     {
         if (running_.load())
         {
@@ -77,7 +77,7 @@ namespace fix_gateway::manager
     }
 
     // Lifecycle management
-    void MessageManager::start()
+    void OutboundMessageManager::start()
     {
         if (running_.load())
         {
@@ -104,7 +104,7 @@ namespace fix_gateway::manager
         }
     }
 
-    void MessageManager::stop()
+    void OutboundMessageManager::stop()
     {
         if (!running_.load())
         {
@@ -125,7 +125,7 @@ namespace fix_gateway::manager
         std::cout << "[MessageManager] Stopped" << std::endl;
     }
 
-    void MessageManager::shutdown(std::chrono::seconds timeout)
+    void OutboundMessageManager::shutdown(std::chrono::seconds timeout)
     {
         shutdown_requested_.store(true);
         std::cout << "[MessageManager] Shutdown requested with timeout: "
@@ -144,7 +144,7 @@ namespace fix_gateway::manager
 
     // Core message management functionality
     // dispatch message to the correct priority queue
-    bool MessageManager::routeMessage(MessagePtr message)
+    bool OutboundMessageManager::routeMessage(MessagePtr message)
     {
         if (!running_.load() || !message)
         {
@@ -164,17 +164,17 @@ namespace fix_gateway::manager
     }
 
     // Status and monitoring
-    bool MessageManager::isRunning() const
+    bool OutboundMessageManager::isRunning() const
     {
         return running_.load();
     }
 
-    bool MessageManager::isConnected() const
+    bool OutboundMessageManager::isConnected() const
     {
         return tcp_connection_ && tcp_connection_->isConnected();
     }
 
-    MessageManager::PerformanceStats MessageManager::getStats() const
+    OutboundMessageManager::PerformanceStats OutboundMessageManager::getStats() const
     {
         PerformanceStats stats;
 
@@ -226,7 +226,7 @@ namespace fix_gateway::manager
         return stats;
     }
 
-    SenderStats MessageManager::getStatsForPriority(Priority priority) const
+    SenderStats OutboundMessageManager::getStatsForPriority(Priority priority) const
     {
         auto it = async_senders_.find(priority);
         if (it != async_senders_.end() && it->second)
@@ -237,14 +237,14 @@ namespace fix_gateway::manager
     }
 
     // Configuration
-    void MessageManager::setCoreAffinity(Priority priority, int core_id)
+    void OutboundMessageManager::setCoreAffinity(Priority priority, int core_id)
     {
         priority_to_core_[priority] = core_id;
         std::cout << "[MessageManager] Set core affinity for priority "
                   << static_cast<int>(priority) << " to core " << core_id << std::endl;
     }
 
-    void MessageManager::setRealTimePriority(Priority priority, bool enable)
+    void OutboundMessageManager::setRealTimePriority(Priority priority, bool enable)
     {
         // Update config
         config_.enable_real_time_priority = enable;
@@ -253,7 +253,7 @@ namespace fix_gateway::manager
     }
 
     // Monitoring
-    std::vector<size_t> MessageManager::getQueueDepths() const
+    std::vector<size_t> OutboundMessageManager::getQueueDepths() const
     {
         std::vector<size_t> depths;
         depths.reserve(4); // 4 priority levels
@@ -266,12 +266,12 @@ namespace fix_gateway::manager
         return depths;
     }
 
-    size_t MessageManager::getQueueDepthForPriority(Priority priority) const
+    size_t OutboundMessageManager::getQueueDepthForPriority(Priority priority) const
     {
         return getQueueSize(priority);
     }
 
-    bool MessageManager::areAllCoresConnected() const
+    bool OutboundMessageManager::areAllCoresConnected() const
     {
         if (!isConnected())
         {
@@ -291,7 +291,7 @@ namespace fix_gateway::manager
     }
 
     // Connection management
-    bool MessageManager::connectToServer(const std::string &host, int port)
+    bool OutboundMessageManager::connectToServer(const std::string &host, int port)
     {
         if (!tcp_connection_)
         {
@@ -311,7 +311,7 @@ namespace fix_gateway::manager
         return success;
     }
 
-    void MessageManager::disconnectFromServer()
+    void OutboundMessageManager::disconnectFromServer()
     {
         if (tcp_connection_)
         {
@@ -321,13 +321,13 @@ namespace fix_gateway::manager
     }
 
     // Private helper methods
-    void MessageManager::createTcpConnection()
+    void OutboundMessageManager::createTcpConnection()
     {
         tcp_connection_ = std::make_shared<TcpConnection>();
         std::cout << "[MessageManager] Created shared TCP connection" << std::endl;
     }
 
-    void MessageManager::createQueuesAndSenders()
+    void OutboundMessageManager::createQueuesAndSenders()
     {
         std::cout << "[MessageManager] Creating queues and senders..." << std::endl;
         std::cout << "[MessageManager] Queue type: " << getQueueTypeString() << std::endl;
@@ -359,16 +359,16 @@ namespace fix_gateway::manager
         else // LOCK_FREE
         {
             // Create lock-free priority queues
-            lockfree_queues_[Priority::CRITICAL] = std::make_shared<LockFreePriorityQueue>(
+            lockfree_queues_[Priority::CRITICAL] = std::make_shared<LockFreeQueue>(
                 config_.critical_queue_size, "critical_lockfree_queue");
 
-            lockfree_queues_[Priority::HIGH] = std::make_shared<LockFreePriorityQueue>(
+            lockfree_queues_[Priority::HIGH] = std::make_shared<LockFreeQueue>(
                 config_.high_queue_size, "high_lockfree_queue");
 
-            lockfree_queues_[Priority::MEDIUM] = std::make_shared<LockFreePriorityQueue>(
+            lockfree_queues_[Priority::MEDIUM] = std::make_shared<LockFreeQueue>(
                 config_.medium_queue_size, "medium_lockfree_queue");
 
-            lockfree_queues_[Priority::LOW] = std::make_shared<LockFreePriorityQueue>(
+            lockfree_queues_[Priority::LOW] = std::make_shared<LockFreeQueue>(
                 config_.low_queue_size, "low_lockfree_queue");
 
             // Create AsyncSenders with lock-free queues
@@ -382,12 +382,12 @@ namespace fix_gateway::manager
         }
     }
 
-    void MessageManager::startAsyncSenders()
+    void OutboundMessageManager::startAsyncSenders()
     {
         std::cout << "[MessageManager] Starting AsyncSenders..." << std::endl;
 
         // Print system information
-        int detected_cores = MessageManagerFactory::detectPerformanceCores();
+        int detected_cores = OutboundMessageManagerFactory::detectPerformanceCores();
         std::cout << "[MessageManager] Detected " << detected_cores << " performance cores" << std::endl;
 
 #ifdef __APPLE__
@@ -455,7 +455,7 @@ namespace fix_gateway::manager
         std::cout << "[MessageManager] All AsyncSenders started" << std::endl;
     }
 
-    void MessageManager::stopAsyncSenders()
+    void OutboundMessageManager::stopAsyncSenders()
     {
         std::cout << "[MessageManager] Stopping AsyncSenders..." << std::endl;
 
@@ -470,7 +470,7 @@ namespace fix_gateway::manager
         std::cout << "[MessageManager] All AsyncSenders stopped" << std::endl;
     }
 
-    bool MessageManager::pinThreadToCore(std::thread &thread, int core_id)
+    bool OutboundMessageManager::pinThreadToCore(std::thread &thread, int core_id)
     {
         // Platform-specific implementation
 #ifdef __APPLE__
@@ -541,7 +541,7 @@ namespace fix_gateway::manager
 #endif
     }
 
-    bool MessageManager::setThreadQoSClass(std::thread &thread, int core_id)
+    bool OutboundMessageManager::setThreadQoSClass(std::thread &thread, int core_id)
     {
 #ifdef __APPLE__
         // Alternative approach using QoS classes for macOS
@@ -595,7 +595,7 @@ namespace fix_gateway::manager
 #endif
     }
 
-    bool MessageManager::setThreadRealTimePriority(std::thread &thread)
+    bool OutboundMessageManager::setThreadRealTimePriority(std::thread &thread)
     {
         if (!config_.enable_real_time_priority)
         {
@@ -643,13 +643,13 @@ namespace fix_gateway::manager
 #endif
     }
 
-    Priority MessageManager::getMessagePriority(MessagePtr message) const
+    Priority OutboundMessageManager::getMessagePriority(MessagePtr message) const
     {
         return message ? message->getPriority() : Priority::LOW;
     }
 
     // Queue interface abstraction methods
-    bool MessageManager::pushToQueue(Priority priority, MessagePtr message)
+    bool OutboundMessageManager::pushToQueue(Priority priority, MessagePtr message)
     {
         if (config_.queue_type == QueueType::MUTEX_BASED)
         {
@@ -670,7 +670,7 @@ namespace fix_gateway::manager
         return false;
     }
 
-    size_t MessageManager::getQueueSize(Priority priority) const
+    size_t OutboundMessageManager::getQueueSize(Priority priority) const
     {
         if (config_.queue_type == QueueType::MUTEX_BASED)
         {
@@ -684,7 +684,7 @@ namespace fix_gateway::manager
         }
     }
 
-    std::string MessageManager::getQueueTypeString() const
+    std::string OutboundMessageManager::getQueueTypeString() const
     {
         switch (config_.queue_type)
         {
@@ -697,7 +697,7 @@ namespace fix_gateway::manager
         }
     }
 
-    size_t MessageManager::getQueueSizeForPriority(Priority priority) const
+    size_t OutboundMessageManager::getQueueSizeForPriority(Priority priority) const
     {
         switch (priority)
         {
@@ -714,16 +714,16 @@ namespace fix_gateway::manager
         }
     }
 
-    int MessageManager::getCoreForPriority(Priority priority) const
+    int OutboundMessageManager::getCoreForPriority(Priority priority) const
     {
         auto it = priority_to_core_.find(priority);
         return (it != priority_to_core_.end()) ? it->second : 0;
     }
 
     // MessageManagerFactory Implementation
-    MessageManager::CorePinningConfig MessageManagerFactory::createM1MaxConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createM1MaxConfig()
     {
-        MessageManager::CorePinningConfig config;
+        OutboundMessageManager::CorePinningConfig config;
 
         // M1 Max has 8 performance cores + 2 efficiency cores
         // Use performance cores for trading
@@ -745,9 +745,9 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createIntelConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createIntelConfig()
     {
-        MessageManager::CorePinningConfig config;
+        OutboundMessageManager::CorePinningConfig config;
 
         // Generic Intel configuration
         config.critical_core = 0;
@@ -767,9 +767,9 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createDefaultConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createDefaultConfig()
     {
-        MessageManager::CorePinningConfig config;
+        OutboundMessageManager::CorePinningConfig config;
 
         // Safe defaults that work everywhere
         config.critical_core = 0;
@@ -789,7 +789,7 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createLowLatencyConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLowLatencyConfig()
     {
         auto config = createM1MaxConfig(); // Start with hardware-optimized
 
@@ -804,7 +804,7 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createHighThroughputConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createHighThroughputConfig()
     {
         auto config = createM1MaxConfig(); // Start with hardware-optimized
 
@@ -817,12 +817,12 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createLockFreeConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLockFreeConfig()
     {
         auto config = createDefaultConfig();
 
         // Enable lock-free queues
-        config.queue_type = MessageManager::QueueType::LOCK_FREE;
+        config.queue_type = OutboundMessageManager::QueueType::LOCK_FREE;
 
         // Optimize queue sizes for lock-free (power of 2)
         config.critical_queue_size = 512; // 2^9
@@ -833,12 +833,12 @@ namespace fix_gateway::manager
         return config;
     }
 
-    MessageManager::CorePinningConfig MessageManagerFactory::createLockFreeM1MaxConfig()
+    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLockFreeM1MaxConfig()
     {
         auto config = createM1MaxConfig(); // Start with M1 Max hardware config
 
         // Enable lock-free queues
-        config.queue_type = MessageManager::QueueType::LOCK_FREE;
+        config.queue_type = OutboundMessageManager::QueueType::LOCK_FREE;
 
         // Optimize for M1 Max with lock-free queues
         config.critical_queue_size = 256; // 2^8 - Ultra low latency
@@ -853,7 +853,7 @@ namespace fix_gateway::manager
         return config;
     }
 
-    int MessageManagerFactory::detectPerformanceCores()
+    int OutboundMessageManagerFactory::detectPerformanceCores()
     {
 #ifdef __APPLE__
         // M1 Max typically has 8 performance cores
@@ -864,7 +864,7 @@ namespace fix_gateway::manager
 #endif
     }
 
-    std::vector<int> MessageManagerFactory::getOptimalCoreAssignment()
+    std::vector<int> OutboundMessageManagerFactory::getOptimalCoreAssignment()
     {
         int num_cores = detectPerformanceCores();
         std::vector<int> assignment;
@@ -878,7 +878,7 @@ namespace fix_gateway::manager
         return assignment;
     }
 
-    bool MessageManagerFactory::isRealTimePrioritySupported()
+    bool OutboundMessageManagerFactory::isRealTimePrioritySupported()
     {
         // Real-time priority typically requires root privileges
         return getuid() == 0; // Check if running as root

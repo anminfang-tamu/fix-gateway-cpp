@@ -16,10 +16,10 @@
 
 namespace fix_gateway::manager
 {
-    using PriorityQueue = fix_gateway::utils::PriorityQueue;
-    using LockFreePriorityQueue = fix_gateway::utils::LockFreePriorityQueue;
-    using TcpConnection = fix_gateway::network::TcpConnection;
     using MessagePtr = fix_gateway::common::MessagePtr;
+    using PriorityQueue = fix_gateway::utils::PriorityQueue;
+    using LockFreeQueue = fix_gateway::utils::LockFreeQueue<MessagePtr>;
+    using TcpConnection = fix_gateway::network::TcpConnection;
     using AsyncSender = fix_gateway::network::AsyncSender;
     using SenderStats = fix_gateway::network::SenderStats;
 
@@ -38,7 +38,7 @@ namespace fix_gateway::manager
      *
      * Phase 3 Enhancement: Lock-free queue support for sub-10μs latency
      */
-    class MessageManager
+    class OutboundMessageManager
     {
     public:
         enum class QueueType
@@ -98,9 +98,9 @@ namespace fix_gateway::manager
         };
 
     public:
-        explicit MessageManager(const CorePinningConfig &config);
-        explicit MessageManager(); // Default constructor
-        ~MessageManager();
+        explicit OutboundMessageManager(const CorePinningConfig &config);
+        explicit OutboundMessageManager(); // Default constructor
+        ~OutboundMessageManager();
 
         // Lifecycle management
         void start();
@@ -142,7 +142,7 @@ namespace fix_gateway::manager
 
         // Per-priority queues and senders - supports both mutex-based and lock-free
         std::unordered_map<Priority, std::shared_ptr<PriorityQueue>> priority_queues_;
-        std::unordered_map<Priority, std::shared_ptr<LockFreePriorityQueue>> lockfree_queues_;
+        std::unordered_map<Priority, std::shared_ptr<LockFreeQueue>> lockfree_queues_;
         std::unordered_map<Priority, std::unique_ptr<AsyncSender>> async_senders_;
 
         // Core management
@@ -177,21 +177,21 @@ namespace fix_gateway::manager
     /**
      * @brief Factory for creating optimized message managers
      */
-    class MessageManagerFactory
+    class OutboundMessageManagerFactory
     {
     public:
         // Pre-configured setups for different hardware
-        static MessageManager::CorePinningConfig createM1MaxConfig();
-        static MessageManager::CorePinningConfig createIntelConfig();
-        static MessageManager::CorePinningConfig createDefaultConfig();
+        static OutboundMessageManager::CorePinningConfig createM1MaxConfig();
+        static OutboundMessageManager::CorePinningConfig createIntelConfig();
+        static OutboundMessageManager::CorePinningConfig createDefaultConfig();
 
         // Trading environment specific configs
-        static MessageManager::CorePinningConfig createLowLatencyConfig();
-        static MessageManager::CorePinningConfig createHighThroughputConfig();
+        static OutboundMessageManager::CorePinningConfig createLowLatencyConfig();
+        static OutboundMessageManager::CorePinningConfig createHighThroughputConfig();
 
         // Phase 3: Lock-free configurations
-        static MessageManager::CorePinningConfig createLockFreeConfig();
-        static MessageManager::CorePinningConfig createLockFreeM1MaxConfig();
+        static OutboundMessageManager::CorePinningConfig createLockFreeConfig();
+        static OutboundMessageManager::CorePinningConfig createLockFreeM1MaxConfig();
 
         // Hardware detection
         static int detectPerformanceCores();

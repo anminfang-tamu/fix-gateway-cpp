@@ -1,4 +1,4 @@
-#include "manager/message_manager.h"
+#include "manager/outbound_message_manager.h"
 #include "common/message.h"
 #include "utils/performance_timer.h"
 #include <iostream>
@@ -17,8 +17,8 @@ int main()
     // Test 1: Basic functionality - mutex-based
     std::cout << "Test 1: Basic Mutex-Based Queue Test" << std::endl;
     {
-        auto config = manager::MessageManagerFactory::createM1MaxConfig();
-        manager::MessageManager messageManager(config);
+        auto config = manager::OutboundMessageManagerFactory::createM1MaxConfig();
+        manager::OutboundMessageManager messageManager(config);
 
         std::cout << "Queue Type: " << messageManager.getQueueTypeString() << std::endl;
 
@@ -75,8 +75,8 @@ int main()
     // Test 2: Basic functionality - lock-free
     std::cout << "Test 2: Basic Lock-Free Queue Test" << std::endl;
     {
-        auto config = manager::MessageManagerFactory::createLockFreeM1MaxConfig();
-        manager::MessageManager messageManager(config);
+        auto config = manager::OutboundMessageManagerFactory::createLockFreeM1MaxConfig();
+        manager::OutboundMessageManager messageManager(config);
 
         std::cout << "Queue Type: " << messageManager.getQueueTypeString() << std::endl;
 
@@ -135,14 +135,14 @@ int main()
     const int NUM_MESSAGES = 1000;
     const int NUM_ITERATIONS = 3;
 
-    auto test_performance = [](const manager::MessageManager::CorePinningConfig &config,
+    auto test_performance = [](const manager::OutboundMessageManager::CorePinningConfig &config,
                                const std::string &name) -> double
     {
         double total_time = 0.0;
 
         for (int iter = 0; iter < NUM_ITERATIONS; ++iter)
         {
-            manager::MessageManager messageManager(config);
+            manager::OutboundMessageManager messageManager(config);
             messageManager.start();
 
             // Create messages
@@ -184,8 +184,8 @@ int main()
     };
 
     // Test both configurations
-    auto mutex_config = manager::MessageManagerFactory::createM1MaxConfig();
-    auto lockfree_config = manager::MessageManagerFactory::createLockFreeM1MaxConfig();
+    auto mutex_config = manager::OutboundMessageManagerFactory::createM1MaxConfig();
+    auto lockfree_config = manager::OutboundMessageManagerFactory::createLockFreeM1MaxConfig();
 
     std::cout << "\nMutex-based performance:" << std::endl;
     double mutex_avg = test_performance(mutex_config, "Mutex");

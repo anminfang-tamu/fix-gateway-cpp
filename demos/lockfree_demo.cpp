@@ -1,4 +1,4 @@
-#include "manager/message_manager.h"
+#include "manager/outbound_message_manager.h"
 #include "common/message.h"
 #include "utils/performance_timer.h"
 #include <iostream>
@@ -39,19 +39,19 @@ private:
     void testBasicFunctionality()
     {
         std::cout << "Testing mutex-based queues..." << std::endl;
-        testQueueType(manager::MessageManagerFactory::createM1MaxConfig());
+        testQueueType(manager::OutboundMessageManagerFactory::createM1MaxConfig());
 
         std::cout << std::endl;
         std::cout << "Testing lock-free queues..." << std::endl;
-        testQueueType(manager::MessageManagerFactory::createLockFreeM1MaxConfig());
+        testQueueType(manager::OutboundMessageManagerFactory::createLockFreeM1MaxConfig());
     }
 
-    void testQueueType(const manager::MessageManager::CorePinningConfig &config)
+    void testQueueType(const manager::OutboundMessageManager::CorePinningConfig &config)
     {
         try
         {
             // Create message manager
-            manager::MessageManager messageManager(config);
+            manager::OutboundMessageManager messageManager(config);
 
             std::cout << "  Queue Type: " << messageManager.getQueueTypeString() << std::endl;
 
@@ -124,11 +124,11 @@ private:
         std::cout << "Comparing performance with " << NUM_MESSAGES << " messages x " << NUM_ITERATIONS << " iterations:" << std::endl;
 
         // Test mutex-based performance
-        auto mutex_config = manager::MessageManagerFactory::createM1MaxConfig();
+        auto mutex_config = manager::OutboundMessageManagerFactory::createM1MaxConfig();
         double mutex_avg_time = measurePerformance(mutex_config, NUM_MESSAGES, NUM_ITERATIONS);
 
         // Test lock-free performance
-        auto lockfree_config = manager::MessageManagerFactory::createLockFreeM1MaxConfig();
+        auto lockfree_config = manager::OutboundMessageManagerFactory::createLockFreeM1MaxConfig();
         double lockfree_avg_time = measurePerformance(lockfree_config, NUM_MESSAGES, NUM_ITERATIONS);
 
         // Calculate improvement
@@ -142,7 +142,7 @@ private:
         std::cout << "  Speedup:      " << (mutex_avg_time / lockfree_avg_time) << "x" << std::endl;
     }
 
-    double measurePerformance(const manager::MessageManager::CorePinningConfig &config,
+    double measurePerformance(const manager::OutboundMessageManager::CorePinningConfig &config,
                               int num_messages, int num_iterations)
     {
         double total_time = 0.0;
@@ -151,7 +151,7 @@ private:
         {
             try
             {
-                manager::MessageManager messageManager(config);
+                manager::OutboundMessageManager messageManager(config);
                 messageManager.start();
 
                 // Create messages
@@ -203,8 +203,8 @@ private:
 
         try
         {
-            auto config = manager::MessageManagerFactory::createLockFreeM1MaxConfig();
-            manager::MessageManager messageManager(config);
+            auto config = manager::OutboundMessageManagerFactory::createLockFreeM1MaxConfig();
+            manager::OutboundMessageManager messageManager(config);
             messageManager.start();
 
             std::vector<std::thread> threads;
