@@ -1,7 +1,7 @@
 #pragma once
 
 #include "utils/priority_queue.h"
-#include "utils/lockfree_priority_queue.h"
+#include "utils/lockfree_queue.h"
 #include "network/tcp_connection.h"
 #include "network/async_sender.h"
 #include "common/message.h"

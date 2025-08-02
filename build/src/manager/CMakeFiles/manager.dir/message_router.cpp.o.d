@@ -1,7 +1,7 @@
 src/manager/CMakeFiles/manager.dir/message_router.cpp.o: \
   /Users/anminfang/fix-gateway-cpp/src/manager/message_router.cpp \
   /Users/anminfang/fix-gateway-cpp/include/manager/message_router.h \
-  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_priority_queue.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h \
   /Users/anminfang/fix-gateway-cpp/include/common/message.h \
   /Users/anminfang/fix-gateway-cpp/config/priority_config.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/string \

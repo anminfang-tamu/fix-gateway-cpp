@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/lockfree_priority_queue.h"
+#include "utils/lockfree_queue.h"
 #include "protocol/fix_message.h"
 #include "../../config/priority_config.h"
 
