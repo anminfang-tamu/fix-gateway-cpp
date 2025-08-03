@@ -827,7 +827,7 @@ src/network/CMakeFiles/network.dir/async_sender.cpp.o: /Users/anminfang/fix-gate
   /Users/anminfang/fix-gateway-cpp/include/common/message.h \
   /Users/anminfang/fix-gateway-cpp/include/network/async_sender.h \
   /Users/anminfang/fix-gateway-cpp/include/network/tcp_connection.h \
-  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_priority_queue.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/performance_timer.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/priority_queue.h
@@ -1723,6 +1723,8 @@ src/network/CMakeFiles/network.dir/tcp_connection.cpp.o: /Users/anminfang/fix-ga
 /Users/anminfang/fix-gateway-cpp/include/utils/performance_timer.h:
 
 /Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h:
+
+/Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h:
 
 /Users/anminfang/fix-gateway-cpp/include/network/tcp_connection.h:
 
@@ -2891,8 +2893,6 @@ src/network/CMakeFiles/network.dir/tcp_connection.cpp.o: /Users/anminfang/fix-ga
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__atomic/memory_order.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__type_traits/is_polymorphic.h:
-
-/Users/anminfang/fix-gateway-cpp/include/utils/lockfree_priority_queue.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__bit/blsr.h:
 

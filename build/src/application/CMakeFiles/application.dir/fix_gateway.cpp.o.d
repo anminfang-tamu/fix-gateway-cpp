@@ -831,6 +831,13 @@ src/application/CMakeFiles/application.dir/fix_gateway.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/map \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__tree \
+  /Users/anminfang/fix-gateway-cpp/include/manager/message_router.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/../application/priority_queue_container.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/../application/../../config/priority_config.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/../../config/priority_config.h \
+  /Users/anminfang/fix-gateway-cpp/include/application/priority_queue_container.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/logger.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/fstream \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/filesystem \

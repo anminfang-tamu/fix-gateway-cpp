@@ -8,7 +8,7 @@ namespace fix_gateway::application
     using namespace fix_gateway::protocol;
     using namespace fix_gateway::common;
 
-    FixGateway::FixGateway(size_t message_pool_size)
+    FixGateway::FixGateway(size_t message_pool_size, std::shared_ptr<PriorityQueueContainer> queues)
         : connected_(false)
     {
         // Create message pool first
@@ -19,6 +19,20 @@ namespace fix_gateway::application
 
         // Create TCP connection
         tcp_connection_ = std::make_unique<TcpConnection>();
+
+        // Setup message routing
+        if (queues)
+        {
+            priority_queues_ = queues;
+        }
+        else
+        {
+            priority_queues_ = std::make_shared<PriorityQueueContainer>();
+        }
+
+        // Create message router with shared queues
+        message_router_ = std::make_unique<manager::MessageRouter>(priority_queues_);
+        message_router_->start();
 
         // =================================================================
         // CRITICAL INTEGRATION: Setup TCP callbacks to flow to FIX parser
@@ -48,6 +62,10 @@ namespace fix_gateway::application
 
     FixGateway::~FixGateway()
     {
+        if (message_router_)
+        {
+            message_router_->stop();
+        }
         disconnect();
     }
 
@@ -121,8 +139,8 @@ namespace fix_gateway::application
                 // Process the parsed message
                 processParsedMessage(parse_result.parsed_message);
 
-                // Return message to pool when done
-                message_pool_->deallocate(parse_result.parsed_message);
+                // NOTE: Message deallocation is now handled by business logic components
+                // after they finish processing the message from the priority queues
                 break;
             }
 
@@ -189,7 +207,24 @@ namespace fix_gateway::application
         // Log message details
         LOG_INFO("Processed FIX message: " + message->getFieldsSummary());
 
-        // Call user callback if set
+        // Route message through MessageRouter to priority queues
+        if (message_router_)
+        {
+            try
+            {
+                message_router_->routeMessage(message);
+                LOG_DEBUG("Message routed to priority queue successfully");
+            }
+            catch (const std::exception &e)
+            {
+                LOG_ERROR("Exception routing message: " + std::string(e.what()));
+                // If routing fails, deallocate message immediately
+                message_pool_->deallocate(message);
+                return;
+            }
+        }
+
+        // Call user callback if set (optional - for backwards compatibility)
         if (message_callback_)
         {
             try
@@ -286,6 +321,20 @@ namespace fix_gateway::application
     MessagePool<FixMessage>::PoolStats FixGateway::getPoolStats() const
     {
         return message_pool_->getStats();
+    }
+
+    // =================================================================
+    // MESSAGE ROUTING
+    // =================================================================
+
+    std::shared_ptr<PriorityQueueContainer> FixGateway::getPriorityQueues() const
+    {
+        return priority_queues_;
+    }
+
+    MessagePool<FixMessage> *FixGateway::getMessagePool() const
+    {
+        return message_pool_.get();
     }
 
     // =================================================================

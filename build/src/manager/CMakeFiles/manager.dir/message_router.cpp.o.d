@@ -816,6 +816,8 @@ src/manager/CMakeFiles/manager.dir/message_router.cpp.o: \
   /Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h \
   /Users/anminfang/fix-gateway-cpp/include/protocol/fix_message.h \
   /Users/anminfang/fix-gateway-cpp/include/protocol/fix_fields.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/../application/priority_queue_container.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/../application/../../config/priority_config.h \
   /Users/anminfang/fix-gateway-cpp/include/manager/../../config/priority_config.h \
   /Users/anminfang/fix-gateway-cpp/include/utils/logger.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/fstream \
