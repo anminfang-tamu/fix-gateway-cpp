@@ -198,32 +198,6 @@ platform-demo/fast:
 .PHONY : platform-demo/fast
 
 #=============================================================================
-# Target rules for targets named lockfree-demo
-
-# Build rule for target.
-lockfree-demo: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lockfree-demo
-.PHONY : lockfree-demo
-
-# fast build rule for target.
-lockfree-demo/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/build
-.PHONY : lockfree-demo/fast
-
-#=============================================================================
-# Target rules for targets named simple-lockfree-test
-
-# Build rule for target.
-simple-lockfree-test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simple-lockfree-test
-.PHONY : simple-lockfree-test
-
-# fast build rule for target.
-simple-lockfree-test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/build
-.PHONY : simple-lockfree-test/fast
-
-#=============================================================================
 # Target rules for targets named message-pool-test
 
 # Build rule for target.
@@ -380,19 +354,6 @@ network/fast:
 .PHONY : network/fast
 
 #=============================================================================
-# Target rules for targets named session
-
-# Build rule for target.
-session: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 session
-.PHONY : session
-
-# fast build rule for target.
-session/fast:
-	$(MAKE) $(MAKESILENT) -f src/session/CMakeFiles/session.dir/build.make src/session/CMakeFiles/session.dir/build
-.PHONY : session/fast
-
-#=============================================================================
 # Target rules for targets named protocol
 
 # Build rule for target.
@@ -456,19 +417,6 @@ test_async_sender: cmake_check_build_system
 test_async_sender/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
 .PHONY : test_async_sender/fast
-
-#=============================================================================
-# Target rules for targets named test_message_manager
-
-# Build rule for target.
-test_message_manager: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_message_manager
-.PHONY : test_message_manager
-
-# fast build rule for target.
-test_message_manager/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_manager.dir/build.make tests/CMakeFiles/test_message_manager.dir/build
-.PHONY : test_message_manager/fast
 
 #=============================================================================
 # Target rules for targets named test_stream_fix_parser
@@ -569,30 +517,6 @@ demos/fix_demo.s: demos/fix_demo.cpp.s
 demos/fix_demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/demos/fix_demo.cpp.s
 .PHONY : demos/fix_demo.cpp.s
-
-demos/lockfree_demo.o: demos/lockfree_demo.cpp.o
-.PHONY : demos/lockfree_demo.o
-
-# target to build an object file
-demos/lockfree_demo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.o
-.PHONY : demos/lockfree_demo.cpp.o
-
-demos/lockfree_demo.i: demos/lockfree_demo.cpp.i
-.PHONY : demos/lockfree_demo.i
-
-# target to preprocess a source file
-demos/lockfree_demo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.i
-.PHONY : demos/lockfree_demo.cpp.i
-
-demos/lockfree_demo.s: demos/lockfree_demo.cpp.s
-.PHONY : demos/lockfree_demo.s
-
-# target to generate assembly for a file
-demos/lockfree_demo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lockfree-demo.dir/build.make CMakeFiles/lockfree-demo.dir/demos/lockfree_demo.cpp.s
-.PHONY : demos/lockfree_demo.cpp.s
 
 demos/memory_performance_test.o: demos/memory_performance_test.cpp.o
 .PHONY : demos/memory_performance_test.o
@@ -786,30 +710,6 @@ demos/raw_pointer_perf_demo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/demos/raw_pointer_perf_demo.cpp.s
 .PHONY : demos/raw_pointer_perf_demo.cpp.s
 
-demos/simple_lockfree_test.o: demos/simple_lockfree_test.cpp.o
-.PHONY : demos/simple_lockfree_test.o
-
-# target to build an object file
-demos/simple_lockfree_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.o
-.PHONY : demos/simple_lockfree_test.cpp.o
-
-demos/simple_lockfree_test.i: demos/simple_lockfree_test.cpp.i
-.PHONY : demos/simple_lockfree_test.i
-
-# target to preprocess a source file
-demos/simple_lockfree_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.i
-.PHONY : demos/simple_lockfree_test.cpp.i
-
-demos/simple_lockfree_test.s: demos/simple_lockfree_test.cpp.s
-.PHONY : demos/simple_lockfree_test.s
-
-# target to generate assembly for a file
-demos/simple_lockfree_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simple-lockfree-test.dir/build.make CMakeFiles/simple-lockfree-test.dir/demos/simple_lockfree_test.cpp.s
-.PHONY : demos/simple_lockfree_test.cpp.s
-
 examples/parser_buffer_demo.o: examples/parser_buffer_demo.cpp.o
 .PHONY : examples/parser_buffer_demo.o
 
@@ -876,7 +776,6 @@ help:
 	@echo "... existing-pool-templated-demo"
 	@echo "... fix-demo"
 	@echo "... fix-gateway"
-	@echo "... lockfree-demo"
 	@echo "... manager"
 	@echo "... memory-perf-test"
 	@echo "... message-integration-demo"
@@ -889,10 +788,7 @@ help:
 	@echo "... quick-perf-demo"
 	@echo "... raw-pointer-api-demo"
 	@echo "... raw-pointer-perf-demo"
-	@echo "... session"
-	@echo "... simple-lockfree-test"
 	@echo "... test_async_sender"
-	@echo "... test_message_manager"
 	@echo "... test_stream_fix_parser"
 	@echo "... test_stream_fix_parser_2stage"
 	@echo "... test_stream_fix_parser_improved"
@@ -904,9 +800,6 @@ help:
 	@echo "... demos/fix_demo.o"
 	@echo "... demos/fix_demo.i"
 	@echo "... demos/fix_demo.s"
-	@echo "... demos/lockfree_demo.o"
-	@echo "... demos/lockfree_demo.i"
-	@echo "... demos/lockfree_demo.s"
 	@echo "... demos/memory_performance_test.o"
 	@echo "... demos/memory_performance_test.i"
 	@echo "... demos/memory_performance_test.s"
@@ -931,9 +824,6 @@ help:
 	@echo "... demos/raw_pointer_perf_demo.o"
 	@echo "... demos/raw_pointer_perf_demo.i"
 	@echo "... demos/raw_pointer_perf_demo.s"
-	@echo "... demos/simple_lockfree_test.o"
-	@echo "... demos/simple_lockfree_test.i"
-	@echo "... demos/simple_lockfree_test.s"
 	@echo "... examples/parser_buffer_demo.o"
 	@echo "... examples/parser_buffer_demo.i"
 	@echo "... examples/parser_buffer_demo.s"

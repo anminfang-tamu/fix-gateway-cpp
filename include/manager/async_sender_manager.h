@@ -11,7 +11,6 @@
 #include <memory>
 #include <atomic>
 #include <vector>
-#include <unordered_map>
 #include <string>
 
 namespace fix_gateway::manager
@@ -24,21 +23,20 @@ namespace fix_gateway::manager
     using SenderStats = fix_gateway::network::SenderStats;
 
     /**
-     * @brief Message manager with core-pinned architecture for Phase 4
+     * @brief High-performance AsyncSender manager with priority-based core pinning
      *
-     * Routes incoming messages to priority-specific queues and manages
-     * dedicated AsyncSender threads pinned to individual CPU cores.
-     * Creates and manages a shared TCP connection for all AsyncSenders.
+     * Manages 4 separate AsyncSender instances, each pinned to dedicated CPU cores
+     * for optimal priority-based message processing without interference.
      *
      * Architecture:
-     * - Core 0: CRITICAL priority AsyncSender (< 10μs target)
-     * - Core 1: HIGH priority AsyncSender (< 100μs target)
-     * - Core 2: MEDIUM priority AsyncSender (< 1ms target)
-     * - Core 3: LOW priority AsyncSender (< 10ms target)
+     * - Core 0: CRITICAL priority AsyncSender (< 10μs target) - BusinessLogicManager
+     * - Core 1: HIGH priority AsyncSender (< 100μs target) - BusinessLogicManager
+     * - Core 2: MEDIUM priority AsyncSender (< 1ms target) - BusinessLogicManager
+     * - Core 3: LOW priority AsyncSender (< 10ms target) - FixSessionManager
      *
-     * Phase 3 Enhancement: Lock-free queue support for sub-10μs latency
+     * Each AsyncSender monitors its own priority queue with dedicated core resources.
      */
-    class OutboundMessageManager
+    class AsyncSenderManager
     {
     public:
         enum class QueueType
@@ -49,7 +47,7 @@ namespace fix_gateway::manager
 
         struct CorePinningConfig
         {
-            // Core assignments
+            // Core assignments for priority-specific AsyncSenders
             int critical_core = 0; // Performance core for critical messages
             int high_core = 1;     // Performance core for high priority
             int medium_core = 2;   // Performance core for medium priority
@@ -98,17 +96,24 @@ namespace fix_gateway::manager
         };
 
     public:
-        explicit OutboundMessageManager(const CorePinningConfig &config);
-        explicit OutboundMessageManager(); // Default constructor
-        ~OutboundMessageManager();
+        explicit AsyncSenderManager(const CorePinningConfig &config);
+        explicit AsyncSenderManager(); // Default constructor
+        ~AsyncSenderManager();
 
         // Lifecycle management
         void start();
         void stop();
         void shutdown(std::chrono::seconds timeout = std::chrono::seconds(10));
 
-        // Core message management functionality
-        bool routeMessage(MessagePtr message);
+        // Core AsyncSender access - used by InboundMessageManager implementations
+        std::shared_ptr<AsyncSender> getAsyncSenderForPriority(Priority priority) const;
+        std::shared_ptr<AsyncSender> getCriticalSender() const; // For BusinessLogicManager
+        std::shared_ptr<AsyncSender> getHighSender() const;     // For BusinessLogicManager
+        std::shared_ptr<AsyncSender> getMediumSender() const;   // For BusinessLogicManager
+        std::shared_ptr<AsyncSender> getLowSender() const;      // For FixSessionManager
+
+        // Direct message sending (routes to appropriate priority queue)
+        bool sendMessage(MessagePtr message, Priority priority);
 
         // Status and monitoring
         bool isRunning() const;
@@ -143,7 +148,7 @@ namespace fix_gateway::manager
         // Per-priority queues and senders - supports both mutex-based and lock-free
         std::unordered_map<Priority, std::shared_ptr<PriorityQueue>> priority_queues_;
         std::unordered_map<Priority, std::shared_ptr<LockFreeQueue>> lockfree_queues_;
-        std::unordered_map<Priority, std::unique_ptr<AsyncSender>> async_senders_;
+        std::unordered_map<Priority, std::shared_ptr<AsyncSender>> async_senders_;
 
         // Core management
         std::unordered_map<Priority, int> priority_to_core_;
@@ -159,12 +164,10 @@ namespace fix_gateway::manager
         void startAsyncSenders();
         void stopAsyncSenders();
 
-        // Thread management helpers
+        // Thread management helpers (preserved core performance logic)
         bool pinThreadToCore(std::thread &thread, int core_id);
         bool setThreadQoSClass(std::thread &thread, int core_id);
         bool setThreadRealTimePriority(std::thread &thread);
-
-        Priority getMessagePriority(MessagePtr message) const;
 
         // Queue interface abstraction
         bool pushToQueue(Priority priority, MessagePtr message);
@@ -175,23 +178,23 @@ namespace fix_gateway::manager
     };
 
     /**
-     * @brief Factory for creating optimized message managers
+     * @brief Factory for creating optimized AsyncSender managers
      */
-    class OutboundMessageManagerFactory
+    class AsyncSenderManagerFactory
     {
     public:
         // Pre-configured setups for different hardware
-        static OutboundMessageManager::CorePinningConfig createM1MaxConfig();
-        static OutboundMessageManager::CorePinningConfig createIntelConfig();
-        static OutboundMessageManager::CorePinningConfig createDefaultConfig();
+        static AsyncSenderManager::CorePinningConfig createM1MaxConfig();
+        static AsyncSenderManager::CorePinningConfig createIntelConfig();
+        static AsyncSenderManager::CorePinningConfig createDefaultConfig();
 
         // Trading environment specific configs
-        static OutboundMessageManager::CorePinningConfig createLowLatencyConfig();
-        static OutboundMessageManager::CorePinningConfig createHighThroughputConfig();
+        static AsyncSenderManager::CorePinningConfig createLowLatencyConfig();
+        static AsyncSenderManager::CorePinningConfig createHighThroughputConfig();
 
         // Phase 3: Lock-free configurations
-        static OutboundMessageManager::CorePinningConfig createLockFreeConfig();
-        static OutboundMessageManager::CorePinningConfig createLockFreeM1MaxConfig();
+        static AsyncSenderManager::CorePinningConfig createLockFreeConfig();
+        static AsyncSenderManager::CorePinningConfig createLockFreeM1MaxConfig();
 
         // Hardware detection
         static int detectPerformanceCores();

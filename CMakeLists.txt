@@ -22,7 +22,6 @@ include_directories(${CMAKE_SOURCE_DIR}/config)
 # Add subdirectories for each module
 add_subdirectory(src/common)
 add_subdirectory(src/network)
-add_subdirectory(src/session)
 add_subdirectory(src/protocol)
 add_subdirectory(src/application)
 add_subdirectory(src/utils)
@@ -50,32 +49,6 @@ add_executable(platform-demo
 target_link_libraries(platform-demo
     utils
     common
-    Threads::Threads
-)
-
-# Lock-free integration demo executable (Phase 3)
-add_executable(lockfree-demo
-    demos/lockfree_demo.cpp
-)
-
-target_link_libraries(lockfree-demo
-    utils
-    common
-    manager
-    network
-    Threads::Threads
-)
-
-# Simple lock-free test executable (Phase 3)
-add_executable(simple-lockfree-test
-    demos/simple_lockfree_test.cpp
-)
-
-target_link_libraries(simple-lockfree-test
-    utils
-    common
-    manager
-    network
     Threads::Threads
 )
 

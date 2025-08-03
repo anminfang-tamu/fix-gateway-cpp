@@ -845,14 +845,21 @@ src/application/CMakeFiles/application.dir/fix_gateway.cpp.o: /Users/anminfang/f
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
   /Users/anminfang/fix-gateway-cpp/config/priority_config.h \
   /Users/anminfang/fix-gateway-cpp/include/application/fix_gateway.h \
+  /Users/anminfang/fix-gateway-cpp/include/application/priority_queue_container.h \
   /Users/anminfang/fix-gateway-cpp/include/common/constants.h \
   /Users/anminfang/fix-gateway-cpp/include/common/message.h \
   /Users/anminfang/fix-gateway-cpp/include/common/message_pool.h \
+  /Users/anminfang/fix-gateway-cpp/config/priority_config.h \
+  /Users/anminfang/fix-gateway-cpp/config/priority_config.h \
+  /Users/anminfang/fix-gateway-cpp/include/application/priority_queue_container.h \
+  /Users/anminfang/fix-gateway-cpp/include/manager/message_router.h \
   /Users/anminfang/fix-gateway-cpp/include/network/tcp_connection.h \
   /Users/anminfang/fix-gateway-cpp/include/protocol/fix_fields.h \
   /Users/anminfang/fix-gateway-cpp/include/protocol/fix_message.h \
   /Users/anminfang/fix-gateway-cpp/include/protocol/stream_fix_parser.h \
-  /Users/anminfang/fix-gateway-cpp/include/utils/logger.h
+  /Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/logger.h \
+  /Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h
 
 src/application/CMakeFiles/application.dir/message_handler.cpp.o: /Users/anminfang/fix-gateway-cpp/src/application/message_handler.cpp
 
@@ -863,11 +870,17 @@ src/application/CMakeFiles/application.dir/order_book_interface.cpp.o: /Users/an
 
 /Users/anminfang/fix-gateway-cpp/src/application/message_handler.cpp:
 
+/Users/anminfang/fix-gateway-cpp/include/utils/performance_counters.h:
+
+/Users/anminfang/fix-gateway-cpp/include/utils/lockfree_queue.h:
+
 /Users/anminfang/fix-gateway-cpp/include/protocol/stream_fix_parser.h:
 
 /Users/anminfang/fix-gateway-cpp/include/protocol/fix_message.h:
 
 /Users/anminfang/fix-gateway-cpp/include/network/tcp_connection.h:
+
+/Users/anminfang/fix-gateway-cpp/include/manager/message_router.h:
 
 /Users/anminfang/fix-gateway-cpp/include/common/message_pool.h:
 
@@ -1662,6 +1675,8 @@ src/application/CMakeFiles/application.dir/order_book_interface.cpp.o: /Users/an
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__filesystem/perm_options.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__memory/destruct_n.h:
+
+/Users/anminfang/fix-gateway-cpp/include/application/priority_queue_container.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__utility/is_pointer_in_range.h:
 

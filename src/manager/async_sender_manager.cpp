@@ -1,4 +1,4 @@
-#include "outbound_message_manager.h"
+#include "async_sender_manager.h"
 #include "utils/logger.h"
 #include <iostream>
 #include <sstream>
@@ -22,7 +22,7 @@
 namespace fix_gateway::manager
 {
     // Constructor with config
-    OutboundMessageManager::OutboundMessageManager(const CorePinningConfig &config)
+    AsyncSenderManager::AsyncSenderManager(const CorePinningConfig &config)
         : config_(config),
           running_(false),
           shutdown_requested_(false)
@@ -33,7 +33,7 @@ namespace fix_gateway::manager
         priority_to_core_[Priority::MEDIUM] = config_.medium_core;
         priority_to_core_[Priority::LOW] = config_.low_core;
 
-        std::cout << "[MessageManager] Created with cores: "
+        std::cout << "[AsyncSenderManager] Created with cores: "
                   << "CRITICAL=" << config_.critical_core
                   << ", HIGH=" << config_.high_core
                   << ", MEDIUM=" << config_.medium_core
@@ -41,7 +41,7 @@ namespace fix_gateway::manager
     }
 
     // Default constructor
-    OutboundMessageManager::OutboundMessageManager()
+    AsyncSenderManager::AsyncSenderManager()
         : running_(false),
           shutdown_requested_(false)
     {
@@ -56,6 +56,7 @@ namespace fix_gateway::manager
         config_.high_queue_size = 2048;
         config_.medium_queue_size = 4096;
         config_.low_queue_size = 8192;
+        config_.queue_type = QueueType::MUTEX_BASED;
 
         // Initialize core mapping
         priority_to_core_[Priority::CRITICAL] = config_.critical_core;
@@ -63,29 +64,29 @@ namespace fix_gateway::manager
         priority_to_core_[Priority::MEDIUM] = config_.medium_core;
         priority_to_core_[Priority::LOW] = config_.low_core;
 
-        std::cout << "[MessageManager] Created with default config" << std::endl;
+        std::cout << "[AsyncSenderManager] Created with default config" << std::endl;
     }
 
     // Destructor
-    OutboundMessageManager::~OutboundMessageManager()
+    AsyncSenderManager::~AsyncSenderManager()
     {
         if (running_.load())
         {
             shutdown(std::chrono::seconds(5));
         }
-        std::cout << "[MessageManager] Destroyed" << std::endl;
+        std::cout << "[AsyncSenderManager] Destroyed" << std::endl;
     }
 
     // Lifecycle management
-    void OutboundMessageManager::start()
+    void AsyncSenderManager::start()
     {
         if (running_.load())
         {
-            std::cout << "[MessageManager] Already running" << std::endl;
+            std::cout << "[AsyncSenderManager] Already running" << std::endl;
             return;
         }
 
-        std::cout << "[MessageManager] Starting..." << std::endl;
+        std::cout << "[AsyncSenderManager] Starting..." << std::endl;
 
         try
         {
@@ -94,24 +95,24 @@ namespace fix_gateway::manager
             startAsyncSenders();
 
             running_.store(true);
-            std::cout << "[MessageManager] Started successfully" << std::endl;
+            std::cout << "[AsyncSenderManager] Started successfully" << std::endl;
         }
         catch (const std::exception &e)
         {
-            std::cerr << "[MessageManager] Failed to start: " << e.what() << std::endl;
+            std::cerr << "[AsyncSenderManager] Failed to start: " << e.what() << std::endl;
             stop();
             throw;
         }
     }
 
-    void OutboundMessageManager::stop()
+    void AsyncSenderManager::stop()
     {
         if (!running_.load())
         {
             return;
         }
 
-        std::cout << "[MessageManager] Stopping..." << std::endl;
+        std::cout << "[AsyncSenderManager] Stopping..." << std::endl;
 
         running_.store(false);
         stopAsyncSenders();
@@ -122,41 +123,66 @@ namespace fix_gateway::manager
             tcp_connection_->disconnect();
         }
 
-        std::cout << "[MessageManager] Stopped" << std::endl;
+        std::cout << "[AsyncSenderManager] Stopped" << std::endl;
     }
 
-    void OutboundMessageManager::shutdown(std::chrono::seconds timeout)
+    void AsyncSenderManager::shutdown(std::chrono::seconds timeout)
     {
         shutdown_requested_.store(true);
-        std::cout << "[MessageManager] Shutdown requested with timeout: "
+        std::cout << "[AsyncSenderManager] Shutdown requested with timeout: "
                   << timeout.count() << "s" << std::endl;
 
         stop();
 
         // Clean up resources
         priority_queues_.clear();
+        lockfree_queues_.clear();
         async_senders_.clear();
         tcp_connection_.reset();
 
         shutdown_requested_.store(false);
-        std::cout << "[MessageManager] Shutdown complete" << std::endl;
+        std::cout << "[AsyncSenderManager] Shutdown complete" << std::endl;
     }
 
-    // Core message management functionality
-    // dispatch message to the correct priority queue
-    bool OutboundMessageManager::routeMessage(MessagePtr message)
+    // Core AsyncSender access functionality
+    std::shared_ptr<AsyncSender> AsyncSenderManager::getAsyncSenderForPriority(Priority priority) const
+    {
+        auto it = async_senders_.find(priority);
+        return (it != async_senders_.end()) ? it->second : nullptr;
+    }
+
+    std::shared_ptr<AsyncSender> AsyncSenderManager::getCriticalSender() const
+    {
+        return getAsyncSenderForPriority(Priority::CRITICAL);
+    }
+
+    std::shared_ptr<AsyncSender> AsyncSenderManager::getHighSender() const
+    {
+        return getAsyncSenderForPriority(Priority::HIGH);
+    }
+
+    std::shared_ptr<AsyncSender> AsyncSenderManager::getMediumSender() const
+    {
+        return getAsyncSenderForPriority(Priority::MEDIUM);
+    }
+
+    std::shared_ptr<AsyncSender> AsyncSenderManager::getLowSender() const
+    {
+        return getAsyncSenderForPriority(Priority::LOW);
+    }
+
+    bool AsyncSenderManager::sendMessage(MessagePtr message, Priority priority)
     {
         if (!running_.load() || !message)
         {
             return false;
         }
 
-        Priority priority = getMessagePriority(message);
         bool success = pushToQueue(priority, message);
 
         if (!success)
         {
-            std::cerr << "[MessageManager] Failed to route message to "
+            std::cerr << "[AsyncSenderManager] Failed to enqueue message to "
                       << static_cast<int>(priority) << " priority queue" << std::endl;
         }
 
@@ -164,17 +190,17 @@ namespace fix_gateway::manager
     }
 
     // Status and monitoring
-    bool OutboundMessageManager::isRunning() const
+    bool AsyncSenderManager::isRunning() const
     {
         return running_.load();
     }
 
-    bool OutboundMessageManager::isConnected() const
+    bool AsyncSenderManager::isConnected() const
     {
         return tcp_connection_ && tcp_connection_->isConnected();
     }
 
-    OutboundMessageManager::PerformanceStats OutboundMessageManager::getStats() const
+    AsyncSenderManager::PerformanceStats AsyncSenderManager::getStats() const
     {
         PerformanceStats stats;
 
@@ -226,7 +252,7 @@ namespace fix_gateway::manager
         return stats;
     }
 
-    SenderStats OutboundMessageManager::getStatsForPriority(Priority priority) const
+    SenderStats AsyncSenderManager::getStatsForPriority(Priority priority) const
     {
         auto it = async_senders_.find(priority);
         if (it != async_senders_.end() && it->second)
@@ -237,23 +263,23 @@ namespace fix_gateway::manager
     }
 
     // Configuration
-    void OutboundMessageManager::setCoreAffinity(Priority priority, int core_id)
+    void AsyncSenderManager::setCoreAffinity(Priority priority, int core_id)
     {
         priority_to_core_[priority] = core_id;
-        std::cout << "[MessageManager] Set core affinity for priority "
+        std::cout << "[AsyncSenderManager] Set core affinity for priority "
                   << static_cast<int>(priority) << " to core " << core_id << std::endl;
     }
 
-    void OutboundMessageManager::setRealTimePriority(Priority priority, bool enable)
+    void AsyncSenderManager::setRealTimePriority(Priority priority, bool enable)
     {
         // Update config
         config_.enable_real_time_priority = enable;
-        std::cout << "[MessageManager] Set real-time priority for priority "
+        std::cout << "[AsyncSenderManager] Set real-time priority for priority "
                   << static_cast<int>(priority) << " to " << (enable ? "enabled" : "disabled") << std::endl;
     }
 
     // Monitoring
-    std::vector<size_t> OutboundMessageManager::getQueueDepths() const
+    std::vector<size_t> AsyncSenderManager::getQueueDepths() const
     {
         std::vector<size_t> depths;
         depths.reserve(4); // 4 priority levels
@@ -266,12 +292,12 @@ namespace fix_gateway::manager
         return depths;
     }
 
-    size_t OutboundMessageManager::getQueueDepthForPriority(Priority priority) const
+    size_t AsyncSenderManager::getQueueDepthForPriority(Priority priority) const
     {
         return getQueueSize(priority);
     }
 
-    bool OutboundMessageManager::areAllCoresConnected() const
+    bool AsyncSenderManager::areAllCoresConnected() const
     {
         if (!isConnected())
         {
@@ -291,7 +317,7 @@ namespace fix_gateway::manager
     }
 
     // Connection management
-    bool OutboundMessageManager::connectToServer(const std::string &host, int port)
+    bool AsyncSenderManager::connectToServer(const std::string &host, int port)
     {
         if (!tcp_connection_)
         {
@@ -301,36 +327,36 @@ namespace fix_gateway::manager
         bool success = tcp_connection_->connect(host, port);
         if (success)
         {
-            std::cout << "[MessageManager] Connected to " << host << ":" << port << std::endl;
+            std::cout << "[AsyncSenderManager] Connected to " << host << ":" << port << std::endl;
         }
         else
         {
-            std::cerr << "[MessageManager] Failed to connect to " << host << ":" << port << std::endl;
+            std::cerr << "[AsyncSenderManager] Failed to connect to " << host << ":" << port << std::endl;
         }
 
         return success;
     }
 
-    void OutboundMessageManager::disconnectFromServer()
+    void AsyncSenderManager::disconnectFromServer()
     {
         if (tcp_connection_)
         {
             tcp_connection_->disconnect();
-            std::cout << "[MessageManager] Disconnected from server" << std::endl;
+            std::cout << "[AsyncSenderManager] Disconnected from server" << std::endl;
         }
     }
 
     // Private helper methods
-    void OutboundMessageManager::createTcpConnection()
+    void AsyncSenderManager::createTcpConnection()
     {
         tcp_connection_ = std::make_shared<TcpConnection>();
-        std::cout << "[MessageManager] Created shared TCP connection" << std::endl;
+        std::cout << "[AsyncSenderManager] Created shared TCP connection" << std::endl;
     }
 
-    void OutboundMessageManager::createQueuesAndSenders()
+    void AsyncSenderManager::createQueuesAndSenders()
     {
-        std::cout << "[MessageManager] Creating queues and senders..." << std::endl;
-        std::cout << "[MessageManager] Queue type: " << getQueueTypeString() << std::endl;
+        std::cout << "[AsyncSenderManager] Creating queues and senders..." << std::endl;
+        std::cout << "[AsyncSenderManager] Queue type: " << getQueueTypeString() << std::endl;
 
         if (config_.queue_type == QueueType::MUTEX_BASED)
         {
@@ -350,10 +376,10 @@ namespace fix_gateway::manager
             // Create AsyncSenders with mutex-based queues
             for (const auto &[priority, queue] : priority_queues_)
             {
-                async_senders_[priority] = std::make_unique<AsyncSender>(queue, tcp_connection_);
+                async_senders_[priority] = std::make_shared<AsyncSender>(queue, tcp_connection_);
             }
 
-            std::cout << "[MessageManager] Created " << priority_queues_.size()
+            std::cout << "[AsyncSenderManager] Created " << priority_queues_.size()
                       << " mutex-based queues and " << async_senders_.size() << " senders" << std::endl;
         }
         else // LOCK_FREE
@@ -374,30 +400,30 @@ namespace fix_gateway::manager
             // Create AsyncSenders with lock-free queues
             for (const auto &[priority, queue] : lockfree_queues_)
             {
-                async_senders_[priority] = std::make_unique<AsyncSender>(queue, tcp_connection_);
+                async_senders_[priority] = std::make_shared<AsyncSender>(queue, tcp_connection_);
             }
 
-            std::cout << "[MessageManager] Created " << lockfree_queues_.size()
+            std::cout << "[AsyncSenderManager] Created " << lockfree_queues_.size()
                       << " lock-free queues and " << async_senders_.size() << " senders" << std::endl;
         }
     }
 
-    void OutboundMessageManager::startAsyncSenders()
+    void AsyncSenderManager::startAsyncSenders()
     {
-        std::cout << "[MessageManager] Starting AsyncSenders..." << std::endl;
+        std::cout << "[AsyncSenderManager] Starting AsyncSenders..." << std::endl;
 
         // Print system information
-        int detected_cores = OutboundMessageManagerFactory::detectPerformanceCores();
-        std::cout << "[MessageManager] Detected " << detected_cores << " performance cores" << std::endl;
+        int detected_cores = AsyncSenderManagerFactory::detectPerformanceCores();
+        std::cout << "[AsyncSenderManager] Detected " << detected_cores << " performance cores" << std::endl;
 
 #ifdef __APPLE__
-        std::cout << "[MessageManager] macOS detected - thread affinity support is limited" << std::endl;
-        std::cout << "[MessageManager] Will attempt affinity first, then fallback to QoS classes" << std::endl;
+        std::cout << "[AsyncSenderManager] macOS detected - thread affinity support is limited" << std::endl;
+        std::cout << "[AsyncSenderManager] Will attempt affinity first, then fallback to QoS classes" << std::endl;
 #elif defined(__linux__)
-        std::cout << "[MessageManager] Linux detected - full thread affinity and RT priority support" << std::endl;
-        std::cout << "[MessageManager] Can pin threads to specific cores with pthread_setaffinity_np" << std::endl;
+        std::cout << "[AsyncSenderManager] Linux detected - full thread affinity and RT priority support" << std::endl;
+        std::cout << "[AsyncSenderManager] Can pin threads to specific cores with pthread_setaffinity_np" << std::endl;
 #else
-        std::cout << "[MessageManager] Platform has limited thread control capabilities" << std::endl;
+        std::cout << "[AsyncSenderManager] Platform has limited thread control capabilities" << std::endl;
 #endif
 
         for (auto &[priority, sender] : async_senders_)
@@ -412,18 +438,18 @@ namespace fix_gateway::manager
                     int core_id = getCoreForPriority(priority);
                     std::thread &sender_thread = sender->getSenderThread();
 
-                    std::cout << "[MessageManager] Attempting to pin priority "
+                    std::cout << "[AsyncSenderManager] Attempting to pin priority "
                               << static_cast<int>(priority) << " thread to core " << core_id << std::endl;
 
                     bool pinned = pinThreadToCore(sender_thread, core_id);
                     if (pinned)
                     {
-                        std::cout << "[MessageManager] Successfully configured priority "
+                        std::cout << "[AsyncSenderManager] Successfully configured priority "
                                   << static_cast<int>(priority) << " thread for core " << core_id << std::endl;
                     }
                     else
                     {
-                        std::cout << "[MessageManager] Thread configuration failed for priority "
+                        std::cout << "[AsyncSenderManager] Thread configuration failed for priority "
                                   << static_cast<int>(priority) << " thread (core " << core_id
                                   << ") - performance may be reduced" << std::endl;
                     }
@@ -434,30 +460,30 @@ namespace fix_gateway::manager
                         bool rt_set = setThreadRealTimePriority(sender_thread);
                         if (rt_set)
                         {
-                            std::cout << "[MessageManager] Set real-time priority for "
+                            std::cout << "[AsyncSenderManager] Set real-time priority for "
                                       << static_cast<int>(priority) << " thread" << std::endl;
                         }
                         else
                         {
-                            std::cout << "[MessageManager] Failed to set real-time priority for "
+                            std::cout << "[AsyncSenderManager] Failed to set real-time priority for "
                                       << static_cast<int>(priority) << " thread (try running as root)" << std::endl;
                         }
                     }
                 }
                 else
                 {
-                    std::cout << "[MessageManager] Core pinning disabled for priority "
+                    std::cout << "[AsyncSenderManager] Core pinning disabled for priority "
                               << static_cast<int>(priority) << " thread" << std::endl;
                 }
             }
         }
 
-        std::cout << "[MessageManager] All AsyncSenders started" << std::endl;
+        std::cout << "[AsyncSenderManager] All AsyncSenders started" << std::endl;
     }
 
-    void OutboundMessageManager::stopAsyncSenders()
+    void AsyncSenderManager::stopAsyncSenders()
     {
-        std::cout << "[MessageManager] Stopping AsyncSenders..." << std::endl;
+        std::cout << "[AsyncSenderManager] Stopping AsyncSenders..." << std::endl;
 
         for (auto &[priority, sender] : async_senders_)
         {
@@ -467,10 +493,10 @@ namespace fix_gateway::manager
             }
         }
 
-        std::cout << "[MessageManager] All AsyncSenders stopped" << std::endl;
+        std::cout << "[AsyncSenderManager] All AsyncSenders stopped" << std::endl;
     }
 
-    bool OutboundMessageManager::pinThreadToCore(std::thread &thread, int core_id)
+    bool AsyncSenderManager::pinThreadToCore(std::thread &thread, int core_id)
     {
         // Platform-specific implementation
 #ifdef __APPLE__
@@ -507,15 +533,15 @@ namespace fix_gateway::manager
                 break;
             }
 
-            std::cerr << "[MessageManager] Failed to set thread affinity to core "
+            std::cerr << "[AsyncSenderManager] Failed to set thread affinity to core "
                       << core_id << " - " << error_msg << " (kern_return_t: " << result << ")" << std::endl;
 
             // Try alternative approach: QoS class
-            std::cout << "[MessageManager] Attempting alternative QoS-based approach for core " << core_id << std::endl;
+            std::cout << "[AsyncSenderManager] Attempting alternative QoS-based approach for core " << core_id << std::endl;
             return setThreadQoSClass(thread, core_id);
         }
 
-        std::cout << "[MessageManager] Successfully pinned thread to core " << core_id << std::endl;
+        std::cout << "[AsyncSenderManager] Successfully pinned thread to core " << core_id << std::endl;
         return true;
 #elif defined(__linux__)
         // Linux implementation using pthread_setaffinity_np
@@ -528,20 +554,20 @@ namespace fix_gateway::manager
 
         if (result != 0)
         {
-            std::cerr << "[MessageManager] Failed to set thread affinity to core " << core_id
+            std::cerr << "[AsyncSenderManager] Failed to set thread affinity to core " << core_id
                       << " - error: " << result << " (" << strerror(result) << ")" << std::endl;
             return false;
         }
 
-        std::cout << "[MessageManager] Successfully pinned thread to core " << core_id << std::endl;
+        std::cout << "[AsyncSenderManager] Successfully pinned thread to core " << core_id << std::endl;
         return true;
 #else
-        std::cout << "[MessageManager] Thread pinning not implemented for this platform" << std::endl;
+        std::cout << "[AsyncSenderManager] Thread pinning not implemented for this platform" << std::endl;
         return false;
 #endif
     }
 
-    bool OutboundMessageManager::setThreadQoSClass(std::thread &thread, int core_id)
+    bool AsyncSenderManager::setThreadQoSClass(std::thread &thread, int core_id)
     {
 #ifdef __APPLE__
         // Alternative approach using QoS classes for macOS
@@ -582,12 +608,12 @@ namespace fix_gateway::manager
 
         if (result != 0)
         {
-            std::cerr << "[MessageManager] Failed to set QoS class for core " << core_id
+            std::cerr << "[AsyncSenderManager] Failed to set QoS class for core " << core_id
                       << " - error: " << result << std::endl;
             return false;
         }
 
-        std::cout << "[MessageManager] Set QoS class for core " << core_id
+        std::cout << "[AsyncSenderManager] Set QoS class for core " << core_id
                   << " (QoS: " << qos_class << ", priority: " << relative_priority << ")" << std::endl;
         return true;
 #else
@@ -595,7 +621,7 @@ namespace fix_gateway::manager
 #endif
     }
 
-    bool OutboundMessageManager::setThreadRealTimePriority(std::thread &thread)
+    bool AsyncSenderManager::setThreadRealTimePriority(std::thread &thread)
     {
         if (!config_.enable_real_time_priority)
         {
@@ -629,27 +655,22 @@ namespace fix_gateway::manager
 
         if (result != 0)
         {
-            std::cerr << "[MessageManager] Failed to set real-time priority - error: "
+            std::cerr << "[AsyncSenderManager] Failed to set real-time priority - error: "
                       << result << " (" << strerror(result) << ")" << std::endl;
-            std::cerr << "[MessageManager] Note: Real-time priority requires CAP_SYS_NICE capability" << std::endl;
+            std::cerr << "[AsyncSenderManager] Note: Real-time priority requires CAP_SYS_NICE capability" << std::endl;
             return false;
         }
 
-        std::cout << "[MessageManager] Set real-time priority (SCHED_FIFO, priority=99)" << std::endl;
+        std::cout << "[AsyncSenderManager] Set real-time priority (SCHED_FIFO, priority=99)" << std::endl;
         return true;
 #else
-        std::cout << "[MessageManager] Real-time priority not implemented for this platform" << std::endl;
+        std::cout << "[AsyncSenderManager] Real-time priority not implemented for this platform" << std::endl;
         return false;
 #endif
     }
 
-    Priority OutboundMessageManager::getMessagePriority(MessagePtr message) const
-    {
-        return message ? message->getPriority() : Priority::LOW;
-    }
-
     // Queue interface abstraction methods
-    bool OutboundMessageManager::pushToQueue(Priority priority, MessagePtr message)
+    bool AsyncSenderManager::pushToQueue(Priority priority, MessagePtr message)
     {
         if (config_.queue_type == QueueType::MUTEX_BASED)
         {
@@ -670,7 +691,7 @@ namespace fix_gateway::manager
         return false;
     }
 
-    size_t OutboundMessageManager::getQueueSize(Priority priority) const
+    size_t AsyncSenderManager::getQueueSize(Priority priority) const
     {
         if (config_.queue_type == QueueType::MUTEX_BASED)
         {
@@ -684,7 +705,7 @@ namespace fix_gateway::manager
         }
     }
 
-    std::string OutboundMessageManager::getQueueTypeString() const
+    std::string AsyncSenderManager::getQueueTypeString() const
     {
         switch (config_.queue_type)
         {
@@ -697,7 +718,7 @@ namespace fix_gateway::manager
         }
     }
 
-    size_t OutboundMessageManager::getQueueSizeForPriority(Priority priority) const
+    size_t AsyncSenderManager::getQueueSizeForPriority(Priority priority) const
     {
         switch (priority)
         {
@@ -714,16 +735,16 @@ namespace fix_gateway::manager
         }
     }
 
-    int OutboundMessageManager::getCoreForPriority(Priority priority) const
+    int AsyncSenderManager::getCoreForPriority(Priority priority) const
     {
         auto it = priority_to_core_.find(priority);
         return (it != priority_to_core_.end()) ? it->second : 0;
     }
 
-    // MessageManagerFactory Implementation
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createM1MaxConfig()
+    // AsyncSenderManagerFactory Implementation
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createM1MaxConfig()
     {
-        OutboundMessageManager::CorePinningConfig config;
+        AsyncSenderManager::CorePinningConfig config;
 
         // M1 Max has 8 performance cores + 2 efficiency cores
         // Use performance cores for trading
@@ -745,9 +766,9 @@ namespace fix_gateway::manager
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createIntelConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createIntelConfig()
     {
-        OutboundMessageManager::CorePinningConfig config;
+        AsyncSenderManager::CorePinningConfig config;
 
         // Generic Intel configuration
         config.critical_core = 0;
@@ -763,13 +784,14 @@ namespace fix_gateway::manager
         config.high_queue_size = 2048;
         config.medium_queue_size = 4096;
         config.low_queue_size = 8192;
+        config.queue_type = AsyncSenderManager::QueueType::MUTEX_BASED;
 
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createDefaultConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createDefaultConfig()
     {
-        OutboundMessageManager::CorePinningConfig config;
+        AsyncSenderManager::CorePinningConfig config;
 
         // Safe defaults that work everywhere
         config.critical_core = 0;
@@ -785,11 +807,12 @@ namespace fix_gateway::manager
         config.high_queue_size = 2048;
         config.medium_queue_size = 4096;
         config.low_queue_size = 8192;
+        config.queue_type = AsyncSenderManager::QueueType::MUTEX_BASED;
 
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLowLatencyConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createLowLatencyConfig()
     {
         auto config = createM1MaxConfig(); // Start with hardware-optimized
 
@@ -804,7 +827,7 @@ namespace fix_gateway::manager
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createHighThroughputConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createHighThroughputConfig()
     {
         auto config = createM1MaxConfig(); // Start with hardware-optimized
 
@@ -817,12 +840,12 @@ namespace fix_gateway::manager
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLockFreeConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createLockFreeConfig()
     {
         auto config = createDefaultConfig();
 
         // Enable lock-free queues
-        config.queue_type = OutboundMessageManager::QueueType::LOCK_FREE;
+        config.queue_type = AsyncSenderManager::QueueType::LOCK_FREE;
 
         // Optimize queue sizes for lock-free (power of 2)
         config.critical_queue_size = 512; // 2^9
@@ -833,12 +856,12 @@ namespace fix_gateway::manager
         return config;
     }
 
-    OutboundMessageManager::CorePinningConfig OutboundMessageManagerFactory::createLockFreeM1MaxConfig()
+    AsyncSenderManager::CorePinningConfig AsyncSenderManagerFactory::createLockFreeM1MaxConfig()
     {
         auto config = createM1MaxConfig(); // Start with M1 Max hardware config
 
         // Enable lock-free queues
-        config.queue_type = OutboundMessageManager::QueueType::LOCK_FREE;
+        config.queue_type = AsyncSenderManager::QueueType::LOCK_FREE;
 
         // Optimize for M1 Max with lock-free queues
         config.critical_queue_size = 256; // 2^8 - Ultra low latency
@@ -853,7 +876,7 @@ namespace fix_gateway::manager
         return config;
     }
 
-    int OutboundMessageManagerFactory::detectPerformanceCores()
+    int AsyncSenderManagerFactory::detectPerformanceCores()
     {
 #ifdef __APPLE__
         // M1 Max typically has 8 performance cores
@@ -864,7 +887,7 @@ namespace fix_gateway::manager
 #endif
     }
 
-    std::vector<int> OutboundMessageManagerFactory::getOptimalCoreAssignment()
+    std::vector<int> AsyncSenderManagerFactory::getOptimalCoreAssignment()
     {
         int num_cores = detectPerformanceCores();
         std::vector<int> assignment;
@@ -878,7 +901,7 @@ namespace fix_gateway::manager
         return assignment;
     }
 
-    bool OutboundMessageManagerFactory::isRealTimePrioritySupported()
+    bool AsyncSenderManagerFactory::isRealTimePrioritySupported()
     {
         // Real-time priority typically requires root privileges
         return getuid() == 0; // Check if running as root

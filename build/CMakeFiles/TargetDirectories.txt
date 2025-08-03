@@ -1,7 +1,5 @@
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/fix-gateway.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/platform-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/lockfree-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/simple-lockfree-test.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/message-pool-test.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/fix-demo.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/memory-perf-test.dir
@@ -35,14 +33,6 @@
 /Users/anminfang/fix-gateway-cpp/build/src/network/CMakeFiles/install.dir
 /Users/anminfang/fix-gateway-cpp/build/src/network/CMakeFiles/install/local.dir
 /Users/anminfang/fix-gateway-cpp/build/src/network/CMakeFiles/install/strip.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/session.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/test.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/edit_cache.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/rebuild_cache.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/list_install_components.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/install.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/install/local.dir
-/Users/anminfang/fix-gateway-cpp/build/src/session/CMakeFiles/install/strip.dir
 /Users/anminfang/fix-gateway-cpp/build/src/protocol/CMakeFiles/protocol.dir
 /Users/anminfang/fix-gateway-cpp/build/src/protocol/CMakeFiles/test.dir
 /Users/anminfang/fix-gateway-cpp/build/src/protocol/CMakeFiles/edit_cache.dir
@@ -76,7 +66,6 @@
 /Users/anminfang/fix-gateway-cpp/build/src/manager/CMakeFiles/install/local.dir
 /Users/anminfang/fix-gateway-cpp/build/src/manager/CMakeFiles/install/strip.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_async_sender.dir
-/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_message_manager.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_performance.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_2stage.dir

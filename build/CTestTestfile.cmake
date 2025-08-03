@@ -6,7 +6,6 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("src/common")
 subdirs("src/network")
-subdirs("src/session")
 subdirs("src/protocol")
 subdirs("src/application")
 subdirs("src/utils")
