@@ -4,4 +4,5 @@ add_library(utils
     performance_counters.cpp
     priority_queue.cpp
     platform_detector.cpp
+    fast_string_conversion.cpp
 ) 

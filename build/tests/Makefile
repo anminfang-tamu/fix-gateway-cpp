@@ -241,6 +241,44 @@ test_stream_fix_parser_improved/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/build
 .PHONY : test_stream_fix_parser_improved/fast
 
+# Convenience name for target.
+tests/CMakeFiles/claude_performance_test.dir/rule:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/claude_performance_test.dir/rule
+.PHONY : tests/CMakeFiles/claude_performance_test.dir/rule
+
+# Convenience name for target.
+claude_performance_test: tests/CMakeFiles/claude_performance_test.dir/rule
+.PHONY : claude_performance_test
+
+# fast build rule for target.
+claude_performance_test/fast:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/build
+.PHONY : claude_performance_test/fast
+
+claude_performance_test.o: claude_performance_test.cpp.o
+.PHONY : claude_performance_test.o
+
+# target to build an object file
+claude_performance_test.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/claude_performance_test.cpp.o
+.PHONY : claude_performance_test.cpp.o
+
+claude_performance_test.i: claude_performance_test.cpp.i
+.PHONY : claude_performance_test.i
+
+# target to preprocess a source file
+claude_performance_test.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/claude_performance_test.cpp.i
+.PHONY : claude_performance_test.cpp.i
+
+claude_performance_test.s: claude_performance_test.cpp.s
+.PHONY : claude_performance_test.s
+
+# target to generate assembly for a file
+claude_performance_test.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/claude_performance_test.cpp.s
+.PHONY : claude_performance_test.cpp.s
+
 test_async_sender.o: test_async_sender.cpp.o
 .PHONY : test_async_sender.o
 
@@ -374,11 +412,15 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... claude_performance_test"
 	@echo "... test_async_sender"
 	@echo "... test_stream_fix_parser"
 	@echo "... test_stream_fix_parser_2stage"
 	@echo "... test_stream_fix_parser_improved"
 	@echo "... test_stream_fix_parser_performance"
+	@echo "... claude_performance_test.o"
+	@echo "... claude_performance_test.i"
+	@echo "... claude_performance_test.s"
 	@echo "... test_async_sender.o"
 	@echo "... test_async_sender.i"
 	@echo "... test_async_sender.s"

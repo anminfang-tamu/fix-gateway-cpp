@@ -88,6 +88,23 @@ target_include_directories(test_stream_fix_parser_improved PRIVATE
     ${CMAKE_SOURCE_DIR}
 )
 
+# Claude's Custom Performance Test
+add_executable(claude_performance_test
+    claude_performance_test.cpp
+)
+
+target_link_libraries(claude_performance_test
+    protocol
+    common
+    utils
+    Threads::Threads
+)
+
+target_include_directories(claude_performance_test PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}
+)
+
 # Add test to CTest if available
 # Removed BUILD_TESTING condition to ensure tests are always built
 add_test(NAME async_sender_test COMMAND test_async_sender)

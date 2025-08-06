@@ -1,15 +1,4 @@
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/fix-gateway.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/platform-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/message-pool-test.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/fix-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/memory-perf-test.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/quick-perf-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/message-integration-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/existing-pool-templated-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/message-pool-validation-test.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/raw-pointer-perf-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/raw-pointer-api-demo.dir
-/Users/anminfang/fix-gateway-cpp/build/CMakeFiles/parser-buffer-demo.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/test.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/edit_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/CMakeFiles/rebuild_cache.dir
@@ -70,6 +59,7 @@
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_performance.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_2stage.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_improved.dir
+/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/claude_performance_test.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/edit_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/rebuild_cache.dir

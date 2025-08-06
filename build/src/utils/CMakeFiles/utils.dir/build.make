@@ -139,13 +139,28 @@ src/utils/CMakeFiles/utils.dir/platform_detector.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/utils.dir/platform_detector.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/utils/platform_detector.cpp -o CMakeFiles/utils.dir/platform_detector.cpp.s
 
+src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o: src/utils/CMakeFiles/utils.dir/flags.make
+src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o: /Users/anminfang/fix-gateway-cpp/src/utils/fast_string_conversion.cpp
+src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o: src/utils/CMakeFiles/utils.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o -MF CMakeFiles/utils.dir/fast_string_conversion.cpp.o.d -o CMakeFiles/utils.dir/fast_string_conversion.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/utils/fast_string_conversion.cpp
+
+src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/utils.dir/fast_string_conversion.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/utils/fast_string_conversion.cpp > CMakeFiles/utils.dir/fast_string_conversion.cpp.i
+
+src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/utils.dir/fast_string_conversion.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/utils/fast_string_conversion.cpp -o CMakeFiles/utils.dir/fast_string_conversion.cpp.s
+
 # Object files for target utils
 utils_OBJECTS = \
 "CMakeFiles/utils.dir/logger.cpp.o" \
 "CMakeFiles/utils.dir/performance_timer.cpp.o" \
 "CMakeFiles/utils.dir/performance_counters.cpp.o" \
 "CMakeFiles/utils.dir/priority_queue.cpp.o" \
-"CMakeFiles/utils.dir/platform_detector.cpp.o"
+"CMakeFiles/utils.dir/platform_detector.cpp.o" \
+"CMakeFiles/utils.dir/fast_string_conversion.cpp.o"
 
 # External object files for target utils
 utils_EXTERNAL_OBJECTS =
@@ -155,9 +170,10 @@ src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/performance_timer.cpp.o
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/performance_counters.cpp.o
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/priority_queue.cpp.o
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/platform_detector.cpp.o
+src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/build.make
 src/utils/libutils.a: src/utils/CMakeFiles/utils.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libutils.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libutils.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && $(CMAKE_COMMAND) -P CMakeFiles/utils.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/utils && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/utils.dir/link.txt --verbose=$(VERBOSE)
 

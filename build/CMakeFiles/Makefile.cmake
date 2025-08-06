@@ -64,17 +64,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/fix-gateway.dir/DependInfo.cmake"
-  "CMakeFiles/platform-demo.dir/DependInfo.cmake"
-  "CMakeFiles/message-pool-test.dir/DependInfo.cmake"
-  "CMakeFiles/fix-demo.dir/DependInfo.cmake"
-  "CMakeFiles/memory-perf-test.dir/DependInfo.cmake"
-  "CMakeFiles/quick-perf-demo.dir/DependInfo.cmake"
-  "CMakeFiles/message-integration-demo.dir/DependInfo.cmake"
-  "CMakeFiles/existing-pool-templated-demo.dir/DependInfo.cmake"
-  "CMakeFiles/message-pool-validation-test.dir/DependInfo.cmake"
-  "CMakeFiles/raw-pointer-perf-demo.dir/DependInfo.cmake"
-  "CMakeFiles/raw-pointer-api-demo.dir/DependInfo.cmake"
-  "CMakeFiles/parser-buffer-demo.dir/DependInfo.cmake"
   "src/common/CMakeFiles/common.dir/DependInfo.cmake"
   "src/network/CMakeFiles/network.dir/DependInfo.cmake"
   "src/protocol/CMakeFiles/protocol.dir/DependInfo.cmake"
@@ -86,4 +75,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "tests/CMakeFiles/test_stream_fix_parser_performance.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_2stage.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_improved.dir/DependInfo.cmake"
+  "tests/CMakeFiles/claude_performance_test.dir/DependInfo.cmake"
   )

@@ -158,7 +158,7 @@ namespace fix_gateway::protocol
         // BodyLength (9) - will be calculated later if auto enabled
         if (!config_.autoBodyLength && !message.hasField(FixFields::BodyLength))
         {
-            message.setField(FixFields::BodyLength, "0");
+            message.setField(FixFields::BodyLength, std::string_view("0"));
         }
 
         // MsgType (35)
@@ -197,7 +197,7 @@ namespace fix_gateway::protocol
         // CheckSum (10) - will be calculated later if auto enabled
         if (!config_.autoChecksum && !message.hasField(FixFields::CheckSum))
         {
-            message.setField(FixFields::CheckSum, "000");
+            message.setField(FixFields::CheckSum, std::string_view("000"));
         }
     }
 
@@ -272,7 +272,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildLogon(int heartBeatInterval, int encryptMethod)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::Logon);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::Logon));
         message.setField(FixFields::EncryptMethod, encryptMethod);
         message.setField(FixFields::HeartBtInt, heartBeatInterval);
 
@@ -282,7 +282,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildLogout(const std::string &text)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::Logout);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::Logout));
 
         if (!text.empty())
         {
@@ -295,7 +295,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildHeartbeat(const std::string &testReqID)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::Heartbeat);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::Heartbeat));
 
         if (!testReqID.empty())
         {
@@ -308,7 +308,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildTestRequest(const std::string &testReqID)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::TestRequest);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::TestRequest));
         message.setField(FixFields::TestReqID, testReqID);
 
         return buildMessage(message);
@@ -317,7 +317,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildResendRequest(int beginSeqNo, int endSeqNo)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::ResendRequest);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::ResendRequest));
         message.setField(FixFields::BeginSeqNo, beginSeqNo);
 
         if (endSeqNo > 0)
@@ -335,12 +335,12 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildSequenceReset(int newSeqNo, bool gapFillFlag)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::SequenceReset);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::SequenceReset));
         message.setField(FixFields::NewSeqNo, newSeqNo);
 
         if (gapFillFlag)
         {
-            message.setField(FixFields::GapFillFlag, "Y");
+            message.setField(FixFields::GapFillFlag, std::string_view("Y"));
         }
 
         return buildMessage(message);
@@ -349,7 +349,7 @@ namespace fix_gateway::protocol
     std::string FixBuilder::buildReject(int refSeqNum, const std::string &refMsgType, const std::string &reason)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::Reject);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::Reject));
         message.setField(FixFields::RefSeqNum, refSeqNum);
 
         if (!refMsgType.empty())
@@ -379,7 +379,7 @@ namespace fix_gateway::protocol
                                                 const std::string &account)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::NewOrderSingle);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::NewOrderSingle));
         message.setField(FixFields::ClOrdID, clOrdID);
         message.setField(FixFields::Symbol, symbol);
         message.setField(FixFields::Side, side);
@@ -415,7 +415,7 @@ namespace fix_gateway::protocol
                                                  const std::string &avgPx)
     {
         FixMessage message;
-        message.setField(FixFields::MsgType, MsgTypes::ExecutionReport);
+        message.setField(FixFields::MsgType, std::string_view(MsgTypes::ExecutionReport));
         message.setField(FixFields::OrderID, orderID);
         message.setField(FixFields::ExecID, execID);
         message.setField(FixFields::ExecType, execType);

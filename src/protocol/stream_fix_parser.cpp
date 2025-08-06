@@ -2,6 +2,7 @@
 #include "protocol/fix_fields.h"
 #include "utils/logger.h"
 #include "utils/performance_timer.h"
+#include "utils/fast_string_conversion.h"
 #include <cstring>
 #include <algorithm>
 #include <sstream>
@@ -9,6 +10,8 @@
 
 namespace fix_gateway::protocol
 {
+    using FastStringConversion = fix_gateway::utils::FastStringConversion;
+
     // FIX protocol constants (FIX_SOH is defined in fix_fields.h)
     static constexpr char FIX_EQUALS = '='; // Tag=Value separator
     static constexpr const char *FIX_BEGIN_STRING = "8=FIX.4.4";
@@ -511,7 +514,7 @@ namespace fix_gateway::protocol
             // =================================================================
 
             size_t value_length = soh_ptr - value_start;
-            std::string field_value(value_start, value_length); // Only copy when storing in FixMessage
+            std::string_view field_value(value_start, value_length); // Only copy when storing in FixMessage
 
             // Store field in message
             message->setField(field_tag, field_value);
@@ -1136,7 +1139,7 @@ namespace fix_gateway::protocol
         else
         {
             // Extract the field value
-            std::string field_value(buffer, value_length);
+            std::string_view field_value(buffer, value_length);
             context.partial_field_value = field_value;
         }
 
@@ -1306,8 +1309,9 @@ namespace fix_gateway::protocol
         }
 
         // Set required header fields that were parsed in earlier states
-        message->setField(FixFields::BeginString, "FIX.4.4");
-        message->setField(FixFields::BodyLength, std::to_string(context.expected_body_length));
+        message->setField(FixFields::BeginString, std::string_view("FIX.4.4"));
+        message->setField(FixFields::BodyLength, FastStringConversion::make_permanent(
+                                                     FastStringConversion::int_to_string(static_cast<int>(context.expected_body_length))));
 
         // Extract MsgType from parsed fields (it should be field 35)
         auto msg_type_field = std::find_if(context.parsed_fields.begin(), context.parsed_fields.end(),

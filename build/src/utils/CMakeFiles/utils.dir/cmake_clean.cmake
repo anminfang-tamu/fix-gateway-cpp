@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/utils.dir/fast_string_conversion.cpp.o"
+  "CMakeFiles/utils.dir/fast_string_conversion.cpp.o.d"
   "CMakeFiles/utils.dir/logger.cpp.o"
   "CMakeFiles/utils.dir/logger.cpp.o.d"
   "CMakeFiles/utils.dir/performance_counters.cpp.o"

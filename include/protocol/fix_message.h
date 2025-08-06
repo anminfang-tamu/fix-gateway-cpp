@@ -44,6 +44,7 @@ namespace fix_gateway::protocol
         void setField(int tag, int value);
         void setField(int tag, double value, int precision = 2);
         void setField(int tag, char value);
+        void setField(int tag, std::string_view value);
 
         bool getField(int tag, std::string &value) const;
         bool getField(int tag, int &value) const;

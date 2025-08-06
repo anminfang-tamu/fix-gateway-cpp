@@ -64,17 +64,6 @@ CMAKE_BINARY_DIR = /Users/anminfang/fix-gateway-cpp/build
 
 # The main recursive "all" target.
 all: CMakeFiles/fix-gateway.dir/all
-all: CMakeFiles/platform-demo.dir/all
-all: CMakeFiles/message-pool-test.dir/all
-all: CMakeFiles/fix-demo.dir/all
-all: CMakeFiles/memory-perf-test.dir/all
-all: CMakeFiles/quick-perf-demo.dir/all
-all: CMakeFiles/message-integration-demo.dir/all
-all: CMakeFiles/existing-pool-templated-demo.dir/all
-all: CMakeFiles/message-pool-validation-test.dir/all
-all: CMakeFiles/raw-pointer-perf-demo.dir/all
-all: CMakeFiles/raw-pointer-api-demo.dir/all
-all: CMakeFiles/parser-buffer-demo.dir/all
 all: src/common/all
 all: src/network/all
 all: src/protocol/all
@@ -96,17 +85,6 @@ preinstall: tests/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/fix-gateway.dir/clean
-clean: CMakeFiles/platform-demo.dir/clean
-clean: CMakeFiles/message-pool-test.dir/clean
-clean: CMakeFiles/fix-demo.dir/clean
-clean: CMakeFiles/memory-perf-test.dir/clean
-clean: CMakeFiles/quick-perf-demo.dir/clean
-clean: CMakeFiles/message-integration-demo.dir/clean
-clean: CMakeFiles/existing-pool-templated-demo.dir/clean
-clean: CMakeFiles/message-pool-validation-test.dir/clean
-clean: CMakeFiles/raw-pointer-perf-demo.dir/clean
-clean: CMakeFiles/raw-pointer-api-demo.dir/clean
-clean: CMakeFiles/parser-buffer-demo.dir/clean
 clean: src/common/clean
 clean: src/network/clean
 clean: src/protocol/clean
@@ -215,6 +193,7 @@ tests/all: tests/CMakeFiles/test_stream_fix_parser.dir/all
 tests/all: tests/CMakeFiles/test_stream_fix_parser_performance.dir/all
 tests/all: tests/CMakeFiles/test_stream_fix_parser_2stage.dir/all
 tests/all: tests/CMakeFiles/test_stream_fix_parser_improved.dir/all
+tests/all: tests/CMakeFiles/claude_performance_test.dir/all
 .PHONY : tests/all
 
 # Recursive "preinstall" directory target.
@@ -227,6 +206,7 @@ tests/clean: tests/CMakeFiles/test_stream_fix_parser.dir/clean
 tests/clean: tests/CMakeFiles/test_stream_fix_parser_performance.dir/clean
 tests/clean: tests/CMakeFiles/test_stream_fix_parser_2stage.dir/clean
 tests/clean: tests/CMakeFiles/test_stream_fix_parser_improved.dir/clean
+tests/clean: tests/CMakeFiles/claude_performance_test.dir/clean
 .PHONY : tests/clean
 
 #=============================================================================
@@ -239,12 +219,12 @@ CMakeFiles/fix-gateway.dir/all: src/utils/CMakeFiles/utils.dir/all
 CMakeFiles/fix-gateway.dir/all: src/manager/CMakeFiles/manager.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-gateway.dir/build.make CMakeFiles/fix-gateway.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-gateway.dir/build.make CMakeFiles/fix-gateway.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=11,12 "Built target fix-gateway"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=9,10 "Built target fix-gateway"
 .PHONY : CMakeFiles/fix-gateway.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fix-gateway.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 19
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 20
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fix-gateway.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : CMakeFiles/fix-gateway.dir/rule
@@ -259,320 +239,13 @@ CMakeFiles/fix-gateway.dir/clean:
 .PHONY : CMakeFiles/fix-gateway.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/platform-demo.dir
-
-# All Build rule for target.
-CMakeFiles/platform-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/platform-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=32,33 "Built target platform-demo"
-.PHONY : CMakeFiles/platform-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/platform-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 10
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/platform-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/platform-demo.dir/rule
-
-# Convenience name for target.
-platform-demo: CMakeFiles/platform-demo.dir/rule
-.PHONY : platform-demo
-
-# clean rule for target.
-CMakeFiles/platform-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/platform-demo.dir/build.make CMakeFiles/platform-demo.dir/clean
-.PHONY : CMakeFiles/platform-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/message-pool-test.dir
-
-# All Build rule for target.
-CMakeFiles/message-pool-test.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/message-pool-test.dir/all: src/network/CMakeFiles/network.dir/all
-CMakeFiles/message-pool-test.dir/all: src/utils/CMakeFiles/utils.dir/all
-CMakeFiles/message-pool-test.dir/all: src/manager/CMakeFiles/manager.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=23,24 "Built target message-pool-test"
-.PHONY : CMakeFiles/message-pool-test.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/message-pool-test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 19
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/message-pool-test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/message-pool-test.dir/rule
-
-# Convenience name for target.
-message-pool-test: CMakeFiles/message-pool-test.dir/rule
-.PHONY : message-pool-test
-
-# clean rule for target.
-CMakeFiles/message-pool-test.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-test.dir/build.make CMakeFiles/message-pool-test.dir/clean
-.PHONY : CMakeFiles/message-pool-test.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/fix-demo.dir
-
-# All Build rule for target.
-CMakeFiles/fix-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/fix-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/fix-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=9,10 "Built target fix-demo"
-.PHONY : CMakeFiles/fix-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/fix-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fix-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/fix-demo.dir/rule
-
-# Convenience name for target.
-fix-demo: CMakeFiles/fix-demo.dir/rule
-.PHONY : fix-demo
-
-# clean rule for target.
-CMakeFiles/fix-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fix-demo.dir/build.make CMakeFiles/fix-demo.dir/clean
-.PHONY : CMakeFiles/fix-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/memory-perf-test.dir
-
-# All Build rule for target.
-CMakeFiles/memory-perf-test.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/memory-perf-test.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/memory-perf-test.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=19,20 "Built target memory-perf-test"
-.PHONY : CMakeFiles/memory-perf-test.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/memory-perf-test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/memory-perf-test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/memory-perf-test.dir/rule
-
-# Convenience name for target.
-memory-perf-test: CMakeFiles/memory-perf-test.dir/rule
-.PHONY : memory-perf-test
-
-# clean rule for target.
-CMakeFiles/memory-perf-test.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/memory-perf-test.dir/build.make CMakeFiles/memory-perf-test.dir/clean
-.PHONY : CMakeFiles/memory-perf-test.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/quick-perf-demo.dir
-
-# All Build rule for target.
-CMakeFiles/quick-perf-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/quick-perf-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/quick-perf-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=39,40 "Built target quick-perf-demo"
-.PHONY : CMakeFiles/quick-perf-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/quick-perf-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/quick-perf-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/quick-perf-demo.dir/rule
-
-# Convenience name for target.
-quick-perf-demo: CMakeFiles/quick-perf-demo.dir/rule
-.PHONY : quick-perf-demo
-
-# clean rule for target.
-CMakeFiles/quick-perf-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/quick-perf-demo.dir/build.make CMakeFiles/quick-perf-demo.dir/clean
-.PHONY : CMakeFiles/quick-perf-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/message-integration-demo.dir
-
-# All Build rule for target.
-CMakeFiles/message-integration-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/message-integration-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/message-integration-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=21,22 "Built target message-integration-demo"
-.PHONY : CMakeFiles/message-integration-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/message-integration-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/message-integration-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/message-integration-demo.dir/rule
-
-# Convenience name for target.
-message-integration-demo: CMakeFiles/message-integration-demo.dir/rule
-.PHONY : message-integration-demo
-
-# clean rule for target.
-CMakeFiles/message-integration-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-integration-demo.dir/build.make CMakeFiles/message-integration-demo.dir/clean
-.PHONY : CMakeFiles/message-integration-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/existing-pool-templated-demo.dir
-
-# All Build rule for target.
-CMakeFiles/existing-pool-templated-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/existing-pool-templated-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/existing-pool-templated-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=7,8 "Built target existing-pool-templated-demo"
-.PHONY : CMakeFiles/existing-pool-templated-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/existing-pool-templated-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/existing-pool-templated-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/existing-pool-templated-demo.dir/rule
-
-# Convenience name for target.
-existing-pool-templated-demo: CMakeFiles/existing-pool-templated-demo.dir/rule
-.PHONY : existing-pool-templated-demo
-
-# clean rule for target.
-CMakeFiles/existing-pool-templated-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/existing-pool-templated-demo.dir/build.make CMakeFiles/existing-pool-templated-demo.dir/clean
-.PHONY : CMakeFiles/existing-pool-templated-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/message-pool-validation-test.dir
-
-# All Build rule for target.
-CMakeFiles/message-pool-validation-test.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/message-pool-validation-test.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=25,26 "Built target message-pool-validation-test"
-.PHONY : CMakeFiles/message-pool-validation-test.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/message-pool-validation-test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 10
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/message-pool-validation-test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/message-pool-validation-test.dir/rule
-
-# Convenience name for target.
-message-pool-validation-test: CMakeFiles/message-pool-validation-test.dir/rule
-.PHONY : message-pool-validation-test
-
-# clean rule for target.
-CMakeFiles/message-pool-validation-test.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/message-pool-validation-test.dir/build.make CMakeFiles/message-pool-validation-test.dir/clean
-.PHONY : CMakeFiles/message-pool-validation-test.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/raw-pointer-perf-demo.dir
-
-# All Build rule for target.
-CMakeFiles/raw-pointer-perf-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/raw-pointer-perf-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/raw-pointer-perf-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=43,44 "Built target raw-pointer-perf-demo"
-.PHONY : CMakeFiles/raw-pointer-perf-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/raw-pointer-perf-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/raw-pointer-perf-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/raw-pointer-perf-demo.dir/rule
-
-# Convenience name for target.
-raw-pointer-perf-demo: CMakeFiles/raw-pointer-perf-demo.dir/rule
-.PHONY : raw-pointer-perf-demo
-
-# clean rule for target.
-CMakeFiles/raw-pointer-perf-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-perf-demo.dir/build.make CMakeFiles/raw-pointer-perf-demo.dir/clean
-.PHONY : CMakeFiles/raw-pointer-perf-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/raw-pointer-api-demo.dir
-
-# All Build rule for target.
-CMakeFiles/raw-pointer-api-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/raw-pointer-api-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/raw-pointer-api-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=41,42 "Built target raw-pointer-api-demo"
-.PHONY : CMakeFiles/raw-pointer-api-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/raw-pointer-api-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/raw-pointer-api-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/raw-pointer-api-demo.dir/rule
-
-# Convenience name for target.
-raw-pointer-api-demo: CMakeFiles/raw-pointer-api-demo.dir/rule
-.PHONY : raw-pointer-api-demo
-
-# clean rule for target.
-CMakeFiles/raw-pointer-api-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/raw-pointer-api-demo.dir/build.make CMakeFiles/raw-pointer-api-demo.dir/clean
-.PHONY : CMakeFiles/raw-pointer-api-demo.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/parser-buffer-demo.dir
-
-# All Build rule for target.
-CMakeFiles/parser-buffer-demo.dir/all: src/common/CMakeFiles/common.dir/all
-CMakeFiles/parser-buffer-demo.dir/all: src/protocol/CMakeFiles/protocol.dir/all
-CMakeFiles/parser-buffer-demo.dir/all: src/utils/CMakeFiles/utils.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=30,31 "Built target parser-buffer-demo"
-.PHONY : CMakeFiles/parser-buffer-demo.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/parser-buffer-demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/parser-buffer-demo.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
-.PHONY : CMakeFiles/parser-buffer-demo.dir/rule
-
-# Convenience name for target.
-parser-buffer-demo: CMakeFiles/parser-buffer-demo.dir/rule
-.PHONY : parser-buffer-demo
-
-# clean rule for target.
-CMakeFiles/parser-buffer-demo.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/parser-buffer-demo.dir/build.make CMakeFiles/parser-buffer-demo.dir/clean
-.PHONY : CMakeFiles/parser-buffer-demo.dir/clean
-
-#=============================================================================
 # Target rules for target src/common/CMakeFiles/common.dir
 
 # All Build rule for target.
 src/common/CMakeFiles/common.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/common/CMakeFiles/common.dir/build.make src/common/CMakeFiles/common.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=5,6 "Built target common"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=7,8 "Built target common"
 .PHONY : src/common/CMakeFiles/common.dir/all
 
 # Build rule for subdir invocation for target.
@@ -599,12 +272,12 @@ src/network/CMakeFiles/network.dir/all: src/common/CMakeFiles/common.dir/all
 src/network/CMakeFiles/network.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/network/CMakeFiles/network.dir/build.make src/network/CMakeFiles/network.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=27,28,29 "Built target network"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=17,18,19 "Built target network"
 .PHONY : src/network/CMakeFiles/network.dir/all
 
 # Build rule for subdir invocation for target.
 src/network/CMakeFiles/network.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/network/CMakeFiles/network.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : src/network/CMakeFiles/network.dir/rule
@@ -625,7 +298,7 @@ src/network/CMakeFiles/network.dir/clean:
 src/protocol/CMakeFiles/protocol.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/protocol/CMakeFiles/protocol.dir/build.make src/protocol/CMakeFiles/protocol.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=34,35,36,37,38 "Built target protocol"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=20,21,22,23,24 "Built target protocol"
 .PHONY : src/protocol/CMakeFiles/protocol.dir/all
 
 # Build rule for subdir invocation for target.
@@ -677,12 +350,12 @@ src/application/CMakeFiles/application.dir/clean:
 src/utils/CMakeFiles/utils.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=55,56,57,58,59,60 "Built target utils"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=35,36,37,38,39,40,41 "Built target utils"
 .PHONY : src/utils/CMakeFiles/utils.dir/all
 
 # Build rule for subdir invocation for target.
 src/utils/CMakeFiles/utils.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/utils/CMakeFiles/utils.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : src/utils/CMakeFiles/utils.dir/rule
@@ -705,12 +378,12 @@ src/manager/CMakeFiles/manager.dir/all: src/network/CMakeFiles/network.dir/all
 src/manager/CMakeFiles/manager.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=13,14,15,16,17,18 "Built target manager"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=11,12,13,14,15,16 "Built target manager"
 .PHONY : src/manager/CMakeFiles/manager.dir/all
 
 # Build rule for subdir invocation for target.
 src/manager/CMakeFiles/manager.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 18
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/manager/CMakeFiles/manager.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : src/manager/CMakeFiles/manager.dir/rule
@@ -733,12 +406,12 @@ tests/CMakeFiles/test_async_sender.dir/all: src/network/CMakeFiles/network.dir/a
 tests/CMakeFiles/test_async_sender.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=45,46 "Built target test_async_sender"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=25,26 "Built target test_async_sender"
 .PHONY : tests/CMakeFiles/test_async_sender.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_async_sender.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_async_sender.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_async_sender.dir/rule
@@ -761,12 +434,12 @@ tests/CMakeFiles/test_stream_fix_parser.dir/all: src/protocol/CMakeFiles/protoco
 tests/CMakeFiles/test_stream_fix_parser.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser.dir/build.make tests/CMakeFiles/test_stream_fix_parser.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser.dir/build.make tests/CMakeFiles/test_stream_fix_parser.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=47,48 "Built target test_stream_fix_parser"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=27,28 "Built target test_stream_fix_parser"
 .PHONY : tests/CMakeFiles/test_stream_fix_parser.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_stream_fix_parser.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_stream_fix_parser.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_stream_fix_parser.dir/rule
@@ -789,12 +462,12 @@ tests/CMakeFiles/test_stream_fix_parser_performance.dir/all: src/protocol/CMakeF
 tests/CMakeFiles/test_stream_fix_parser_performance.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_performance.dir/build.make tests/CMakeFiles/test_stream_fix_parser_performance.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_performance.dir/build.make tests/CMakeFiles/test_stream_fix_parser_performance.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=53,54 "Built target test_stream_fix_parser_performance"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=33,34 "Built target test_stream_fix_parser_performance"
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_performance.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_stream_fix_parser_performance.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_stream_fix_parser_performance.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_performance.dir/rule
@@ -817,12 +490,12 @@ tests/CMakeFiles/test_stream_fix_parser_2stage.dir/all: src/protocol/CMakeFiles/
 tests/CMakeFiles/test_stream_fix_parser_2stage.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=49,50 "Built target test_stream_fix_parser_2stage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=29,30 "Built target test_stream_fix_parser_2stage"
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_2stage.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_stream_fix_parser_2stage.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_stream_fix_parser_2stage.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_2stage.dir/rule
@@ -845,12 +518,12 @@ tests/CMakeFiles/test_stream_fix_parser_improved.dir/all: src/protocol/CMakeFile
 tests/CMakeFiles/test_stream_fix_parser_improved.dir/all: src/utils/CMakeFiles/utils.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=51,52 "Built target test_stream_fix_parser_improved"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=31,32 "Built target test_stream_fix_parser_improved"
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_improved.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_stream_fix_parser_improved.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_improved.dir/rule
@@ -863,6 +536,34 @@ test_stream_fix_parser_improved: tests/CMakeFiles/test_stream_fix_parser_improve
 tests/CMakeFiles/test_stream_fix_parser_improved.dir/clean:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/clean
 .PHONY : tests/CMakeFiles/test_stream_fix_parser_improved.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/claude_performance_test.dir
+
+# All Build rule for target.
+tests/CMakeFiles/claude_performance_test.dir/all: src/common/CMakeFiles/common.dir/all
+tests/CMakeFiles/claude_performance_test.dir/all: src/protocol/CMakeFiles/protocol.dir/all
+tests/CMakeFiles/claude_performance_test.dir/all: src/utils/CMakeFiles/utils.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=5,6 "Built target claude_performance_test"
+.PHONY : tests/CMakeFiles/claude_performance_test.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/claude_performance_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 16
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/claude_performance_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/anminfang/fix-gateway-cpp/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/claude_performance_test.dir/rule
+
+# Convenience name for target.
+claude_performance_test: tests/CMakeFiles/claude_performance_test.dir/rule
+.PHONY : claude_performance_test
+
+# clean rule for target.
+tests/CMakeFiles/claude_performance_test.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/clean
+.PHONY : tests/CMakeFiles/claude_performance_test.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -185,6 +185,30 @@ utils/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/build
 .PHONY : utils/fast
 
+fast_string_conversion.o: fast_string_conversion.cpp.o
+.PHONY : fast_string_conversion.o
+
+# target to build an object file
+fast_string_conversion.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o
+.PHONY : fast_string_conversion.cpp.o
+
+fast_string_conversion.i: fast_string_conversion.cpp.i
+.PHONY : fast_string_conversion.i
+
+# target to preprocess a source file
+fast_string_conversion.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.i
+.PHONY : fast_string_conversion.cpp.i
+
+fast_string_conversion.s: fast_string_conversion.cpp.s
+.PHONY : fast_string_conversion.s
+
+# target to generate assembly for a file
+fast_string_conversion.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.s
+.PHONY : fast_string_conversion.cpp.s
+
 logger.o: logger.cpp.o
 .PHONY : logger.o
 
@@ -319,6 +343,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... utils"
+	@echo "... fast_string_conversion.o"
+	@echo "... fast_string_conversion.i"
+	@echo "... fast_string_conversion.s"
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
