@@ -1,6 +1,7 @@
 #include "protocol/fix_message.h"
 #include "protocol/fix_fields.h"
 #include "common/message_pool.h"
+#include "utils/fast_string_conversion.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -9,6 +10,8 @@
 
 namespace fix_gateway::protocol
 {
+    using FastStringConversion = fix_gateway::utils::FastStringConversion;
+
     // Constructor implementations
     FixMessage::FixMessage()
         : creationTime_(std::chrono::steady_clock::now()),
@@ -109,19 +112,24 @@ namespace fix_gateway::protocol
 
     void FixMessage::setField(int tag, int value)
     {
-        setFieldInternal(tag, std::to_string(value));
+        setFieldInternal(tag, FastStringConversion::make_permanent(
+                                  FastStringConversion::int_to_string(value)));
     }
 
     void FixMessage::setField(int tag, double value, int precision)
     {
-        std::ostringstream oss;
-        oss << std::fixed << std::setprecision(precision) << value;
-        setFieldInternal(tag, oss.str());
+        setFieldInternal(tag, FastStringConversion::make_permanent(
+                                  FastStringConversion::double_to_string(value, precision)));
     }
 
     void FixMessage::setField(int tag, char value)
     {
         setFieldInternal(tag, std::string(1, value));
+    }
+
+    void FixMessage::setField(int tag, std::string_view value)
+    {
+        setFieldInternal(tag, std::string(value));
     }
 
     bool FixMessage::getField(int tag, std::string &value) const
@@ -208,6 +216,31 @@ namespace fix_gateway::protocol
         int seqNum = 0;
         getField(FixFields::MsgSeqNum, seqNum);
         return seqNum;
+    }
+
+    // Ultra-fast message type classification
+    FixMsgType FixMessage::getMsgTypeEnum() const
+    {
+        // Check if already cached
+        if (msgTypeCached_)
+        {
+            return cachedMsgType_;
+        }
+
+        // Get message type string pointer (no allocation)
+        const std::string *msgTypePtr = getFieldPtr(FixFields::MsgType);
+        if (!msgTypePtr)
+        {
+            cachedMsgType_ = FixMsgType::UNKNOWN;
+            msgTypeCached_ = true;
+            return cachedMsgType_;
+        }
+
+        // Convert string to enum using ultra-fast character comparison
+        cachedMsgType_ = FixMsgTypeUtils::fromString(msgTypePtr->c_str());
+        msgTypeCached_ = true;
+
+        return cachedMsgType_;
     }
 
     // Session-level field setters
@@ -480,6 +513,10 @@ namespace fix_gateway::protocol
         checksumValid_ = false;
         lengthValid_ = false;
         cachedString_.clear();
+
+        // Invalidate message type cache (Option 3 optimization)
+        msgTypeCached_ = false;
+        cachedMsgType_ = FixMsgType::UNKNOWN;
     }
 
     void FixMessage::touchModified()
@@ -650,7 +687,7 @@ namespace fix_gateway::protocol
         if (!msg)
             return nullptr;
 
-        msg->setField(FixFields::MsgType, MsgTypes::Logon);
+        msg->setField(FixFields::MsgType, std::string_view(MsgTypes::Logon));
         msg->setSenderCompID(senderID);
         msg->setTargetCompID(targetID);
         msg->setField(FixFields::HeartBtInt, heartBeatInterval);
@@ -667,7 +704,7 @@ namespace fix_gateway::protocol
         if (!msg)
             return nullptr;
 
-        msg->setField(FixFields::MsgType, MsgTypes::Heartbeat);
+        msg->setField(FixFields::MsgType, std::string_view(MsgTypes::Heartbeat));
         msg->setSenderCompID(senderID);
         msg->setTargetCompID(targetID);
 
@@ -687,7 +724,7 @@ namespace fix_gateway::protocol
         if (!msg)
             return nullptr;
 
-        msg->setField(FixFields::MsgType, MsgTypes::NewOrderSingle);
+        msg->setField(FixFields::MsgType, std::string_view(MsgTypes::NewOrderSingle));
         msg->setField(FixFields::ClOrdID, clOrdID);
         msg->setField(FixFields::Symbol, symbol);
         msg->setField(FixFields::Side, side);
@@ -709,7 +746,7 @@ namespace fix_gateway::protocol
         if (!msg)
             return nullptr;
 
-        msg->setField(FixFields::MsgType, MsgTypes::OrderCancelRequest);
+        msg->setField(FixFields::MsgType, std::string_view(MsgTypes::OrderCancelRequest));
         msg->setField(FixFields::OrigClOrdID, origClOrdID);
         msg->setField(FixFields::ClOrdID, clOrdID);
         msg->setField(FixFields::Symbol, symbol);
@@ -742,7 +779,7 @@ namespace fix_gateway::protocol
                                                 const std::string &price, const std::string &orderType,
                                                 const std::string &timeInForce)
     {
-        setField(FixFields::MsgType, MsgTypes::NewOrderSingle);
+        setField(FixFields::MsgType, std::string_view(MsgTypes::NewOrderSingle));
         setField(FixFields::ClOrdID, clOrdID);
         setField(FixFields::Symbol, symbol);
         setField(FixFields::Side, side);
@@ -755,7 +792,7 @@ namespace fix_gateway::protocol
     void FixMessage::initializeAsOrderCancel(const std::string &origClOrdID, const std::string &clOrdID,
                                              const std::string &symbol, const std::string &side)
     {
-        setField(FixFields::MsgType, MsgTypes::OrderCancelRequest);
+        setField(FixFields::MsgType, std::string_view(MsgTypes::OrderCancelRequest));
         setField(FixFields::OrigClOrdID, origClOrdID);
         setField(FixFields::ClOrdID, clOrdID);
         setField(FixFields::Symbol, symbol);
@@ -778,14 +815,14 @@ namespace fix_gateway::protocol
                 return nullptr;
 
             // Step 2: Direct field setting (minimal overhead)
-            msg->setField(FixFields::MsgType, MsgTypes::NewOrderSingle);
+            msg->setField(FixFields::MsgType, std::string_view(MsgTypes::NewOrderSingle));
             msg->setField(FixFields::ClOrdID, clOrdID);
             msg->setField(FixFields::Symbol, symbol);
             msg->setField(FixFields::Side, side);
             msg->setField(FixFields::OrderQty, qty);
             msg->setField(FixFields::Price, price);
-            msg->setField(FixFields::OrdType, "2");     // Limit order
-            msg->setField(FixFields::TimeInForce, "0"); // Day order
+            msg->setField(FixFields::OrdType, std::string_view("2"));     // Limit order
+            msg->setField(FixFields::TimeInForce, std::string_view("0")); // Day order
 
             return msg; // Total: ~200-300ns vs ~8000ns for shared_ptr
         }
@@ -799,7 +836,7 @@ namespace fix_gateway::protocol
             if (!msg)
                 return nullptr;
 
-            msg->setField(FixFields::MsgType, MsgTypes::OrderCancelRequest);
+            msg->setField(FixFields::MsgType, std::string_view(MsgTypes::OrderCancelRequest));
             msg->setField(FixFields::OrigClOrdID, origClOrdID);
             msg->setField(FixFields::ClOrdID, clOrdID);
             msg->setField(FixFields::Symbol, symbol);

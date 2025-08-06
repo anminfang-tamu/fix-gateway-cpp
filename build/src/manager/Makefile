@@ -185,29 +185,125 @@ manager/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/build
 .PHONY : manager/fast
 
-message_manager.o: message_manager.cpp.o
-.PHONY : message_manager.o
+async_sender_manager.o: async_sender_manager.cpp.o
+.PHONY : async_sender_manager.o
 
 # target to build an object file
-message_manager.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.o
-.PHONY : message_manager.cpp.o
+async_sender_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o
+.PHONY : async_sender_manager.cpp.o
 
-message_manager.i: message_manager.cpp.i
-.PHONY : message_manager.i
+async_sender_manager.i: async_sender_manager.cpp.i
+.PHONY : async_sender_manager.i
 
 # target to preprocess a source file
-message_manager.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.i
-.PHONY : message_manager.cpp.i
+async_sender_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.i
+.PHONY : async_sender_manager.cpp.i
 
-message_manager.s: message_manager.cpp.s
-.PHONY : message_manager.s
+async_sender_manager.s: async_sender_manager.cpp.s
+.PHONY : async_sender_manager.s
 
 # target to generate assembly for a file
-message_manager.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_manager.cpp.s
-.PHONY : message_manager.cpp.s
+async_sender_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.s
+.PHONY : async_sender_manager.cpp.s
+
+business_logic_manager.o: business_logic_manager.cpp.o
+.PHONY : business_logic_manager.o
+
+# target to build an object file
+business_logic_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/business_logic_manager.cpp.o
+.PHONY : business_logic_manager.cpp.o
+
+business_logic_manager.i: business_logic_manager.cpp.i
+.PHONY : business_logic_manager.i
+
+# target to preprocess a source file
+business_logic_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/business_logic_manager.cpp.i
+.PHONY : business_logic_manager.cpp.i
+
+business_logic_manager.s: business_logic_manager.cpp.s
+.PHONY : business_logic_manager.s
+
+# target to generate assembly for a file
+business_logic_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/business_logic_manager.cpp.s
+.PHONY : business_logic_manager.cpp.s
+
+fix_session_manager.o: fix_session_manager.cpp.o
+.PHONY : fix_session_manager.o
+
+# target to build an object file
+fix_session_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/fix_session_manager.cpp.o
+.PHONY : fix_session_manager.cpp.o
+
+fix_session_manager.i: fix_session_manager.cpp.i
+.PHONY : fix_session_manager.i
+
+# target to preprocess a source file
+fix_session_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/fix_session_manager.cpp.i
+.PHONY : fix_session_manager.cpp.i
+
+fix_session_manager.s: fix_session_manager.cpp.s
+.PHONY : fix_session_manager.s
+
+# target to generate assembly for a file
+fix_session_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/fix_session_manager.cpp.s
+.PHONY : fix_session_manager.cpp.s
+
+inbound_message_manager.o: inbound_message_manager.cpp.o
+.PHONY : inbound_message_manager.o
+
+# target to build an object file
+inbound_message_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.o
+.PHONY : inbound_message_manager.cpp.o
+
+inbound_message_manager.i: inbound_message_manager.cpp.i
+.PHONY : inbound_message_manager.i
+
+# target to preprocess a source file
+inbound_message_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.i
+.PHONY : inbound_message_manager.cpp.i
+
+inbound_message_manager.s: inbound_message_manager.cpp.s
+.PHONY : inbound_message_manager.s
+
+# target to generate assembly for a file
+inbound_message_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.s
+.PHONY : inbound_message_manager.cpp.s
+
+message_router.o: message_router.cpp.o
+.PHONY : message_router.o
+
+# target to build an object file
+message_router.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.o
+.PHONY : message_router.cpp.o
+
+message_router.i: message_router.cpp.i
+.PHONY : message_router.i
+
+# target to preprocess a source file
+message_router.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.i
+.PHONY : message_router.cpp.i
+
+message_router.s: message_router.cpp.s
+.PHONY : message_router.s
+
+# target to generate assembly for a file
+message_router.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.s
+.PHONY : message_router.cpp.s
 
 # Help Target
 help:
@@ -223,9 +319,21 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... manager"
-	@echo "... message_manager.o"
-	@echo "... message_manager.i"
-	@echo "... message_manager.s"
+	@echo "... async_sender_manager.o"
+	@echo "... async_sender_manager.i"
+	@echo "... async_sender_manager.s"
+	@echo "... business_logic_manager.o"
+	@echo "... business_logic_manager.i"
+	@echo "... business_logic_manager.s"
+	@echo "... fix_session_manager.o"
+	@echo "... fix_session_manager.i"
+	@echo "... fix_session_manager.s"
+	@echo "... inbound_message_manager.o"
+	@echo "... inbound_message_manager.i"
+	@echo "... inbound_message_manager.s"
+	@echo "... message_router.o"
+	@echo "... message_router.i"
+	@echo "... message_router.s"
 .PHONY : help
 
 

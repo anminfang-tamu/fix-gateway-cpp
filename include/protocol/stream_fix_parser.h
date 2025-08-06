@@ -3,6 +3,7 @@
 #include "fix_message.h"
 #include "fix_fields.h"
 #include "common/message_pool.h"
+#include "utils/fast_string_conversion.h"
 #include <string>
 #include <string_view>
 #include <chrono>
@@ -15,6 +16,7 @@ namespace fix_gateway::protocol
 {
     using namespace fix_gateway::common;
     using namespace fix_gateway::protocol::FixFields;
+    using FastStringConversion = fix_gateway::utils::FastStringConversion;
 
     // =================================================================
     // FORWARD DECLARATIONS FOR TEMPLATE SPECIALIZATIONS
@@ -558,8 +560,8 @@ namespace fix_gateway::protocol
             }
 
             // Set header fields (known values for optimization)
-            message->setField(FixFields::BeginString, "FIX.4.4");
-            message->setField(FixFields::MsgType, "8"); // EXECUTION_REPORT
+            message->setField(FixFields::BeginString, std::string_view("FIX.4.4"));
+            message->setField(FixFields::MsgType, std::string_view("8")); // EXECUTION_REPORT
 
             // =================================================================
             // OPTIMIZED FIELD PARSING: Priority fields for EXECUTION_REPORT
@@ -586,7 +588,8 @@ namespace fix_gateway::protocol
             }
 
             // Set BodyLength field using the locally parsed value (not parse_context_)
-            message->setField(FixFields::BodyLength, std::to_string(body_length));
+            message->setField(FixFields::BodyLength, FastStringConversion::make_permanent(
+                                                         FastStringConversion::int_to_string(body_length)));
 
             current_ptr = body_length_end + 1;                        // Start of message body
             const char *body_end = body_length_end + 1 + body_length; // Calculate end based on parsed body length
@@ -632,8 +635,8 @@ namespace fix_gateway::protocol
                             StreamFixParser::ParseState::ERROR_RECOVERY, 0};
                 }
 
-                // Extract field value (zero-copy using string constructor)
-                std::string field_value(value_start, soh_ptr - value_start);
+                // Extract field value (zero-copy using string_view)
+                std::string_view field_value(value_start, soh_ptr - value_start);
                 message->setField(field_tag, field_value);
 
                 // Move to next field
@@ -762,8 +765,8 @@ namespace fix_gateway::protocol
             }
 
             // Set header fields (known values for optimization)
-            message->setField(FixFields::BeginString, "FIX.4.4");
-            message->setField(FixFields::MsgType, "0"); // HEARTBEAT
+            message->setField(FixFields::BeginString, std::string_view("FIX.4.4"));
+            message->setField(FixFields::MsgType, std::string_view("0")); // HEARTBEAT
 
             // =================================================================
             // OPTIMIZED FIELD PARSING: HEARTBEAT has minimal fields
@@ -790,7 +793,8 @@ namespace fix_gateway::protocol
             }
 
             // Set BodyLength field using the locally parsed value (not parse_context_)
-            message->setField(FixFields::BodyLength, std::to_string(body_length));
+            message->setField(FixFields::BodyLength, fix_gateway::utils::FastStringConversion::make_permanent(
+                                                         fix_gateway::utils::FastStringConversion::int_to_string(body_length)));
 
             current_ptr = body_length_end + 1;                        // Start of message body
             const char *body_end = body_length_end + 1 + body_length; // Calculate end based on parsed body length
@@ -837,8 +841,8 @@ namespace fix_gateway::protocol
                             StreamFixParser::ParseState::ERROR_RECOVERY, 0};
                 }
 
-                // Extract field value (zero-copy using string constructor)
-                std::string field_value(value_start, soh_ptr - value_start);
+                // Extract field value (zero-copy using string_view)
+                std::string_view field_value(value_start, soh_ptr - value_start);
                 message->setField(field_tag, field_value);
 
                 // HEARTBEAT can have session fields like SenderCompID, TargetCompID, etc.

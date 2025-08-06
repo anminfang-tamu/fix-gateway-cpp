@@ -44,6 +44,7 @@ namespace fix_gateway::protocol
         void setField(int tag, int value);
         void setField(int tag, double value, int precision = 2);
         void setField(int tag, char value);
+        void setField(int tag, std::string_view value);
 
         bool getField(int tag, std::string &value) const;
         bool getField(int tag, int &value) const;
@@ -63,6 +64,9 @@ namespace fix_gateway::protocol
         std::string getOrderQty() const { return getFieldValue(FixFields::OrderQty); }
         std::string getPrice() const { return getFieldValue(FixFields::Price); }
         int getMsgSeqNum() const;
+
+        // Ultra-fast message type classification (cached enum - Option 3 optimization)
+        FixMsgType getMsgTypeEnum() const;
 
         // Session-level fields
         void setSenderCompID(const std::string &senderID);
@@ -171,6 +175,10 @@ namespace fix_gateway::protocol
         mutable bool lengthValid_ = false;
         mutable std::string cachedString_;
         mutable bool stringCacheValid_ = false;
+
+        // Cached message type enum for ultra-fast classification (Option 3 optimization)
+        mutable FixMsgType cachedMsgType_ = FixMsgType::UNKNOWN;
+        mutable bool msgTypeCached_ = false;
 
         // Helper methods
         std::string getFieldValue(int tag) const;

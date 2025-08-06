@@ -9,25 +9,50 @@ namespace fix_gateway::protocol
         FixMsgType fromString(const char *msgTypeStr)
         {
             if (!msgTypeStr)
-                return static_cast<FixMsgType>(-1); // Invalid
+                return FixMsgType::UNKNOWN;
 
-            // Compare with known message type strings
-            if (strcmp(msgTypeStr, MsgTypes::Heartbeat) == 0)
+            // Ultra-fast single/double character comparisons (no strlen needed)
+            // Session messages
+            if (msgTypeStr[0] == '0' && msgTypeStr[1] == '\0')
                 return FixMsgType::HEARTBEAT;
-            else if (strcmp(msgTypeStr, MsgTypes::TestRequest) == 0)
+            if (msgTypeStr[0] == '1' && msgTypeStr[1] == '\0')
                 return FixMsgType::TEST_REQUEST;
-            else if (strcmp(msgTypeStr, MsgTypes::Logon) == 0)
-                return FixMsgType::LOGON;
-            else if (strcmp(msgTypeStr, MsgTypes::Logout) == 0)
+            if (msgTypeStr[0] == '2' && msgTypeStr[1] == '\0')
+                return FixMsgType::RESEND_REQUEST;
+            if (msgTypeStr[0] == '3' && msgTypeStr[1] == '\0')
+                return FixMsgType::REJECT;
+            if (msgTypeStr[0] == '4' && msgTypeStr[1] == '\0')
+                return FixMsgType::SEQUENCE_RESET;
+            if (msgTypeStr[0] == '5' && msgTypeStr[1] == '\0')
                 return FixMsgType::LOGOUT;
-            else if (strcmp(msgTypeStr, MsgTypes::NewOrderSingle) == 0)
-                return FixMsgType::NEW_ORDER_SINGLE;
-            else if (strcmp(msgTypeStr, MsgTypes::OrderCancelRequest) == 0)
-                return FixMsgType::ORDER_CANCEL_REQUEST;
-            else if (strcmp(msgTypeStr, MsgTypes::ExecutionReport) == 0)
-                return FixMsgType::EXECUTION_REPORT;
+            if (msgTypeStr[0] == 'A' && msgTypeStr[1] == '\0')
+                return FixMsgType::LOGON;
 
-            return static_cast<FixMsgType>(-1); // Unknown/unsupported message type
+            // Business messages
+            if (msgTypeStr[0] == '8' && msgTypeStr[1] == '\0')
+                return FixMsgType::EXECUTION_REPORT;
+            if (msgTypeStr[0] == '9' && msgTypeStr[1] == '\0')
+                return FixMsgType::ORDER_CANCEL_REJECT;
+            if (msgTypeStr[0] == 'D' && msgTypeStr[1] == '\0')
+                return FixMsgType::NEW_ORDER_SINGLE;
+            if (msgTypeStr[0] == 'F' && msgTypeStr[1] == '\0')
+                return FixMsgType::ORDER_CANCEL_REQUEST;
+            if (msgTypeStr[0] == 'G' && msgTypeStr[1] == '\0')
+                return FixMsgType::ORDER_CANCEL_REPLACE_REQUEST;
+            if (msgTypeStr[0] == 'H' && msgTypeStr[1] == '\0')
+                return FixMsgType::ORDER_STATUS_REQUEST;
+
+            // Market data messages
+            if (msgTypeStr[0] == 'V' && msgTypeStr[1] == '\0')
+                return FixMsgType::MARKET_DATA_REQUEST;
+            if (msgTypeStr[0] == 'W' && msgTypeStr[1] == '\0')
+                return FixMsgType::MARKET_DATA_SNAPSHOT;
+            if (msgTypeStr[0] == 'X' && msgTypeStr[1] == '\0')
+                return FixMsgType::MARKET_DATA_INCREMENTAL_REFRESH;
+            if (msgTypeStr[0] == 'Y' && msgTypeStr[1] == '\0')
+                return FixMsgType::MARKET_DATA_REQUEST_REJECT;
+
+            return FixMsgType::UNKNOWN;
         }
     }
 } // namespace fix_gateway::protocol

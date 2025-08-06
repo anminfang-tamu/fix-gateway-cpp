@@ -83,10 +83,24 @@ src/protocol/CMakeFiles/protocol.dir/fix_message.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/protocol.dir/fix_message.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/protocol/fix_message.cpp -o CMakeFiles/protocol.dir/fix_message.cpp.s
 
+src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o: src/protocol/CMakeFiles/protocol.dir/flags.make
+src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o: /Users/anminfang/fix-gateway-cpp/src/protocol/fix_fields.cpp
+src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o: src/protocol/CMakeFiles/protocol.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o -MF CMakeFiles/protocol.dir/fix_fields.cpp.o.d -o CMakeFiles/protocol.dir/fix_fields.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/protocol/fix_fields.cpp
+
+src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/protocol.dir/fix_fields.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/protocol/fix_fields.cpp > CMakeFiles/protocol.dir/fix_fields.cpp.i
+
+src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/protocol.dir/fix_fields.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/protocol/fix_fields.cpp -o CMakeFiles/protocol.dir/fix_fields.cpp.s
+
 src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o: src/protocol/CMakeFiles/protocol.dir/flags.make
 src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o: /Users/anminfang/fix-gateway-cpp/src/protocol/stream_fix_parser.cpp
 src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o: src/protocol/CMakeFiles/protocol.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o -MF CMakeFiles/protocol.dir/stream_fix_parser.cpp.o.d -o CMakeFiles/protocol.dir/stream_fix_parser.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/protocol/stream_fix_parser.cpp
 
 src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.i: cmake_force
@@ -100,7 +114,7 @@ src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.s: cmake_force
 src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o: src/protocol/CMakeFiles/protocol.dir/flags.make
 src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o: /Users/anminfang/fix-gateway-cpp/src/protocol/fix_builder.cpp
 src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o: src/protocol/CMakeFiles/protocol.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o -MF CMakeFiles/protocol.dir/fix_builder.cpp.o.d -o CMakeFiles/protocol.dir/fix_builder.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/protocol/fix_builder.cpp
 
 src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.i: cmake_force
@@ -114,6 +128,7 @@ src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.s: cmake_force
 # Object files for target protocol
 protocol_OBJECTS = \
 "CMakeFiles/protocol.dir/fix_message.cpp.o" \
+"CMakeFiles/protocol.dir/fix_fields.cpp.o" \
 "CMakeFiles/protocol.dir/stream_fix_parser.cpp.o" \
 "CMakeFiles/protocol.dir/fix_builder.cpp.o"
 
@@ -121,11 +136,12 @@ protocol_OBJECTS = \
 protocol_EXTERNAL_OBJECTS =
 
 src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/fix_message.cpp.o
+src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/fix_fields.cpp.o
 src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/stream_fix_parser.cpp.o
 src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/fix_builder.cpp.o
 src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/build.make
 src/protocol/libprotocol.a: src/protocol/CMakeFiles/protocol.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libprotocol.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libprotocol.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && $(CMAKE_COMMAND) -P CMakeFiles/protocol.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/protocol && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/protocol.dir/link.txt --verbose=$(VERBOSE)
 

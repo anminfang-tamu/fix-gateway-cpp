@@ -9,6 +9,7 @@
 
 namespace fix_gateway::protocol
 {
+    using FixMessagePtr = std::shared_ptr<FixMessage>;
     class FixBuilder
     {
     public:

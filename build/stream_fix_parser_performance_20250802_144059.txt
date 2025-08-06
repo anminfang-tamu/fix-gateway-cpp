@@ -1,0 +1,94 @@
+StreamFixParser Performance Test Results
+========================================
+
+Test Date: Sat Aug  2 14:41:31 2025
+System Information:
+  CPU cores: 10
+  Page size: 16384 bytes
+  Message pool size: 10000
+  Test messages: 1100
+
+Single-Threaded Throughput:
+  Messages processed: 17017
+  Parse errors: 82983
+  Allocation failures: 0
+  Total bytes: 20845245
+  Throughput (msgs/sec): 27067.61
+  Throughput (MB/sec): 31.62
+  Average latency (ns): 31296
+  Min latency (ns): 2125
+  Max latency (ns): 270250
+  P50 latency (ns): 5167
+  P95 latency (ns): 9667
+  P99 latency (ns): 11250
+
+Partial Message Performance:
+  Messages processed: 902
+  Parse errors: 9098
+  Allocation failures: 0
+  Total bytes: 2084315
+  Throughput (msgs/sec): 10620.96
+  Throughput (MB/sec): 23.41
+  Average latency (ns): 86752
+  Min latency (ns): 3833
+  Max latency (ns): 346250
+  P50 latency (ns): 6792
+  P95 latency (ns): 17291
+  P99 latency (ns): 18500
+
+Multi-Threaded Performance (2 threads):
+  Messages processed: 8512
+  Parse errors: 41488
+  Allocation failures: 0
+  Total bytes: 10000000
+  Throughput (msgs/sec): 46161.77
+  Throughput (MB/sec): 51.72
+  Average latency (ns): 37087
+  Min latency (ns): 2250
+  Max latency (ns): 70875
+  P50 latency (ns): 6125
+  P95 latency (ns): 11041
+  P99 latency (ns): 15250
+
+Multi-Threaded Performance (4 threads):
+  Messages processed: 17017
+  Parse errors: 82983
+  Allocation failures: 0
+  Total bytes: 20000000
+  Throughput (msgs/sec): 53466.63
+  Throughput (MB/sec): 59.93
+  Average latency (ns): 68230
+  Min latency (ns): 2208
+  Max latency (ns): 365584
+  P50 latency (ns): 10417
+  P95 latency (ns): 22541
+  P99 latency (ns): 40375
+
+Multi-Threaded Performance (8 threads):
+  Messages processed: 17017
+  Parse errors: 82983
+  Allocation failures: 0
+  Total bytes: 20000000
+  Throughput (msgs/sec): 23360.76
+  Throughput (MB/sec): 26.18
+  Average latency (ns): 333875
+  Min latency (ns): 2209
+  Max latency (ns): 852834
+  P50 latency (ns): 54792
+  P95 latency (ns): 99875
+  P99 latency (ns): 126709
+
+Sustained Load Test:
+  Messages processed: 832150
+  Parse errors: 4062781
+  Allocation failures: 0
+  Total bytes: 1023112292
+  Throughput (msgs/sec): 27738.32
+  Throughput (MB/sec): 32.52
+  Average latency (ns): 29135
+  Min latency (ns): 2083
+  Max latency (ns): 2050583
+  P50 latency (ns): 4958
+  P95 latency (ns): 9208
+  P99 latency (ns): 9541
+

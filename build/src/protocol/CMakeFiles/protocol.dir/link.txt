@@ -1,2 +1,2 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libprotocol.a CMakeFiles/protocol.dir/fix_message.cpp.o CMakeFiles/protocol.dir/stream_fix_parser.cpp.o CMakeFiles/protocol.dir/fix_builder.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ar qc libprotocol.a CMakeFiles/protocol.dir/fix_message.cpp.o CMakeFiles/protocol.dir/fix_fields.cpp.o CMakeFiles/protocol.dir/stream_fix_parser.cpp.o CMakeFiles/protocol.dir/fix_builder.cpp.o
 /Library/Developer/CommandLineTools/usr/bin/ranlib libprotocol.a

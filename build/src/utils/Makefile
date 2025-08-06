@@ -185,29 +185,29 @@ utils/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/build
 .PHONY : utils/fast
 
-lockfree_priority_queue.o: lockfree_priority_queue.cpp.o
-.PHONY : lockfree_priority_queue.o
+fast_string_conversion.o: fast_string_conversion.cpp.o
+.PHONY : fast_string_conversion.o
 
 # target to build an object file
-lockfree_priority_queue.cpp.o:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.o
-.PHONY : lockfree_priority_queue.cpp.o
+fast_string_conversion.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.o
+.PHONY : fast_string_conversion.cpp.o
 
-lockfree_priority_queue.i: lockfree_priority_queue.cpp.i
-.PHONY : lockfree_priority_queue.i
+fast_string_conversion.i: fast_string_conversion.cpp.i
+.PHONY : fast_string_conversion.i
 
 # target to preprocess a source file
-lockfree_priority_queue.cpp.i:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.i
-.PHONY : lockfree_priority_queue.cpp.i
+fast_string_conversion.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.i
+.PHONY : fast_string_conversion.cpp.i
 
-lockfree_priority_queue.s: lockfree_priority_queue.cpp.s
-.PHONY : lockfree_priority_queue.s
+fast_string_conversion.s: fast_string_conversion.cpp.s
+.PHONY : fast_string_conversion.s
 
 # target to generate assembly for a file
-lockfree_priority_queue.cpp.s:
-	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/lockfree_priority_queue.cpp.s
-.PHONY : lockfree_priority_queue.cpp.s
+fast_string_conversion.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/utils/CMakeFiles/utils.dir/build.make src/utils/CMakeFiles/utils.dir/fast_string_conversion.cpp.s
+.PHONY : fast_string_conversion.cpp.s
 
 logger.o: logger.cpp.o
 .PHONY : logger.o
@@ -343,9 +343,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... utils"
-	@echo "... lockfree_priority_queue.o"
-	@echo "... lockfree_priority_queue.i"
-	@echo "... lockfree_priority_queue.s"
+	@echo "... fast_string_conversion.o"
+	@echo "... fast_string_conversion.i"
+	@echo "... fast_string_conversion.s"
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"

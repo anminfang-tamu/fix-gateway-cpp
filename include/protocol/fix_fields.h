@@ -68,6 +68,17 @@ namespace fix_gateway::protocol
         constexpr int Currency = 15;   // Currency
         constexpr int Commission = 12; // Commission
         constexpr int CommType = 13;   // Commission type
+
+        // Session Management Additional Fields
+        constexpr int BeginSeqNo = 7;    // Begin sequence number for resend
+        constexpr int EndSeqNo = 16;     // End sequence number for resend
+        constexpr int NewSeqNo = 36;     // New sequence number for reset
+        constexpr int GapFillFlag = 123; // Gap fill flag
+        constexpr int RefSeqNum = 45;    // Reference sequence number
+        constexpr int RefMsgType = 372;  // Reference message type
+
+        // Repeating Group Fields
+        constexpr int NoRelatedSym = 146; // Number of related symbols
     }
 
     // FIX Message Types (MsgType field values) - Runtime constants
@@ -102,14 +113,31 @@ namespace fix_gateway::protocol
     // Compile-time enum for template specialization (maps to MsgTypes above)
     enum class FixMsgType
     {
-        HEARTBEAT,            // "0"
-        TEST_REQUEST,         // "1"
-        LOGON,                // "A"
-        LOGOUT,               // "5"
-        NEW_ORDER_SINGLE,     // "D"
-        ORDER_CANCEL_REQUEST, // "F"
-        EXECUTION_REPORT,     // "8"
-        // Add more as needed for template optimization
+        // Session messages (administrative)
+        HEARTBEAT,      // "0"
+        TEST_REQUEST,   // "1"
+        RESEND_REQUEST, // "2"
+        REJECT,         // "3"
+        SEQUENCE_RESET, // "4"
+        LOGOUT,         // "5"
+        LOGON,          // "A"
+
+        // Business messages (trading)
+        EXECUTION_REPORT,             // "8"
+        ORDER_CANCEL_REJECT,          // "9"
+        NEW_ORDER_SINGLE,             // "D"
+        ORDER_CANCEL_REQUEST,         // "F"
+        ORDER_CANCEL_REPLACE_REQUEST, // "G"
+        ORDER_STATUS_REQUEST,         // "H"
+
+        // Market data messages
+        MARKET_DATA_REQUEST,             // "V"
+        MARKET_DATA_SNAPSHOT,            // "W"
+        MARKET_DATA_INCREMENTAL_REFRESH, // "X"
+        MARKET_DATA_REQUEST_REJECT,      // "Y"
+
+        // Unknown/unsupported message type
+        UNKNOWN
     };
 
     // Utility to convert between enum and runtime strings
@@ -120,20 +148,47 @@ namespace fix_gateway::protocol
         {
             switch (msgType)
             {
+            // Session messages
             case FixMsgType::HEARTBEAT:
                 return MsgTypes::Heartbeat;
             case FixMsgType::TEST_REQUEST:
                 return MsgTypes::TestRequest;
-            case FixMsgType::LOGON:
-                return MsgTypes::Logon;
+            case FixMsgType::RESEND_REQUEST:
+                return MsgTypes::ResendRequest;
+            case FixMsgType::REJECT:
+                return MsgTypes::Reject;
+            case FixMsgType::SEQUENCE_RESET:
+                return MsgTypes::SequenceReset;
             case FixMsgType::LOGOUT:
                 return MsgTypes::Logout;
+            case FixMsgType::LOGON:
+                return MsgTypes::Logon;
+
+            // Business messages
+            case FixMsgType::EXECUTION_REPORT:
+                return MsgTypes::ExecutionReport;
+            case FixMsgType::ORDER_CANCEL_REJECT:
+                return MsgTypes::OrderCancelReject;
             case FixMsgType::NEW_ORDER_SINGLE:
                 return MsgTypes::NewOrderSingle;
             case FixMsgType::ORDER_CANCEL_REQUEST:
                 return MsgTypes::OrderCancelRequest;
-            case FixMsgType::EXECUTION_REPORT:
-                return MsgTypes::ExecutionReport;
+            case FixMsgType::ORDER_CANCEL_REPLACE_REQUEST:
+                return MsgTypes::OrderCancelReplaceRequest;
+            case FixMsgType::ORDER_STATUS_REQUEST:
+                return MsgTypes::OrderStatusRequest;
+
+            // Market data messages
+            case FixMsgType::MARKET_DATA_REQUEST:
+                return MsgTypes::MarketDataRequest;
+            case FixMsgType::MARKET_DATA_SNAPSHOT:
+                return MsgTypes::MarketDataSnapshot;
+            case FixMsgType::MARKET_DATA_INCREMENTAL_REFRESH:
+                return MsgTypes::MarketDataIncrementalRefresh;
+            case FixMsgType::MARKET_DATA_REQUEST_REJECT:
+                return MsgTypes::MarketDataRequestReject;
+
+            case FixMsgType::UNKNOWN:
             default:
                 return "";
             }
