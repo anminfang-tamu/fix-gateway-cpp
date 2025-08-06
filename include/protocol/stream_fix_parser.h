@@ -9,6 +9,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>  // Added for strncmp and memchr
 #include <map>    // Added for error pattern tracking
 #include <vector> // Added for parsed_fields storage
 
