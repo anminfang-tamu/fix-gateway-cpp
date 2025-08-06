@@ -71,8 +71,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "src/utils/CMakeFiles/utils.dir/DependInfo.cmake"
   "src/manager/CMakeFiles/manager.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_async_sender.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_stream_fix_parser.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_stream_fix_parser_performance.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_2stage.dir/DependInfo.cmake"
   "tests/CMakeFiles/test_stream_fix_parser_improved.dir/DependInfo.cmake"
   "tests/CMakeFiles/claude_performance_test.dir/DependInfo.cmake"

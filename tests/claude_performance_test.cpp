@@ -12,13 +12,14 @@ using namespace fix_gateway::protocol;
 using namespace fix_gateway::common;
 
 /**
- * @brief Claude's Clean Performance Test
+ * @brief Claude's Clean Performance Test - Client Side Messages Only
  *
  * This test isolates the core parsing performance by using:
- * 1. Hand-crafted, known-good FIX messages
+ * 1. Hand-crafted, known-good FIX messages (ExecutionReport, Heartbeat)
  * 2. Controlled test environment
  * 3. Clear error reporting
  * 4. Focus on string optimization impact
+ * 5. Client-side message types only (no NewOrderSingle)
  */
 class ClaudePerformanceTest
 {
@@ -90,12 +91,12 @@ public:
     }
 
     /**
-     * @brief Generate a perfect, known-good FIX message
+     * @brief Generate a perfect ExecutionReport message (client side receives these)
      * These messages are manually crafted to be 100% compliant
      */
     std::string createPerfectMessage(int seq_num)
     {
-        // Build a minimal but complete FIX 4.4 NewOrderSingle message
+        // Build a minimal but complete FIX 4.4 ExecutionReport message
         std::string msg;
 
         // Header: BeginString
@@ -103,19 +104,24 @@ public:
 
         // Body (we'll calculate length)
         std::string body;
-        body += "35=D\x01";                                     // MsgType = NewOrderSingle
+        body += "35=8\x01";                                     // MsgType = ExecutionReport
         body += "49=SENDER\x01";                                // SenderCompID
         body += "56=TARGET\x01";                                // TargetCompID
         body += "34=" + std::to_string(seq_num) + "\x01";       // MsgSeqNum
         body += "52=20231201-12:00:00\x01";                     // SendingTime
+        body += "37=EXEC_" + std::to_string(seq_num) + "\x01";  // OrderID
         body += "11=ORDER_" + std::to_string(seq_num) + "\x01"; // ClOrdID
+        body += "17=EXEC_" + std::to_string(seq_num) + "\x01";  // ExecID
+        body += "150=2\x01";                                    // ExecType = Fill
+        body += "39=2\x01";                                     // OrdStatus = Filled
         body += "55=AAPL\x01";                                  // Symbol
-        body += "54=1\x01";                                     // Side (Buy)
-        body += "60=20231201-12:00:00\x01";                     // TransactTime
+        body += "54=1\x01";                                     // Side
         body += "38=100\x01";                                   // OrderQty
-        body += "40=2\x01";                                     // OrdType (Limit)
-        body += "44=150.25\x01";                                // Price (fixed precision)
-        body += "59=0\x01";                                     // TimeInForce (Day)
+        body += "32=100\x01";                                   // LastQty
+        body += "31=150.25\x01";                                // LastPx
+        body += "151=0\x01";                                    // LeavesQty
+        body += "14=100\x01";                                   // CumQty
+        body += "6=150.25\x01";                                 // AvgPx
 
         // Add BodyLength
         msg += "9=" + std::to_string(body.length()) + "\x01";
@@ -155,7 +161,7 @@ public:
             test_messages.push_back(createPerfectMessage(i + 1));
         }
 
-        std::cout << "   Generated " << test_messages.size() << " perfect FIX messages\n";
+        std::cout << "   Generated " << test_messages.size() << " perfect ExecutionReport messages\n";
         std::cout << "   Sample message length: " << test_messages[0].length() << " bytes\n";
         std::cout << "   Running parsing test...\n";
 
@@ -196,11 +202,12 @@ public:
     }
 
     /**
-     * @brief Test with various message types to see parsing consistency
+     * @brief Test with various client-side message types to see parsing consistency
+     * Only tests ExecutionReport and Heartbeat (messages a client receives)
      */
     TestMetrics runMessageTypeTest()
     {
-        std::cout << "🔄 Running Message Type Variety Test\n";
+        std::cout << "🔄 Running Client-Side Message Type Variety Test\n";
 
         TestMetrics metrics;
         std::vector<std::string> messages;
@@ -208,12 +215,8 @@ public:
         // Generate different message types
         for (int i = 0; i < 1000; ++i)
         {
-            // Alternate between different message patterns
-            if (i % 3 == 0)
-            {
-                messages.push_back(createPerfectMessage(i)); // NewOrderSingle
-            }
-            else if (i % 3 == 1)
+            // Alternate between different message patterns (no NewOrderSingle - client side doesn't receive these)
+            if (i % 2 == 0)
             {
                 messages.push_back(createHeartbeatMessage(i)); // Heartbeat
             }

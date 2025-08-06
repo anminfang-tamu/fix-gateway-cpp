@@ -276,32 +276,6 @@ test_async_sender/fast:
 .PHONY : test_async_sender/fast
 
 #=============================================================================
-# Target rules for targets named test_stream_fix_parser
-
-# Build rule for target.
-test_stream_fix_parser: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser
-.PHONY : test_stream_fix_parser
-
-# fast build rule for target.
-test_stream_fix_parser/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser.dir/build.make tests/CMakeFiles/test_stream_fix_parser.dir/build
-.PHONY : test_stream_fix_parser/fast
-
-#=============================================================================
-# Target rules for targets named test_stream_fix_parser_performance
-
-# Build rule for target.
-test_stream_fix_parser_performance: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_performance
-.PHONY : test_stream_fix_parser_performance
-
-# fast build rule for target.
-test_stream_fix_parser_performance/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_performance.dir/build.make tests/CMakeFiles/test_stream_fix_parser_performance.dir/build
-.PHONY : test_stream_fix_parser_performance/fast
-
-#=============================================================================
 # Target rules for targets named test_stream_fix_parser_2stage
 
 # Build rule for target.
@@ -385,10 +359,8 @@ help:
 	@echo "... network"
 	@echo "... protocol"
 	@echo "... test_async_sender"
-	@echo "... test_stream_fix_parser"
 	@echo "... test_stream_fix_parser_2stage"
 	@echo "... test_stream_fix_parser_improved"
-	@echo "... test_stream_fix_parser_performance"
 	@echo "... utils"
 	@echo "... src/main.o"
 	@echo "... src/main.i"

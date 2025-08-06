@@ -55,8 +55,6 @@
 /Users/anminfang/fix-gateway-cpp/build/src/manager/CMakeFiles/install/local.dir
 /Users/anminfang/fix-gateway-cpp/build/src/manager/CMakeFiles/install/strip.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_async_sender.dir
-/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser.dir
-/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_performance.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_2stage.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_improved.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/claude_performance_test.dir
