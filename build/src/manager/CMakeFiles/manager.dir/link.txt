@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libmanager.a CMakeFiles/manager.dir/inbound_message_manager.cpp.o CMakeFiles/manager.dir/business_logic_manager.cpp.o CMakeFiles/manager.dir/fix_session_manager.cpp.o CMakeFiles/manager.dir/async_sender_manager.cpp.o CMakeFiles/manager.dir/message_router.cpp.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libmanager.a
