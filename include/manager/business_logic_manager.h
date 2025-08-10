@@ -17,6 +17,11 @@ namespace fix_gateway::manager
      *
      * Processes order management messages (NEW_ORDER_SINGLE, ORDER_CANCEL_REQUEST, etc.)
      * and execution reports. Integrates with order book and applies business rules.
+     * 
+     * Routes processed messages to outbound priority queues:
+     * - HIGH: ExecutionReports, OrderCancelRejects (time-sensitive trading messages)
+     * - MEDIUM: Order acknowledgments, status responses (standard trading flow)
+     * - LOW: Administrative order status requests, reports
      */
     class BusinessLogicManager : public InboundMessageManager
     {
@@ -67,43 +72,47 @@ namespace fix_gateway::manager
         BusinessStats getBusinessStats() const { return business_stats_; }
 
         // Order state queries
-        bool getOrderState(const std::string &order_id, OrderState &state) const;
+        bool getOrderState(const std::string& order_id, OrderState& state) const;
         std::vector<OrderState> getActiveOrders() const;
 
     protected:
-        // Implementation of abstract methods from parent
-        bool canHandleMessage(const FixMessage *message) const override;
-        bool handleMessage(FixMessage *message) override;
-        std::vector<FixMsgType> getSupportedMessageTypes() const override;
+        // Implementation of abstract methods from InboundMessageManager
+        bool handleMessage(FixMessage* message) override;
+        bool isMessageSupported(const FixMessage* message) const override;
+        std::vector<FixMsgType> getHandledMessageTypes() const override;
 
     private:
         // Order processing methods
-        bool handleNewOrderSingle(FixMessage *message);
-        bool handleOrderCancelRequest(FixMessage *message);
-        bool handleOrderCancelReplaceRequest(FixMessage *message);
-        bool handleOrderStatusRequest(FixMessage *message);
+        bool handleNewOrderSingle(FixMessage* message);
+        bool handleOrderCancelRequest(FixMessage* message);
+        bool handleOrderCancelReplaceRequest(FixMessage* message);
+        bool handleOrderStatusRequest(FixMessage* message);
 
-        // Response generation
-        bool sendExecutionReport(const OrderState &order, char exec_type, char order_status);
-        bool sendOrderCancelReject(const std::string &client_order_id, const std::string &reason);
+        // Response generation - creates messages and routes to outbound queues
+        bool sendExecutionReport(const OrderState& order, char exec_type, char order_status);
+        bool sendOrderCancelReject(const std::string& client_order_id, const std::string& reason);
 
         // Business logic validation
-        bool validateNewOrder(const FixMessage *message, std::string &reject_reason);
-        bool applyRiskChecks(const FixMessage *message, std::string &reject_reason);
-        bool checkOrderSize(double size, std::string &reject_reason);
-        bool checkOrderRate(std::string &reject_reason);
+        bool validateNewOrder(const FixMessage* message, std::string& reject_reason);
+        bool applyRiskChecks(const FixMessage* message, std::string& reject_reason);
+        bool checkOrderSize(double size, std::string& reject_reason);
+        bool checkOrderRate(std::string& reject_reason);
 
         // Order state management
-        void storeOrderState(const OrderState &order);
-        bool findOrderByClientId(const std::string &client_order_id, OrderState &order);
-        void updateOrderState(const std::string &order_id, char new_status);
+        void storeOrderState(const OrderState& order);
+        bool findOrderByClientId(const std::string& client_order_id, OrderState& order);
+        void updateOrderState(const std::string& order_id, char new_status);
 
         // Utility methods
         std::string generateOrderId();
-        double extractPrice(const FixMessage *message);
-        double extractQuantity(const FixMessage *message);
-        char extractSide(const FixMessage *message);
-        std::string extractSymbol(const FixMessage *message);
+        double extractPrice(const FixMessage* message);
+        double extractQuantity(const FixMessage* message);
+        char extractSide(const FixMessage* message);
+        std::string extractSymbol(const FixMessage* message);
+        
+        // Message creation helpers
+        FixMessage* createExecutionReportMessage(const OrderState& order, char exec_type, char order_status);
+        FixMessage* createOrderCancelRejectMessage(const std::string& client_order_id, const std::string& reason);
 
     private:
         // Order book interface

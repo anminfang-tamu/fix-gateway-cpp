@@ -2,6 +2,7 @@
 
 #include "manager/inbound_message_manager.h"
 #include "protocol/fix_message.h"
+#include "common/message_pool.h"
 
 #include <string>
 #include <vector>
@@ -16,6 +17,11 @@ namespace fix_gateway::manager
      *
      * Processes session-level messages like LOGON, LOGOUT, HEARTBEAT, TEST_REQUEST.
      * Manages session state, sequence numbers, and heartbeat scheduling.
+     * 
+     * Routes processed messages to outbound priority queues:
+     * - CRITICAL: Logon, Logout (session-critical)
+     * - HIGH: Heartbeat responses, TestRequest responses (time-sensitive)
+     * - MEDIUM: Sequence reset, administrative responses
      */
     class FixSessionManager : public InboundMessageManager
     {
@@ -57,7 +63,7 @@ namespace fix_gateway::manager
         };
 
     public:
-        explicit FixSessionManager(const SessionConfig &config);
+        explicit FixSessionManager(const SessionConfig& config);
         ~FixSessionManager() override;
 
         // Session lifecycle
@@ -66,12 +72,13 @@ namespace fix_gateway::manager
 
         // Session management
         bool initiateLogon();
-        bool initiateLogout(const std::string &reason = "");
+        bool initiateLogout(const std::string& reason = "");
         SessionState getSessionState() const { return session_state_.load(); }
 
         // Configuration
         void updateHeartbeatInterval(int seconds);
         void setSequenceNumbers(int incoming_seq, int outgoing_seq);
+        void setMessagePool(std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool);
 
         // Session stats
         SessionStats getSessionStats() const { return session_stats_; }
@@ -81,31 +88,31 @@ namespace fix_gateway::manager
         int getExpectedIncomingSeqNum() const { return expected_incoming_seq_num_; }
 
     protected:
-        // Implementation of abstract methods from parent
-        bool canHandleMessage(const FixMessage *message) const override;
-        bool handleMessage(FixMessage *message) override;
-        std::vector<FixMsgType> getSupportedMessageTypes() const override;
+        // Implementation of abstract methods from InboundMessageManager
+        bool handleMessage(FixMessage* message) override;
+        bool isMessageSupported(const FixMessage* message) const override;
+        std::vector<FixMsgType> getHandledMessageTypes() const override;
 
     private:
         // Session message handlers
-        bool handleLogon(FixMessage *message);
-        bool handleLogout(FixMessage *message);
-        bool handleHeartbeat(FixMessage *message);
-        bool handleTestRequest(FixMessage *message);
-        bool handleResendRequest(FixMessage *message);
-        bool handleSequenceReset(FixMessage *message);
-        bool handleReject(FixMessage *message);
+        bool handleLogon(FixMessage* message);
+        bool handleLogout(FixMessage* message);
+        bool handleHeartbeat(FixMessage* message);
+        bool handleTestRequest(FixMessage* message);
+        bool handleResendRequest(FixMessage* message);
+        bool handleSequenceReset(FixMessage* message);
+        bool handleReject(FixMessage* message);
 
-        // Session message senders
+        // Session response generators - create and route to outbound queues
         bool sendLogon();
-        bool sendLogout(const std::string &reason);
-        bool sendHeartbeat(const std::string &test_req_id = "");
+        bool sendLogout(const std::string& reason);
+        bool sendHeartbeat(const std::string& test_req_id = "");
         bool sendTestRequest();
-        bool sendReject(int ref_seq_num, const std::string &reason);
+        bool sendReject(int ref_seq_num, const std::string& reason);
         bool sendSequenceReset(int new_seq_num, bool gap_fill = false);
 
         // Sequence number validation
-        bool validateSequenceNumber(const FixMessage *message);
+        bool validateSequenceNumber(const FixMessage* message);
         void handleSequenceNumberGap(int expected, int received);
 
         // Heartbeat management
@@ -116,17 +123,27 @@ namespace fix_gateway::manager
         bool shouldSendTestRequest() const;
 
         // Session validation
-        bool validateSessionMessage(const FixMessage *message) const;
-        bool isValidSenderCompId(const std::string &sender_comp_id) const;
-        bool isValidTargetCompId(const std::string &target_comp_id) const;
+        bool validateSessionMessage(const FixMessage* message) const;
+        bool isValidSenderCompId(const std::string& sender_comp_id) const;
+        bool isValidTargetCompId(const std::string& target_comp_id) const;
 
         // Utility methods
         void updateSessionState(SessionState new_state);
         std::string createTestRequestId();
+        
+        // Message creation helpers
+        FixMessage* createLogonMessage();
+        FixMessage* createLogoutMessage(const std::string& reason);
+        FixMessage* createHeartbeatMessage(const std::string& test_req_id = "");
+        FixMessage* createTestRequestMessage();
+        FixMessage* createRejectMessage(int ref_seq_num, const std::string& reason);
 
     private:
         // Session configuration
         SessionConfig config_;
+        
+        // Message pool for response message creation
+        std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool_;
 
         // Session state
         std::atomic<SessionState> session_state_{SessionState::DISCONNECTED};

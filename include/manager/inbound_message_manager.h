@@ -2,9 +2,9 @@
 
 #include "protocol/fix_message.h"
 #include "protocol/fix_fields.h"
-#include "common/message.h"
-#include "network/async_sender.h"
-#include "priority_config.h"
+#include "utils/lockfree_queue.h"
+#include "application/priority_queue_container.h"
+#include "../../config/priority_config.h"
 
 #include <memory>
 #include <atomic>
@@ -17,15 +17,18 @@ namespace fix_gateway::manager
 {
     using FixMessage = fix_gateway::protocol::FixMessage;
     using FixMsgType = fix_gateway::protocol::FixMsgType;
-    using MessagePtr = fix_gateway::common::MessagePtr;
-    using AsyncSender = fix_gateway::network::AsyncSender;
+    using LockFreeQueue = fix_gateway::utils::LockFreeQueue<FixMessage*>;
 
     /**
      * @brief Abstract base class for inbound message managers
      *
-     * Provides common functionality for processing inbound FIX messages.
-     * Child classes (FixSessionManager, BusinessLogicManager) implement
-     * specific message processing logic for their domain.
+     * Processes inbound FIX messages and routes them to outbound priority queues.
+     * Follows the architecture: Inbound Queue → Processing → Outbound Priority Queues
+     * 
+     * CRITICAL DESIGN PRINCIPLE:
+     * - Managers ONLY process messages and route to outbound queues
+     * - AsyncSender threads independently handle TCP/network transmission
+     * - NO direct network operations in message managers
      */
     class InboundMessageManager
     {
@@ -33,18 +36,25 @@ namespace fix_gateway::manager
         struct ProcessingStats
         {
             uint64_t total_messages_processed = 0;
-            uint64_t total_messages_sent = 0;
+            uint64_t total_messages_routed = 0;
             uint64_t total_processing_errors = 0;
+            uint64_t total_routing_errors = 0;
             double avg_processing_time_ns = 0.0;
             std::chrono::steady_clock::time_point last_message_time;
 
             // Per-message-type breakdown
             std::unordered_map<FixMsgType, uint64_t> message_type_counts;
             std::unordered_map<FixMsgType, double> message_type_avg_latency;
+            
+            // Per-priority routing counts
+            uint64_t critical_routed = 0;
+            uint64_t high_routed = 0;
+            uint64_t medium_routed = 0;
+            uint64_t low_routed = 0;
         };
 
     public:
-        explicit InboundMessageManager(const std::string &manager_name);
+        explicit InboundMessageManager(const std::string& manager_name);
         virtual ~InboundMessageManager() = default;
 
         // Lifecycle management
@@ -52,43 +62,59 @@ namespace fix_gateway::manager
         virtual void stop();
         bool isRunning() const { return running_.load(); }
 
-        // Core message processing (template method pattern)
-        bool processMessage(FixMessage *message);
+        // Queue integration - core of the architecture
+        void setInboundQueue(std::shared_ptr<LockFreeQueue> inbound_queue);
+        void setOutboundQueues(std::shared_ptr<PriorityQueueContainer> outbound_queues);
 
-        // AsyncSender integration
-        void setAsyncSender(std::shared_ptr<AsyncSender> sender);
-        bool isConnected() const;
+        // Main processing loop - polls inbound queue and processes messages
+        void processMessages();
+        
+        // Single message processing (for testing and manual invocation)
+        bool processMessage(FixMessage* message);
+        
+        // Public message handler for testing (delegates to protected handleMessage)
+        bool handleMessagePublic(FixMessage* message) { return handleMessage(message); }
+
+        // Public interface for testing and external access
+        bool canHandleMessage(const FixMessage* message) const;
+        std::vector<FixMsgType> getSupportedMessageTypes() const;
 
         // Monitoring and stats
         ProcessingStats getStats() const { return stats_; }
-        const std::string &getManagerName() const { return manager_name_; }
+        const std::string& getManagerName() const { return manager_name_; }
 
         // Configuration
         void setProcessingTimeout(std::chrono::milliseconds timeout) { processing_timeout_ = timeout; }
 
     protected:
         // Abstract methods - must be implemented by child classes
-        virtual bool canHandleMessage(const FixMessage *message) const = 0;
-        virtual bool handleMessage(FixMessage *message) = 0;
-        virtual std::vector<FixMsgType> getSupportedMessageTypes() const = 0;
+        virtual bool handleMessage(FixMessage* message) = 0;
+        virtual bool isMessageSupported(const FixMessage* message) const = 0;
+        virtual std::vector<FixMsgType> getHandledMessageTypes() const = 0;
 
-        // Utility methods for child classes
-        bool sendResponse(MessagePtr response_message, Priority priority = Priority::MEDIUM);
-        bool sendFixMessage(const FixMessage &fix_message, Priority priority = Priority::MEDIUM);
-
+        // Message routing to outbound queues
+        bool routeToOutbound(FixMessage* message, Priority priority);
+        
+        // Response message creation and routing
+        bool sendResponse(FixMessage* response_message, Priority priority = Priority::MEDIUM);
+        
         // Message validation helpers
-        bool validateMessage(const FixMessage *message) const;
+        bool validateMessage(const FixMessage* message) const;
         bool isSessionMessage(FixMsgType msg_type) const;
         bool isTradingMessage(FixMsgType msg_type) const;
 
+        // Priority determination based on message type
+        Priority getMessagePriority(FixMsgType msg_type) const;
+
         // Performance monitoring helpers
         void recordProcessingStart();
-        void recordProcessingEnd(FixMsgType msg_type, bool success);
+        void recordProcessingEnd(FixMsgType msg_type, bool success, bool routed = false);
 
         // Logging helpers
-        void logInfo(const std::string &message) const;
-        void logError(const std::string &message) const;
-        void logWarning(const std::string &message) const;
+        void logInfo(const std::string& message) const;
+        void logError(const std::string& message) const;
+        void logWarning(const std::string& message) const;
+        void logDebug(const std::string& message) const;
 
     private:
         // Manager identity
@@ -97,8 +123,9 @@ namespace fix_gateway::manager
         // State management
         std::atomic<bool> running_;
 
-        // AsyncSender for outbound messages
-        std::shared_ptr<AsyncSender> async_sender_;
+        // Queue connections - core architecture
+        std::shared_ptr<LockFreeQueue> inbound_queue_;
+        std::shared_ptr<PriorityQueueContainer> outbound_queues_;
 
         // Performance monitoring
         mutable ProcessingStats stats_;
@@ -108,22 +135,30 @@ namespace fix_gateway::manager
         std::chrono::milliseconds processing_timeout_{1000}; // 1 second default
 
         // Helper methods
-        void updateStats(FixMsgType msg_type, std::chrono::nanoseconds processing_time, bool success);
-        Priority getDefaultPriorityForMessage(FixMsgType msg_type) const;
+        void updateStats(FixMsgType msg_type, std::chrono::nanoseconds processing_time, 
+                        bool success, bool routed = false);
+        
+        // Message type classification
+        bool isSessionMessageType(FixMsgType msg_type) const;
+        bool isTradingMessageType(FixMsgType msg_type) const;
+        bool isAdminMessageType(FixMsgType msg_type) const;
     };
 
     /**
-     * @brief Factory for creating inbound message managers
+     * @brief Simple factory for creating message managers
+     * 
+     * Creates managers with proper queue connections following the architecture
      */
-    class InboundMessageManagerFactory
+    class MessageManagerFactory
     {
     public:
-        static std::unique_ptr<InboundMessageManager> createFixSessionManager();
-        static std::unique_ptr<InboundMessageManager> createBusinessLogicManager();
-
-        // Create both managers with shared AsyncSender
-        static std::pair<std::unique_ptr<InboundMessageManager>, std::unique_ptr<InboundMessageManager>>
-        createManagerPair(std::shared_ptr<AsyncSender> shared_sender);
+        // Create session manager with queue connections
+        static std::unique_ptr<InboundMessageManager> createFixSessionManager(
+            const std::string& manager_name = "FixSessionManager");
+        
+        // Create business logic manager with queue connections  
+        static std::unique_ptr<InboundMessageManager> createBusinessLogicManager(
+            const std::string& manager_name = "BusinessLogicManager");
     };
 
 } // namespace fix_gateway::manager

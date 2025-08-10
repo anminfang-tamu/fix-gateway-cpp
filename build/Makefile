@@ -288,6 +288,19 @@ test_stream_fix_parser_comprehensive/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build.make tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build
 .PHONY : test_stream_fix_parser_comprehensive/fast
 
+#=============================================================================
+# Target rules for targets named test_fix_session_manager
+
+# Build rule for target.
+test_fix_session_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_fix_session_manager
+.PHONY : test_fix_session_manager
+
+# fast build rule for target.
+test_fix_session_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/build
+.PHONY : test_fix_session_manager/fast
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -331,6 +344,7 @@ help:
 	@echo "... manager"
 	@echo "... network"
 	@echo "... protocol"
+	@echo "... test_fix_session_manager"
 	@echo "... test_message_router"
 	@echo "... test_stream_fix_parser_comprehensive"
 	@echo "... utils"

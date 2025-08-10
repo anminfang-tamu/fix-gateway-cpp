@@ -199,6 +199,44 @@ test_stream_fix_parser_comprehensive/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build.make tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build
 .PHONY : test_stream_fix_parser_comprehensive/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_fix_session_manager.dir/rule:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_fix_session_manager.dir/rule
+.PHONY : tests/CMakeFiles/test_fix_session_manager.dir/rule
+
+# Convenience name for target.
+test_fix_session_manager: tests/CMakeFiles/test_fix_session_manager.dir/rule
+.PHONY : test_fix_session_manager
+
+# fast build rule for target.
+test_fix_session_manager/fast:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/build
+.PHONY : test_fix_session_manager/fast
+
+test_fix_session_manager.o: test_fix_session_manager.cpp.o
+.PHONY : test_fix_session_manager.o
+
+# target to build an object file
+test_fix_session_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/test_fix_session_manager.cpp.o
+.PHONY : test_fix_session_manager.cpp.o
+
+test_fix_session_manager.i: test_fix_session_manager.cpp.i
+.PHONY : test_fix_session_manager.i
+
+# target to preprocess a source file
+test_fix_session_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/test_fix_session_manager.cpp.i
+.PHONY : test_fix_session_manager.cpp.i
+
+test_fix_session_manager.s: test_fix_session_manager.cpp.s
+.PHONY : test_fix_session_manager.s
+
+# target to generate assembly for a file
+test_fix_session_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/test_fix_session_manager.cpp.s
+.PHONY : test_fix_session_manager.cpp.s
+
 test_message_router.o: test_message_router.cpp.o
 .PHONY : test_message_router.o
 
@@ -260,8 +298,12 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... test_fix_session_manager"
 	@echo "... test_message_router"
 	@echo "... test_stream_fix_parser_comprehensive"
+	@echo "... test_fix_session_manager.o"
+	@echo "... test_fix_session_manager.i"
+	@echo "... test_fix_session_manager.s"
 	@echo "... test_message_router.o"
 	@echo "... test_message_router.i"
 	@echo "... test_message_router.s"

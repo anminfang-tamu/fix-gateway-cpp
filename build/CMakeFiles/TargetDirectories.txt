@@ -56,6 +56,7 @@
 /Users/anminfang/fix-gateway-cpp/build/src/manager/CMakeFiles/install/strip.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_message_router.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir
+/Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test_fix_session_manager.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/test.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/edit_cache.dir
 /Users/anminfang/fix-gateway-cpp/build/tests/CMakeFiles/rebuild_cache.dir

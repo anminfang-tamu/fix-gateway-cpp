@@ -45,12 +45,35 @@ ctest
 
 ## Architecture
 
+### Message Flow Design
+**Critical Principle**: Strict separation between message processing and network I/O
+
+```
+[Network] → [Inbound Queue] → [InboundMessageManager] → [Outbound Priority Queues] → [AsyncSender Threads] → [Network]
+```
+
 **Core Components**:
-- `MessageManager`: Core-pinned threads with priority queues
-- `AsyncSender`: Non-blocking message transmission  
-- `StreamFixParser`: FIX protocol message parsing
-- `LockfreeQueue`: Sub-microsecond latency data structures
-- `PriorityQueue`: Message routing with priority handling
+- `StreamFixParser`: Parses incoming FIX messages from network
+- `LockfreeQueue`: Sub-microsecond latency inbound queue (84ns-1000ns)
+- `InboundMessageManager`: Processes session/business logic, routes to outbound queues
+  - `FixSessionManager`: Handles session-level messages (Logon, Logout, Heartbeat, etc.)
+  - `BusinessLogicManager`: Handles trading messages (NewOrder, Cancel, etc.)
+- `PriorityQueueContainer`: Outbound queues by priority (Critical, High, Medium, Low)
+- `MessageRouter`: Routes processed messages to appropriate priority queues
+- `AsyncSender`: Separate threads monitoring outbound queues, handling TCP transmission
+
+### Queue Architecture
+- **Inbound Queue**: Single lock-free queue for all incoming parsed messages
+- **Outbound Priority Queues**: 
+  - `CRITICAL`: Session-critical messages (Logon, Logout) - 2048 capacity
+  - `HIGH`: Time-sensitive trading messages (ExecutionReport) - 2048 capacity  
+  - `MEDIUM`: Standard trading messages (NewOrder) - 1024 capacity
+  - `LOW`: Administrative messages (Status requests) - 512 capacity
+
+### Thread Separation
+- **Processing Threads**: InboundMessageManagers process messages and route to outbound queues
+- **Network Threads**: AsyncSender threads independently monitor outbound queues and handle TCP
+- **No Direct TCP**: Message managers NEVER directly handle network connections
 
 **Key Directories**:
 - `include/` - Header files organized by module (application, common, manager, network, protocol, utils)
