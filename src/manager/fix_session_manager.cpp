@@ -340,7 +340,7 @@ bool FixSessionManager::handleTestRequest(FixMessage *message)
 
 bool FixSessionManager::handleResendRequest(FixMessage *message)
 {
-    logInfo("Processing ResendRequest message");
+    logInfo("Processing ResendRequest from broker");
 
     std::string begin_seq_str, end_seq_str;
     if (!message->getField(FixFields::BeginSeqNo, begin_seq_str) ||
@@ -355,11 +355,10 @@ bool FixSessionManager::handleResendRequest(FixMessage *message)
         int begin_seq = std::stoi(begin_seq_str);
         int end_seq = std::stoi(end_seq_str);
 
-        logInfo("Resend request for messages " + std::to_string(begin_seq) +
+        logInfo("Broker requests resend for messages " + std::to_string(begin_seq) +
                 " to " + std::to_string(end_seq));
 
-        // TODO: Implement actual message resending logic
-        // For now, just send sequence reset to indicate gap fill
+        // Performance-focused client: gap fill instead of storing/resending messages
         bool gap_fill_sent = sendSequenceReset(end_seq + 1, true);
         if (!gap_fill_sent)
         {
@@ -367,7 +366,7 @@ bool FixSessionManager::handleResendRequest(FixMessage *message)
             return false;
         }
 
-        logInfo("Sent gap fill for resend request");
+        logInfo("Gap filled - continuing transaction flow");
         return true;
     }
     catch (const std::exception &e)
@@ -545,12 +544,26 @@ bool FixSessionManager::sendReject(int ref_seq_num, const std::string &reason)
 
 bool FixSessionManager::sendSequenceReset(int new_seq_num, bool gap_fill)
 {
-    // TODO: Implement sequence reset message creation
-    logInfo("Sequence reset requested - NewSeqNum: " + std::to_string(new_seq_num) +
-            (gap_fill ? " (gap fill)" : ""));
+    FixMessage *reset_msg = createSequenceResetMessage(new_seq_num, gap_fill);
+    if (!reset_msg)
+    {
+        logError("Failed to create sequence reset message");
+        return false;
+    }
 
-    session_stats_.sequence_resets_sent++;
-    return true; // Placeholder
+    bool success = routeToOutbound(reset_msg, Priority::CRITICAL);
+    if (success)
+    {
+        session_stats_.sequence_resets_sent++;
+        logInfo("Sequence reset sent - NewSeqNum: " + std::to_string(new_seq_num) +
+                (gap_fill ? " (gap fill)" : ""));
+    }
+    else
+    {
+        logError("Failed to route sequence reset message");
+    }
+
+    return success;
 }
 
 // =================================================================
@@ -748,6 +761,81 @@ FixMessage *FixSessionManager::createRejectMessage(int ref_seq_num, const std::s
     return msg;
 }
 
+FixMessage *FixSessionManager::createResendRequestMessage(int begin_seq, int end_seq)
+{
+    if (!message_pool_)
+    {
+        logError("Message pool not set - cannot create resend request message");
+        return nullptr;
+    }
+
+    FixMessage *msg = message_pool_->allocate();
+    if (!msg)
+    {
+        logError("Failed to allocate message from pool");
+        return nullptr;
+    }
+
+    // Standard header
+    msg->setField(FixFields::BeginString, std::string("FIX.4.4"));
+    msg->setField(FixFields::MsgType, std::string("2"));
+    msg->setField(FixFields::SenderCompID, std::string(config_.sender_comp_id));
+    msg->setField(FixFields::TargetCompID, std::string(config_.target_comp_id));
+    msg->setField(FixFields::MsgSeqNum, std::to_string(getNextOutgoingSeqNum()));
+
+    // Sending time
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream oss;
+    oss << std::put_time(std::gmtime(&time_t), "%Y%m%d-%H:%M:%S");
+    msg->setField(FixFields::SendingTime, oss.str());
+
+    // Resend request-specific fields
+    msg->setField(FixFields::BeginSeqNo, std::to_string(begin_seq));
+    msg->setField(FixFields::EndSeqNo, std::to_string(end_seq));
+
+    return msg;
+}
+
+FixMessage *FixSessionManager::createSequenceResetMessage(int new_seq_num, bool gap_fill)
+{
+    if (!message_pool_)
+    {
+        logError("Message pool not set - cannot create sequence reset message");
+        return nullptr;
+    }
+
+    FixMessage *msg = message_pool_->allocate();
+    if (!msg)
+    {
+        logError("Failed to allocate message from pool");
+        return nullptr;
+    }
+
+    // Standard header
+    msg->setField(FixFields::BeginString, std::string("FIX.4.4"));
+    msg->setField(FixFields::MsgType, std::string("4"));
+    msg->setField(FixFields::SenderCompID, std::string(config_.sender_comp_id));
+    msg->setField(FixFields::TargetCompID, std::string(config_.target_comp_id));
+    msg->setField(FixFields::MsgSeqNum, std::to_string(getNextOutgoingSeqNum()));
+
+    // Sending time
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream oss;
+    oss << std::put_time(std::gmtime(&time_t), "%Y%m%d-%H:%M:%S");
+    msg->setField(FixFields::SendingTime, oss.str());
+
+    // Sequence reset-specific fields
+    msg->setField(FixFields::NewSeqNo, std::to_string(new_seq_num));
+    if (gap_fill)
+    {
+        msg->setField(FixFields::GapFillFlag, std::string("Y"));
+    }
+
+    return msg;
+}
+
 // =================================================================
 // VALIDATION METHODS
 // =================================================================
@@ -766,6 +854,10 @@ bool FixSessionManager::validateSequenceNumber(const FixMessage *message)
         int received_seq = std::stoi(seq_num_str);
         int expected_seq = expected_incoming_seq_num_.load();
 
+        // Check if this is a resent message with PossDupFlag
+        std::string poss_dup_flag;
+        bool is_resend = message->getField(FixFields::PossDupFlag, poss_dup_flag) && poss_dup_flag == "Y";
+
         if (received_seq == expected_seq)
         {
             // Correct sequence number - increment expected
@@ -774,20 +866,39 @@ bool FixSessionManager::validateSequenceNumber(const FixMessage *message)
         }
         else if (received_seq > expected_seq)
         {
-            // Gap detected
-            logWarning("Sequence number gap detected - expected: " +
-                       std::to_string(expected_seq) + ", received: " +
-                       std::to_string(received_seq));
-            handleSequenceNumberGap(expected_seq, received_seq);
-            return false;
+            if (is_resend)
+            {
+                // This is a resent message filling our gap - accept it and update expected
+                logInfo("Received resent message filling gap - seq: " + std::to_string(received_seq));
+                expected_incoming_seq_num_.store(received_seq + 1);
+                return true;
+            }
+            else
+            {
+                // Gap detected - request resend
+                logWarning("Sequence number gap detected - expected: " +
+                           std::to_string(expected_seq) + ", received: " +
+                           std::to_string(received_seq));
+                handleSequenceNumberGap(expected_seq, received_seq);
+                return false;
+            }
         }
         else
         {
-            // Duplicate or old message
-            logWarning("Old/duplicate sequence number - expected: " +
-                       std::to_string(expected_seq) + ", received: " +
-                       std::to_string(received_seq));
-            return false;
+            if (is_resend)
+            {
+                // Valid resent message - accept but don't update sequence
+                logDebug("Received valid resent message - seq: " + std::to_string(received_seq));
+                return true;
+            }
+            else
+            {
+                // Duplicate or old message without PossDupFlag
+                logWarning("Old/duplicate sequence number - expected: " +
+                           std::to_string(expected_seq) + ", received: " +
+                           std::to_string(received_seq));
+                return false;
+            }
         }
     }
     catch (const std::exception &e)
@@ -802,9 +913,20 @@ void FixSessionManager::handleSequenceNumberGap(int expected, int received)
     logInfo("Handling sequence number gap: " + std::to_string(expected) +
             " to " + std::to_string(received - 1));
 
-    // TODO: Send resend request for missing messages
-    // For now, just update expected sequence number
-    expected_incoming_seq_num_.store(received + 1);
+    const int begin_seq = expected;
+    const int end_seq = received - 1;
+
+    FixMessage *msg = createResendRequestMessage(begin_seq, end_seq);
+
+    bool success = routeToOutbound(msg, Priority::CRITICAL);
+    if (success)
+    {
+        logInfo("Resend request sent to broker for gap fill");
+    }
+    else
+    {
+        logError("Failed to route resend request message");
+    }
 }
 
 bool FixSessionManager::validateSessionMessage(const FixMessage *message) const

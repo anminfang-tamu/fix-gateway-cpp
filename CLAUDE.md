@@ -2,6 +2,34 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Core Development Philosophy
+
+**"Simple is Best, Reliable is Best, Maintainable is Best, Readable is Best"**
+
+Following the Unix philosophy and principles of robust system design:
+
+### Fundamental Principles
+1. **Testing First**: Every feature starts with tests. Code without tests is broken code.
+2. **Simplicity**: Choose the simplest solution that works. Complexity is the enemy of reliability.
+3. **Reliability**: Systems must fail gracefully and recover automatically.
+4. **Maintainability**: Code should be obvious to read and modify years later.
+5. **Readability**: Code is written once but read hundreds of times.
+
+### Development Rules
+- **Test-Driven Development**: Write tests before implementation
+- **Single Responsibility**: Each function/class does one thing well
+- **Clear Naming**: Names should explain intent without comments
+- **Error Handling**: Every error path must be tested and handled
+- **Documentation**: Code should be self-documenting; comments explain "why", not "what"
+- **Performance**: Measure, don't guess. Optimize only after profiling.
+
+### Testing Strategy
+- Unit tests for all business logic
+- Integration tests for component interactions  
+- Performance tests for latency-critical paths
+- Stress tests for system limits
+- All tests must be deterministic and fast
+
 ## Project Overview
 
 High-performance, low-latency FIX gateway trading system built in C++ with Linux optimization and Docker deployment.

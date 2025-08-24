@@ -45,7 +45,7 @@ void InboundMessageManager::stop()
 {
     if (!running_.load())
     {
-        return;
+        return; // Not Running
     }
 
     running_.store(false);
