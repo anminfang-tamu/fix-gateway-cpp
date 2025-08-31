@@ -1,6 +1,6 @@
 #define _GNU_SOURCE
 #include "manager/sequence_num_gap_manager.h"
-#include "config/priority_config.h"
+#include "priority_config.h"
 #include "utils/logger.h"
 #include <sched.h>
 #include <pthread.h>
@@ -60,7 +60,10 @@ void SequenceNumGapManager::start()
 void SequenceNumGapManager::stop()
 {
     is_running_.store(false);
-    gap_manager_thread_.join();
+    if (gap_manager_thread_.joinable())
+    {
+        gap_manager_thread_.join();
+    }
 }
 
 void SequenceNumGapManager::loop()
@@ -78,7 +81,16 @@ void SequenceNumGapManager::loop()
 
 void SequenceNumGapManager::addGapEntry(int32_t seq_num)
 {
+    // Check if this sequence number already has a gap entry
+    if (hasGap(seq_num))
+    {
+        // Already exists, don't add duplicate
+        logDebug("Gap entry for sequence " + std::to_string(seq_num) + " already exists, skipping duplicate");
+        return;
+    }
+    
     gap_queue_.push(GapQueueEntry(seq_num, std::chrono::milliseconds(kGapTimeoutMs)));
+    logDebug("Added gap entry for sequence " + std::to_string(seq_num));
 }
 
 bool SequenceNumGapManager::resolveGapEntry(int32_t seq_num)
@@ -127,8 +139,8 @@ bool SequenceNumGapManager::hasGap(int32_t seq_num)
             if (entry.seq_num == seq_num && !entry.is_resolved)
             {
                 has_gap = true;
-                temp_entries.push_back(entry);
             }
+            temp_entries.push_back(entry);
         }
         else
         {

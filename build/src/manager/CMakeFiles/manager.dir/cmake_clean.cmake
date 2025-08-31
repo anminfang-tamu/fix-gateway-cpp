@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/manager.dir/inbound_message_manager.cpp.o.d"
   "CMakeFiles/manager.dir/message_router.cpp.o"
   "CMakeFiles/manager.dir/message_router.cpp.o.d"
+  "CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o"
+  "CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o.d"
   "libmanager.a"
   "libmanager.pdb"
 )

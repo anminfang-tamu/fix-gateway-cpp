@@ -213,6 +213,20 @@ test_fix_session_manager/fast:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/build
 .PHONY : test_fix_session_manager/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_sequence_num_gap_manager.dir/rule:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_sequence_num_gap_manager.dir/rule
+.PHONY : tests/CMakeFiles/test_sequence_num_gap_manager.dir/rule
+
+# Convenience name for target.
+test_sequence_num_gap_manager: tests/CMakeFiles/test_sequence_num_gap_manager.dir/rule
+.PHONY : test_sequence_num_gap_manager
+
+# fast build rule for target.
+test_sequence_num_gap_manager/fast:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/build
+.PHONY : test_sequence_num_gap_manager/fast
+
 test_fix_session_manager.o: test_fix_session_manager.cpp.o
 .PHONY : test_fix_session_manager.o
 
@@ -261,6 +275,30 @@ test_message_router.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_router.dir/build.make tests/CMakeFiles/test_message_router.dir/test_message_router.cpp.s
 .PHONY : test_message_router.cpp.s
 
+test_sequence_num_gap_manager.o: test_sequence_num_gap_manager.cpp.o
+.PHONY : test_sequence_num_gap_manager.o
+
+# target to build an object file
+test_sequence_num_gap_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/test_sequence_num_gap_manager.cpp.o
+.PHONY : test_sequence_num_gap_manager.cpp.o
+
+test_sequence_num_gap_manager.i: test_sequence_num_gap_manager.cpp.i
+.PHONY : test_sequence_num_gap_manager.i
+
+# target to preprocess a source file
+test_sequence_num_gap_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/test_sequence_num_gap_manager.cpp.i
+.PHONY : test_sequence_num_gap_manager.cpp.i
+
+test_sequence_num_gap_manager.s: test_sequence_num_gap_manager.cpp.s
+.PHONY : test_sequence_num_gap_manager.s
+
+# target to generate assembly for a file
+test_sequence_num_gap_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/test_sequence_num_gap_manager.cpp.s
+.PHONY : test_sequence_num_gap_manager.cpp.s
+
 test_stream_fix_parser_comprehensive.o: test_stream_fix_parser_comprehensive.cpp.o
 .PHONY : test_stream_fix_parser_comprehensive.o
 
@@ -300,6 +338,7 @@ help:
 	@echo "... test"
 	@echo "... test_fix_session_manager"
 	@echo "... test_message_router"
+	@echo "... test_sequence_num_gap_manager"
 	@echo "... test_stream_fix_parser_comprehensive"
 	@echo "... test_fix_session_manager.o"
 	@echo "... test_fix_session_manager.i"
@@ -307,6 +346,9 @@ help:
 	@echo "... test_message_router.o"
 	@echo "... test_message_router.i"
 	@echo "... test_message_router.s"
+	@echo "... test_sequence_num_gap_manager.o"
+	@echo "... test_sequence_num_gap_manager.i"
+	@echo "... test_sequence_num_gap_manager.s"
 	@echo "... test_stream_fix_parser_comprehensive.o"
 	@echo "... test_stream_fix_parser_comprehensive.i"
 	@echo "... test_stream_fix_parser_comprehensive.s"

@@ -301,6 +301,19 @@ test_fix_session_manager/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/build
 .PHONY : test_fix_session_manager/fast
 
+#=============================================================================
+# Target rules for targets named test_sequence_num_gap_manager
+
+# Build rule for target.
+test_sequence_num_gap_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_sequence_num_gap_manager
+.PHONY : test_sequence_num_gap_manager
+
+# fast build rule for target.
+test_sequence_num_gap_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/build
+.PHONY : test_sequence_num_gap_manager/fast
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -346,6 +359,7 @@ help:
 	@echo "... protocol"
 	@echo "... test_fix_session_manager"
 	@echo "... test_message_router"
+	@echo "... test_sequence_num_gap_manager"
 	@echo "... test_stream_fix_parser_comprehensive"
 	@echo "... utils"
 	@echo "... src/main.o"

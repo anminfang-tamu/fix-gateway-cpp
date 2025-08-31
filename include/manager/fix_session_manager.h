@@ -9,6 +9,9 @@
 #include <chrono>
 #include <atomic>
 #include <thread>
+#include <memory>
+
+class SequenceNumGapManager;
 
 namespace fix_gateway::manager
 {
@@ -63,7 +66,7 @@ namespace fix_gateway::manager
         };
 
     public:
-        explicit FixSessionManager(const SessionConfig &config);
+        explicit FixSessionManager(const SessionConfig &config, std::shared_ptr<SequenceNumGapManager> sequence_num_gap_manager = nullptr);
         ~FixSessionManager() override;
 
         // Session lifecycle
@@ -113,7 +116,6 @@ namespace fix_gateway::manager
 
         // Sequence number validation
         bool validateSequenceNumber(const FixMessage *message);
-        void handleSequenceNumberGap(int expected, int received);
 
         // Heartbeat management
         void startHeartbeatTimer();
@@ -137,12 +139,14 @@ namespace fix_gateway::manager
         FixMessage *createHeartbeatMessage(const std::string &test_req_id = "");
         FixMessage *createTestRequestMessage();
         FixMessage *createRejectMessage(int ref_seq_num, const std::string &reason);
-        FixMessage *createResendRequestMessage(int begin_seq, int end_seq);
         FixMessage *createSequenceResetMessage(int new_seq_num, bool gap_fill = false);
 
     private:
         // Session configuration
         SessionConfig config_;
+
+        // Sequence number gap manager
+        std::shared_ptr<SequenceNumGapManager> sequence_num_gap_manager_;
 
         // Message pool for response message creation
         std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool_;

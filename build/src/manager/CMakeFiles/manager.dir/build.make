@@ -111,10 +111,24 @@ src/manager/CMakeFiles/manager.dir/fix_session_manager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/manager.dir/fix_session_manager.cpp.s"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/manager/fix_session_manager.cpp -o CMakeFiles/manager.dir/fix_session_manager.cpp.s
 
+src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o: src/manager/CMakeFiles/manager.dir/flags.make
+src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o: /Users/anminfang/fix-gateway-cpp/src/manager/sequence_num_gap_manager.cpp
+src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o: src/manager/CMakeFiles/manager.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o -MF CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o.d -o CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/manager/sequence_num_gap_manager.cpp
+
+src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.i"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/anminfang/fix-gateway-cpp/src/manager/sequence_num_gap_manager.cpp > CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.i
+
+src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.s"
+	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/anminfang/fix-gateway-cpp/src/manager/sequence_num_gap_manager.cpp -o CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.s
+
 src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o: src/manager/CMakeFiles/manager.dir/flags.make
 src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o: /Users/anminfang/fix-gateway-cpp/src/manager/async_sender_manager.cpp
 src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o: src/manager/CMakeFiles/manager.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o -MF CMakeFiles/manager.dir/async_sender_manager.cpp.o.d -o CMakeFiles/manager.dir/async_sender_manager.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/manager/async_sender_manager.cpp
 
 src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.i: cmake_force
@@ -128,7 +142,7 @@ src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.s: cmake_force
 src/manager/CMakeFiles/manager.dir/message_router.cpp.o: src/manager/CMakeFiles/manager.dir/flags.make
 src/manager/CMakeFiles/manager.dir/message_router.cpp.o: /Users/anminfang/fix-gateway-cpp/src/manager/message_router.cpp
 src/manager/CMakeFiles/manager.dir/message_router.cpp.o: src/manager/CMakeFiles/manager.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/manager/CMakeFiles/manager.dir/message_router.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object src/manager/CMakeFiles/manager.dir/message_router.cpp.o"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && /Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/manager/CMakeFiles/manager.dir/message_router.cpp.o -MF CMakeFiles/manager.dir/message_router.cpp.o.d -o CMakeFiles/manager.dir/message_router.cpp.o -c /Users/anminfang/fix-gateway-cpp/src/manager/message_router.cpp
 
 src/manager/CMakeFiles/manager.dir/message_router.cpp.i: cmake_force
@@ -144,6 +158,7 @@ manager_OBJECTS = \
 "CMakeFiles/manager.dir/inbound_message_manager.cpp.o" \
 "CMakeFiles/manager.dir/business_logic_manager.cpp.o" \
 "CMakeFiles/manager.dir/fix_session_manager.cpp.o" \
+"CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o" \
 "CMakeFiles/manager.dir/async_sender_manager.cpp.o" \
 "CMakeFiles/manager.dir/message_router.cpp.o"
 
@@ -153,11 +168,12 @@ manager_EXTERNAL_OBJECTS =
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/inbound_message_manager.cpp.o
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/business_logic_manager.cpp.o
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/fix_session_manager.cpp.o
+src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/async_sender_manager.cpp.o
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/message_router.cpp.o
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/build.make
 src/manager/libmanager.a: src/manager/CMakeFiles/manager.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libmanager.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/anminfang/fix-gateway-cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX static library libmanager.a"
 	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && $(CMAKE_COMMAND) -P CMakeFiles/manager.dir/cmake_clean_target.cmake
 	cd /Users/anminfang/fix-gateway-cpp/build/src/manager && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/manager.dir/link.txt --verbose=$(VERBOSE)
 
