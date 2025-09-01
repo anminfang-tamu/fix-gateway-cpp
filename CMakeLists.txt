@@ -13,6 +13,16 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 # Find required packages
 find_package(Threads REQUIRED)
 
+# Google Test setup
+find_package(GTest REQUIRED)
+if(GTest_FOUND)
+    include(GoogleTest)
+    enable_testing()
+    message(STATUS "GTest found: ${GTEST_LIBRARIES}")
+else()
+    message(FATAL_ERROR "GTest not found!")
+endif()
+
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/common)
@@ -41,12 +51,8 @@ target_link_libraries(fix-gateway
     Threads::Threads
 )
 
-# Tests (optional)
-option(BUILD_TESTS "Build tests" OFF)
-if(BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
+# Tests (always build with gTest)
+add_subdirectory(tests)
 
 # Install targets
 install(TARGETS fix-gateway DESTINATION bin) 

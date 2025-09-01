@@ -305,6 +305,30 @@ message_router.cpp.s:
 	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/message_router.cpp.s
 .PHONY : message_router.cpp.s
 
+sequence_num_gap_manager.o: sequence_num_gap_manager.cpp.o
+.PHONY : sequence_num_gap_manager.o
+
+# target to build an object file
+sequence_num_gap_manager.cpp.o:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.o
+.PHONY : sequence_num_gap_manager.cpp.o
+
+sequence_num_gap_manager.i: sequence_num_gap_manager.cpp.i
+.PHONY : sequence_num_gap_manager.i
+
+# target to preprocess a source file
+sequence_num_gap_manager.cpp.i:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.i
+.PHONY : sequence_num_gap_manager.cpp.i
+
+sequence_num_gap_manager.s: sequence_num_gap_manager.cpp.s
+.PHONY : sequence_num_gap_manager.s
+
+# target to generate assembly for a file
+sequence_num_gap_manager.cpp.s:
+	cd /Users/anminfang/fix-gateway-cpp/build && $(MAKE) $(MAKESILENT) -f src/manager/CMakeFiles/manager.dir/build.make src/manager/CMakeFiles/manager.dir/sequence_num_gap_manager.cpp.s
+.PHONY : sequence_num_gap_manager.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -334,6 +358,9 @@ help:
 	@echo "... message_router.o"
 	@echo "... message_router.i"
 	@echo "... message_router.s"
+	@echo "... sequence_num_gap_manager.o"
+	@echo "... sequence_num_gap_manager.i"
+	@echo "... sequence_num_gap_manager.s"
 .PHONY : help
 
 

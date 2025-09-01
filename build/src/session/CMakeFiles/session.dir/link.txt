@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libsession.a CMakeFiles/session.dir/fix_session_manager.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libsession.a

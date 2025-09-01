@@ -231,6 +231,13 @@ namespace fix_gateway::common
     template <typename T>
     void MessagePool<T>::reset()
     {
+        std::cout << "reset" << std::endl;
+        // Caller responsibility: ensure pool is drained first
+        if (allocated_count_.load() > 0)
+        {
+            std::cout << "Cannot reset non-empty pool" << std::endl;
+            throw std::runtime_error("Cannot reset non-empty pool");
+        }
         // Reinitialize free list - same as original
         initializeFreeList();
     }

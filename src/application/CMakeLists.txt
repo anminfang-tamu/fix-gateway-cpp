@@ -4,4 +4,4 @@ add_library(application
     order_book_interface.cpp
 )
 
-target_link_libraries(application protocol session) 
+target_link_libraries(application protocol) 

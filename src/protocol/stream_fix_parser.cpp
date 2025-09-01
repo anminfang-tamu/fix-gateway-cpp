@@ -1770,6 +1770,22 @@ namespace fix_gateway::protocol
         {
             return OptimizedParser<FixMsgType::HEARTBEAT>::parseHeartbeat(this, buffer, length);
         }
+        else if (msg_type == "9") // ORDER_CANCEL_REJECT
+        {
+            return OptimizedParser<FixMsgType::ORDER_CANCEL_REJECT>::parseOrderCancelReject(this, buffer, length);
+        }
+        else if (msg_type == "3") // REJECT
+        {
+            return OptimizedParser<FixMsgType::REJECT>::parseReject(this, buffer, length);
+        }
+        else if (msg_type == "1") // TEST_REQUEST
+        {
+            return OptimizedParser<FixMsgType::TEST_REQUEST>::parseTestRequest(this, buffer, length);
+        }
+        else if (msg_type == "2") // RESEND_REQUEST
+        {
+            return OptimizedParser<FixMsgType::RESEND_REQUEST>::parseResendRequest(this, buffer, length);
+        }
 
         // Fall back to legacy parseMessage for all other message types
         // Note: Don't call parse() here to avoid infinite recursion

@@ -263,56 +263,56 @@ manager/fast:
 .PHONY : manager/fast
 
 #=============================================================================
-# Target rules for targets named test_async_sender
+# Target rules for targets named test_message_router
 
 # Build rule for target.
-test_async_sender: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_async_sender
-.PHONY : test_async_sender
+test_message_router: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_message_router
+.PHONY : test_message_router
 
 # fast build rule for target.
-test_async_sender/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_async_sender.dir/build.make tests/CMakeFiles/test_async_sender.dir/build
-.PHONY : test_async_sender/fast
+test_message_router/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_message_router.dir/build.make tests/CMakeFiles/test_message_router.dir/build
+.PHONY : test_message_router/fast
 
 #=============================================================================
-# Target rules for targets named test_stream_fix_parser_2stage
+# Target rules for targets named test_stream_fix_parser_comprehensive
 
 # Build rule for target.
-test_stream_fix_parser_2stage: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_2stage
-.PHONY : test_stream_fix_parser_2stage
+test_stream_fix_parser_comprehensive: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_comprehensive
+.PHONY : test_stream_fix_parser_comprehensive
 
 # fast build rule for target.
-test_stream_fix_parser_2stage/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build.make tests/CMakeFiles/test_stream_fix_parser_2stage.dir/build
-.PHONY : test_stream_fix_parser_2stage/fast
+test_stream_fix_parser_comprehensive/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build.make tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/build
+.PHONY : test_stream_fix_parser_comprehensive/fast
 
 #=============================================================================
-# Target rules for targets named test_stream_fix_parser_improved
+# Target rules for targets named test_fix_session_manager
 
 # Build rule for target.
-test_stream_fix_parser_improved: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_stream_fix_parser_improved
-.PHONY : test_stream_fix_parser_improved
+test_fix_session_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_fix_session_manager
+.PHONY : test_fix_session_manager
 
 # fast build rule for target.
-test_stream_fix_parser_improved/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_stream_fix_parser_improved.dir/build.make tests/CMakeFiles/test_stream_fix_parser_improved.dir/build
-.PHONY : test_stream_fix_parser_improved/fast
+test_fix_session_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fix_session_manager.dir/build.make tests/CMakeFiles/test_fix_session_manager.dir/build
+.PHONY : test_fix_session_manager/fast
 
 #=============================================================================
-# Target rules for targets named claude_performance_test
+# Target rules for targets named test_sequence_num_gap_manager
 
 # Build rule for target.
-claude_performance_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 claude_performance_test
-.PHONY : claude_performance_test
+test_sequence_num_gap_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_sequence_num_gap_manager
+.PHONY : test_sequence_num_gap_manager
 
 # fast build rule for target.
-claude_performance_test/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/claude_performance_test.dir/build.make tests/CMakeFiles/claude_performance_test.dir/build
-.PHONY : claude_performance_test/fast
+test_sequence_num_gap_manager/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_sequence_num_gap_manager.dir/build.make tests/CMakeFiles/test_sequence_num_gap_manager.dir/build
+.PHONY : test_sequence_num_gap_manager/fast
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -352,15 +352,15 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... application"
-	@echo "... claude_performance_test"
 	@echo "... common"
 	@echo "... fix-gateway"
 	@echo "... manager"
 	@echo "... network"
 	@echo "... protocol"
-	@echo "... test_async_sender"
-	@echo "... test_stream_fix_parser_2stage"
-	@echo "... test_stream_fix_parser_improved"
+	@echo "... test_fix_session_manager"
+	@echo "... test_message_router"
+	@echo "... test_sequence_num_gap_manager"
+	@echo "... test_stream_fix_parser_comprehensive"
 	@echo "... utils"
 	@echo "... src/main.o"
 	@echo "... src/main.i"

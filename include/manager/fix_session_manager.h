@@ -2,12 +2,16 @@
 
 #include "manager/inbound_message_manager.h"
 #include "protocol/fix_message.h"
+#include "common/message_pool.h"
 
 #include <string>
 #include <vector>
 #include <chrono>
 #include <atomic>
 #include <thread>
+#include <memory>
+
+class SequenceNumGapManager;
 
 namespace fix_gateway::manager
 {
@@ -16,6 +20,11 @@ namespace fix_gateway::manager
      *
      * Processes session-level messages like LOGON, LOGOUT, HEARTBEAT, TEST_REQUEST.
      * Manages session state, sequence numbers, and heartbeat scheduling.
+     *
+     * Routes processed messages to outbound priority queues:
+     * - CRITICAL: Logon, Logout (session-critical)
+     * - HIGH: Heartbeat responses, TestRequest responses (time-sensitive)
+     * - MEDIUM: Sequence reset, administrative responses
      */
     class FixSessionManager : public InboundMessageManager
     {
@@ -57,7 +66,7 @@ namespace fix_gateway::manager
         };
 
     public:
-        explicit FixSessionManager(const SessionConfig &config);
+        explicit FixSessionManager(const SessionConfig &config, std::shared_ptr<SequenceNumGapManager> sequence_num_gap_manager = nullptr);
         ~FixSessionManager() override;
 
         // Session lifecycle
@@ -72,6 +81,7 @@ namespace fix_gateway::manager
         // Configuration
         void updateHeartbeatInterval(int seconds);
         void setSequenceNumbers(int incoming_seq, int outgoing_seq);
+        void setMessagePool(std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool);
 
         // Session stats
         SessionStats getSessionStats() const { return session_stats_; }
@@ -81,10 +91,10 @@ namespace fix_gateway::manager
         int getExpectedIncomingSeqNum() const { return expected_incoming_seq_num_; }
 
     protected:
-        // Implementation of abstract methods from parent
-        bool canHandleMessage(const FixMessage *message) const override;
+        // Implementation of abstract methods from InboundMessageManager
         bool handleMessage(FixMessage *message) override;
-        std::vector<FixMsgType> getSupportedMessageTypes() const override;
+        bool isMessageSupported(const FixMessage *message) const override;
+        std::vector<FixMsgType> getHandledMessageTypes() const override;
 
     private:
         // Session message handlers
@@ -96,7 +106,7 @@ namespace fix_gateway::manager
         bool handleSequenceReset(FixMessage *message);
         bool handleReject(FixMessage *message);
 
-        // Session message senders
+        // Session response generators - create and route to outbound queues
         bool sendLogon();
         bool sendLogout(const std::string &reason);
         bool sendHeartbeat(const std::string &test_req_id = "");
@@ -106,7 +116,6 @@ namespace fix_gateway::manager
 
         // Sequence number validation
         bool validateSequenceNumber(const FixMessage *message);
-        void handleSequenceNumberGap(int expected, int received);
 
         // Heartbeat management
         void startHeartbeatTimer();
@@ -124,9 +133,23 @@ namespace fix_gateway::manager
         void updateSessionState(SessionState new_state);
         std::string createTestRequestId();
 
+        // Message creation helpers
+        FixMessage *createLogonMessage();
+        FixMessage *createLogoutMessage(const std::string &reason);
+        FixMessage *createHeartbeatMessage(const std::string &test_req_id = "");
+        FixMessage *createTestRequestMessage();
+        FixMessage *createRejectMessage(int ref_seq_num, const std::string &reason);
+        FixMessage *createSequenceResetMessage(int new_seq_num, bool gap_fill = false);
+
     private:
         // Session configuration
         SessionConfig config_;
+
+        // Sequence number gap manager
+        std::shared_ptr<SequenceNumGapManager> sequence_num_gap_manager_;
+
+        // Message pool for response message creation
+        std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool_;
 
         // Session state
         std::atomic<SessionState> session_state_{SessionState::DISCONNECTED};

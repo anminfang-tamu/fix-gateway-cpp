@@ -19,6 +19,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/Users/anminfang/fix-gateway-cpp/tests/CMakeLists.txt"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeCXXInformation.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeCommonLanguageInclude.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeFindDependencyMacro.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeGenericSystem.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeInitializeConfigs.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/CMakeLanguageInformation.cmake"
@@ -31,9 +32,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Compiler/Clang.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Compiler/GNU.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/FindGTest.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/FindPackageMessage.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/FindThreads.cmake"
+  "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/GoogleTest.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Internal/CheckSourceCompiles.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Platform/Apple-AppleClang-CXX.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Platform/Apple-Clang-CXX.cmake"
@@ -41,6 +44,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Platform/Darwin.cmake"
   "/opt/homebrew/Cellar/cmake/3.30.0/share/cmake/Modules/Platform/UnixPaths.cmake"
+  "/opt/homebrew/lib/cmake/GTest/GTestConfig.cmake"
+  "/opt/homebrew/lib/cmake/GTest/GTestConfigVersion.cmake"
+  "/opt/homebrew/lib/cmake/GTest/GTestTargets-release.cmake"
+  "/opt/homebrew/lib/cmake/GTest/GTestTargets.cmake"
   )
 
 # The corresponding makefile is:
@@ -70,8 +77,8 @@ set(CMAKE_DEPEND_INFO_FILES
   "src/application/CMakeFiles/application.dir/DependInfo.cmake"
   "src/utils/CMakeFiles/utils.dir/DependInfo.cmake"
   "src/manager/CMakeFiles/manager.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_async_sender.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_stream_fix_parser_2stage.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_stream_fix_parser_improved.dir/DependInfo.cmake"
-  "tests/CMakeFiles/claude_performance_test.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_message_router.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_stream_fix_parser_comprehensive.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_fix_session_manager.dir/DependInfo.cmake"
+  "tests/CMakeFiles/test_sequence_num_gap_manager.dir/DependInfo.cmake"
   )

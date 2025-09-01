@@ -40,7 +40,7 @@ RUN useradd -m -s /bin/bash trader
 
 # Copy built application
 COPY --from=builder /app/build/fix-gateway /usr/local/bin/
-COPY --from=builder /app/build/platform-demo /usr/local/bin/
+COPY --from=builder /app/build/tests/claude_performance_test /usr/local/bin/
 COPY --from=builder /app/build/tests/test_* /usr/local/bin/
 COPY --from=builder /app/config/ /app/config/
 COPY --from=builder /app/docs/ /app/docs/
