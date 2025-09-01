@@ -154,15 +154,6 @@ open http://localhost:9090  # Prometheus
 
 ### Performance Benchmarking
 
-```bash
-# Individual benchmarks
-./build/demos/quick_perf_demo
-./build/demos/memory_performance_test
-
-# Comprehensive performance suite
-./run_performance_tests.sh
-```
-
 ## 📊 Complete Test Results & Documentation
 
 - **Performance Analysis**: [`docs/LINUX_DEPLOYMENT_TEST_RESULTS.md`](docs/LINUX_DEPLOYMENT_TEST_RESULTS.md)
