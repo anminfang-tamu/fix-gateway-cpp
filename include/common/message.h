@@ -4,10 +4,8 @@
 
 #include <string>
 #include <vector>
-#include <memory>
 #include <mutex>
 #include <condition_variable>
-#include <atomic>
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -39,17 +37,17 @@ namespace fix_gateway::common
         EXPIRED,
     };
 
-    // Forward declaration for shared_ptr typedef
+    // Forward declaration for pointer alias
     class Message;
-    using MessagePtr = std::shared_ptr<Message>;
+    using MessagePtr = Message *;
 
     class Message
     {
-        // Phase 3 Lock-Free Optimizations Applied:
-        // 1. Replaced mutex-based timestamp operations with std::atomic<uint64_t> for nanosecond precision
-        // 2. Converted error_message_ to atomic string operations using atomic pointers
-        // 3. Used memory ordering for cross-thread synchronization without locks
-        // 4. Target achieved: <50ns per message operation for sub-10μs latency
+        // Phase 3 pipeline optimizations:
+        // 1. Messages flow through single-threaded stages with explicit ownership hand-off
+        // 2. Timing data stored as plain integers; queues provide the necessary synchronization
+        // 3. Error strings managed without atomic indirection to avoid unnecessary heap churn
+        // 4. Target latency remains <50ns per message operation for sub-10μs end-to-end budget
 
     public:
         // Type aliases for callbacks
@@ -90,9 +88,7 @@ namespace fix_gateway::common
         // Destructor
         ~Message();
 
-        // Factory methods for shared_ptr creation
-        // shared_ptr can be used to pass the message to other threads
-        // like producer, consumer, callback, monitoring threads
+        // Factory methods for raw pointer creation
         static MessagePtr create(const std::string &message_id,
                                  const std::string &payload,
                                  Priority priority = Priority::LOW,
@@ -109,6 +105,8 @@ namespace fix_gateway::common
                                  const std::string &destination,
                                  const std::chrono::steady_clock::time_point &deadline = std::chrono::steady_clock::time_point{});
 
+        static void destroy(MessagePtr message);
+
         // Core data accessors
         const std::string &getMessageId() const;
         const std::string &getSequenceNumber() const;
@@ -121,7 +119,7 @@ namespace fix_gateway::common
         const std::string &getSessionId() const;
         const std::string &getDestination() const;
 
-        // Timing & performance accessors (lock-free)
+        // Timing & performance accessors
         std::chrono::steady_clock::time_point getCreationTime() const;
         std::chrono::steady_clock::time_point getQueueEntryTime() const;
         std::chrono::steady_clock::time_point getSendTime() const;
@@ -143,7 +141,7 @@ namespace fix_gateway::common
         bool isFailed() const;
         bool isExpiredState() const;
 
-        // Error handling (lock-free)
+        // Error handling
         int getRetryCount() const;
         int getErrorCode() const;
         std::string getErrorMessage() const; // Returns copy to avoid reference issues
@@ -151,7 +149,7 @@ namespace fix_gateway::common
         void setError(int error_code, const std::string &error_message);
         void clearError();
 
-        // Timing setters (lock-free atomic operations)
+        // Timing setters
         void setQueueEntryTime(const std::chrono::steady_clock::time_point &time);
         void setSendTime(const std::chrono::steady_clock::time_point &time);
         void setDeadlineTime(const std::chrono::steady_clock::time_point &time);
@@ -178,7 +176,7 @@ namespace fix_gateway::common
         bool operator>(const Message &other) const;
         bool operator==(const Message &other) const;
 
-        // Thread safety (simplified for lock-free operations)
+        // Thread safety (callbacks only)
         void lock() const;
         void unlock() const;
         bool tryLock() const;
@@ -196,11 +194,11 @@ namespace fix_gateway::common
         std::string session_id_;
         std::string destination_;
 
-        // Timing & performance (lock-free atomics for sub-10μs latency)
+        // Timing & performance (single-thread pipeline semantics)
         std::chrono::steady_clock::time_point creation_time_;
-        std::atomic<uint64_t> queue_entry_time_ns_; // Nanoseconds since epoch
-        std::atomic<uint64_t> send_time_ns_;        // Nanoseconds since epoch
-        std::atomic<uint64_t> deadline_time_ns_;    // Nanoseconds since epoch
+        uint64_t queue_entry_time_ns_; // Nanoseconds since epoch
+        uint64_t send_time_ns_;        // Nanoseconds since epoch
+        uint64_t deadline_time_ns_;    // Nanoseconds since epoch
 
         // Completion handling (callbacks still mutex-protected)
         CompletionCallback completion_callback_;
@@ -209,12 +207,12 @@ namespace fix_gateway::common
         void *user_context_;
 
         // Message state
-        std::atomic<MessageState> state_;
+        MessageState state_;
 
-        // Error handling (lock-free)
-        std::atomic<int> retry_count_;
-        std::atomic<int> error_code_;
-        std::atomic<std::string *> error_message_ptr_; // Atomic pointer to string
+        // Error handling
+        int retry_count_;
+        int error_code_;
+        std::string error_message_;
 
         // Thread safety (reduced mutex usage)
         // Only used for callbacks and copy/move operations
@@ -226,13 +224,13 @@ namespace fix_gateway::common
         void moveFrom(Message &&other) noexcept;
         static std::string generateSequenceNumber();
 
-        // Lock-free timestamp conversion helpers
+        // Timestamp conversion helpers
         static uint64_t timePointToNanos(const std::chrono::steady_clock::time_point &tp);
         static std::chrono::steady_clock::time_point nanosToTimePoint(uint64_t nanos);
 
-        // Error message management (lock-free)
-        void setErrorMessageAtomic(const std::string &error_message);
-        std::string getErrorMessageAtomic() const;
+        // Error message management
+        void setErrorMessageInternal(const std::string &error_message);
+        std::string getErrorMessageInternal() const;
     };
 
     // Comparator for priority queue (higher priority = higher number)

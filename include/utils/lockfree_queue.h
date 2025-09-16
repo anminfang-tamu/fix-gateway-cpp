@@ -127,12 +127,16 @@ namespace fix_gateway::utils
     bool LockFreeQueue<T>::tryPop(T &message)
     {
         if (is_shutdown_.load(std::memory_order_acquire))
+        {
+            message = T{};
             return false;
+        }
 
         size_t current_head = head_.load(std::memory_order_relaxed);
 
         if (current_head == tail_.load(std::memory_order_acquire))
         {
+            message = T{};
             return false; // Queue empty
         }
 

@@ -812,8 +812,11 @@ src/common/CMakeFiles/common.dir/message.cpp.o: /Users/anminfang/fix-gateway-cpp
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h \
   /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
   /Users/anminfang/fix-gateway-cpp/config/priority_config.h \
-  /Users/anminfang/fix-gateway-cpp/include/common/message.h
+  /Users/anminfang/fix-gateway-cpp/include/common/message.h \
+  /Users/anminfang/fix-gateway-cpp/include/common/message_pool.h
 
+
+/Users/anminfang/fix-gateway-cpp/include/common/message_pool.h:
 
 /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h:
 

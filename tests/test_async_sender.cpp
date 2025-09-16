@@ -56,6 +56,10 @@ int main()
         priority_queue->push(critical_msg); // Critical should jump to front
         priority_queue->push(medium_msg);
         priority_queue->push(high_msg);
+        low_msg = nullptr;
+        critical_msg = nullptr;
+        medium_msg = nullptr;
+        high_msg = nullptr;
 
         std::cout << "Queue depth after pushing: " << async_sender->getQueueDepth() << std::endl;
 
@@ -76,6 +80,7 @@ int main()
         auto final_msg = fix_gateway::common::Message::create(
             "FINAL_001", "35=D|49=SENDER|56=TARGET|", Priority::CRITICAL);
         priority_queue->push(final_msg);
+        final_msg = nullptr;
 
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
 

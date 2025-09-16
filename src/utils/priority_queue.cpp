@@ -31,6 +31,7 @@ namespace fix_gateway::utils
     PriorityQueue::~PriorityQueue()
     {
         shutdown();
+        clear();
         LOG_INFO("PriorityQueue '" + queue_name_ + "' destroyed. Final stats: " + toString());
     }
 
@@ -46,6 +47,7 @@ namespace fix_gateway::utils
         if (is_shutdown_.load(std::memory_order_relaxed))
         {
             LOG_DEBUG("Push rejected: queue is shutdown");
+            fix_gateway::common::Message::destroy(message);
             return false;
         }
 
@@ -69,12 +71,16 @@ namespace fix_gateway::utils
             {
             case OverflowPolicy::DROP_OLDEST:
                 if (!handleOverflow(message))
+                {
+                    fix_gateway::common::Message::destroy(message);
                     return false;
+                }
                 break;
 
             case OverflowPolicy::DROP_NEWEST:
                 total_dropped_.fetch_add(1, std::memory_order_relaxed);
                 LOG_DEBUG("Message dropped due to queue overflow (DROP_NEWEST policy)");
+                fix_gateway::common::Message::destroy(message);
                 return false;
 
             case OverflowPolicy::BLOCK:
@@ -85,6 +91,7 @@ namespace fix_gateway::utils
                 if (!success || is_shutdown_.load(std::memory_order_relaxed))
                 {
                     LOG_DEBUG("Push timed out or queue shutdown");
+                    fix_gateway::common::Message::destroy(message);
                     return false;
                 }
             }
@@ -93,6 +100,7 @@ namespace fix_gateway::utils
             case OverflowPolicy::REJECT:
                 total_dropped_.fetch_add(1, std::memory_order_relaxed);
                 LOG_DEBUG("Message rejected due to queue overflow (REJECT policy)");
+                fix_gateway::common::Message::destroy(message);
                 return false;
             }
         }
@@ -138,11 +146,13 @@ namespace fix_gateway::utils
 
         if (!success || (queue_.empty() && is_shutdown_.load(std::memory_order_relaxed)))
         {
+            message = nullptr;
             return false;
         }
 
         if (queue_.empty())
         {
+            message = nullptr;
             return false;
         }
 
@@ -165,6 +175,7 @@ namespace fix_gateway::utils
 
         if (queue_.empty())
         {
+            message = nullptr;
             return false;
         }
 
@@ -188,7 +199,9 @@ namespace fix_gateway::utils
         // Clear the queue
         while (!queue_.empty())
         {
+            auto msg = queue_.top();
             queue_.pop();
+            fix_gateway::common::Message::destroy(msg);
         }
 
         // Notify all waiting threads
@@ -305,7 +318,9 @@ namespace fix_gateway::utils
         // If we're now over capacity, handle overflow
         while (queue_.size() > max_size_ && overflow_policy_ == OverflowPolicy::DROP_OLDEST)
         {
+            auto msg = queue_.top();
             queue_.pop();
+            fix_gateway::common::Message::destroy(msg);
             total_dropped_.fetch_add(1, std::memory_order_relaxed);
         }
 
@@ -364,7 +379,9 @@ namespace fix_gateway::utils
         // This method assumes the mutex is already locked
         if (overflow_policy_ == OverflowPolicy::DROP_OLDEST && !queue_.empty())
         {
+            auto dropped = queue_.top();
             queue_.pop(); // Remove oldest (lowest priority) message
+            fix_gateway::common::Message::destroy(dropped);
             total_dropped_.fetch_add(1, std::memory_order_relaxed);
             LOG_DEBUG("Dropped oldest message due to queue overflow");
             return true;

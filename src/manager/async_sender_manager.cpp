@@ -182,6 +182,7 @@ namespace fix_gateway::manager
 
         if (!success)
         {
+            fix_gateway::common::Message::destroy(message);
             std::cerr << "[AsyncSenderManager] Failed to enqueue message to "
                       << static_cast<int>(priority) << " priority queue" << std::endl;
         }
