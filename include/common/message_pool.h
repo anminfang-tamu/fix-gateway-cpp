@@ -138,7 +138,6 @@ namespace fix_gateway::common
     };
 
     // Template implementation (must be in header for templates)
-
     template <typename T>
     MessagePool<T>::MessagePool(size_t pool_size, const std::string &pool_name)
         : pool_size_(pool_size), pool_name_(pool_name)
@@ -458,10 +457,6 @@ namespace fix_gateway::common
             initialized_.store(false, std::memory_order_release);
         }
     }
-
-    // Backward compatibility - your existing code will work unchanged!
-    using LegacyMessagePool = MessagePool<Message>;
-    using LegacyGlobalMessagePool = GlobalMessagePool<Message>;
 
     // Convenience factory functions - same as your original design
     namespace pool

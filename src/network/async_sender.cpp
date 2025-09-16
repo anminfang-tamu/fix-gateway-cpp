@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <functional>
+#include <memory>
 
 namespace fix_gateway::network
 {
@@ -173,7 +174,7 @@ namespace fix_gateway::network
 
     void AsyncSender::senderLoopMutex()
     {
-        fix_gateway::common::MessagePtr message;
+        fix_gateway::common::MessagePtr message = nullptr;
 
         while (running_.load())
         {
@@ -183,6 +184,7 @@ namespace fix_gateway::network
                 if (popMessage(message, std::chrono::milliseconds(10)))
                 {
                     sendMessage(message);
+                    message = nullptr;
                 }
 
                 // Check for shutdown request
@@ -204,6 +206,7 @@ namespace fix_gateway::network
             try
             {
                 sendMessage(message);
+                message = nullptr;
             }
             catch (const std::exception &e)
             {
@@ -215,7 +218,7 @@ namespace fix_gateway::network
 
     void AsyncSender::senderLoopLockFree()
     {
-        fix_gateway::common::MessagePtr message;
+        fix_gateway::common::MessagePtr message = nullptr;
 
         while (running_.load())
         {
@@ -225,6 +228,7 @@ namespace fix_gateway::network
                 if (tryPopMessage(message))
                 {
                     sendMessage(message);
+                    message = nullptr;
                 }
                 else
                 {
@@ -252,6 +256,7 @@ namespace fix_gateway::network
             try
             {
                 sendMessage(message);
+                message = nullptr;
             }
             catch (const std::exception &e)
             {
@@ -267,6 +272,9 @@ namespace fix_gateway::network
         {
             return;
         }
+
+        auto cleanup = std::unique_ptr<fix_gateway::common::Message, decltype(&fix_gateway::common::Message::destroy)>(
+            message, &fix_gateway::common::Message::destroy);
 
         auto start_time = std::chrono::high_resolution_clock::now();
         bool success = false;

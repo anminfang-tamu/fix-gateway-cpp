@@ -810,4 +810,5 @@ src/common/CMakeFiles/common.dir/message.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/chrono \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/__chrono/file_clock.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/forward_list \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/iostream
+  /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk/usr/include/c++/v1/iostream \
+  /Users/anminfang/fix-gateway-cpp/include/common/message_pool.h

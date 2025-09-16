@@ -47,6 +47,12 @@
         "vector": "cpp",
         "memory": "cpp",
         "algorithm": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "fstream": "cpp",
+        "iostream": "cpp",
+        "map": "cpp",
+        "__tree": "cpp",
+        "condition_variable": "cpp",
+        "iomanip": "cpp"
     }
 }
