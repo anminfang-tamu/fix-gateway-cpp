@@ -22,6 +22,9 @@ FixSessionManager::FixSessionManager(const SessionConfig &config, std::shared_pt
 {
     logInfo("Created FixSessionManager for " + config_.sender_comp_id + " -> " + config_.target_comp_id);
     session_stats_.current_state = SessionState::DISCONNECTED;
+
+    // Default to the global FIX message pool singleton
+    message_pool_ = &GlobalMessagePool<FixMessage>::getInstance();
 }
 
 FixSessionManager::~FixSessionManager()
@@ -127,7 +130,7 @@ void FixSessionManager::setSequenceNumbers(int incoming_seq, int outgoing_seq)
             ", outgoing: " + std::to_string(outgoing_seq));
 }
 
-void FixSessionManager::setMessagePool(std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool)
+void FixSessionManager::setMessagePool(common::MessagePool<FixMessage> *message_pool)
 {
     message_pool_ = message_pool;
     logInfo("Message pool connected to FixSessionManager");

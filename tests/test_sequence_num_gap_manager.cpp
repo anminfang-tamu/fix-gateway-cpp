@@ -27,7 +27,7 @@ protected:
     void SetUp() override
     {
         // Create message pool
-        message_pool_ = std::make_shared<TestMessagePool>(1000, "gap_test_pool");
+        message_pool_ = std::make_unique<TestMessagePool>(1000, "gap_test_pool");
 
         // Create session context
         session_context_ = std::make_shared<SessionContext>("CLIENT", "SERVER");
@@ -37,7 +37,7 @@ protected:
 
         // Create gap manager
         gap_manager_ = std::make_unique<SequenceNumGapManager>(
-            message_pool_, session_context_, outbound_queues_);
+            message_pool_.get(), session_context_, outbound_queues_);
     }
 
     void TearDown() override
@@ -85,7 +85,7 @@ protected:
     }
 
 protected:
-    std::shared_ptr<TestMessagePool> message_pool_;
+    std::unique_ptr<TestMessagePool> message_pool_;
     std::shared_ptr<SessionContext> session_context_;
     std::shared_ptr<PriorityQueueContainer> outbound_queues_;
     std::unique_ptr<SequenceNumGapManager> gap_manager_;
@@ -452,10 +452,10 @@ TEST_F(SequenceNumGapManagerTest, HandleNullPointers)
         std::invalid_argument);
 
     EXPECT_THROW(
-        SequenceNumGapManager(message_pool_, nullptr, outbound_queues_),
+        SequenceNumGapManager(message_pool_.get(), nullptr, outbound_queues_),
         std::invalid_argument);
 
     EXPECT_THROW(
-        SequenceNumGapManager(message_pool_, session_context_, nullptr),
+        SequenceNumGapManager(message_pool_.get(), session_context_, nullptr),
         std::invalid_argument);
 }

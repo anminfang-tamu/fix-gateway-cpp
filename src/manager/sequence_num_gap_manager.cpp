@@ -17,7 +17,7 @@
 #endif
 
 SequenceNumGapManager::SequenceNumGapManager(
-    std::shared_ptr<MessagePool> message_pool,
+    MessagePool *message_pool,
     std::shared_ptr<SessionContext> session_context,
     std::shared_ptr<PriorityQueueContainer> outbound_queues)
     : message_pool_(message_pool),

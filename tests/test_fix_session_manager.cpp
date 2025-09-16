@@ -37,7 +37,7 @@ protected:
         config_.logon_timeout_seconds = 5;
         config_.validate_sequence_numbers = true;
 
-        message_pool_ = std::make_shared<MessagePool<FixMessage>>(1000, "session_test_pool");
+        message_pool_ = std::make_unique<MessagePool<FixMessage>>(1000, "session_test_pool");
         session_manager_ = std::make_unique<FixSessionManager>(config_);
 
         // Initialize queues required by InboundMessageManager
@@ -47,7 +47,7 @@ protected:
         // Connect queues to the session manager
         session_manager_->setInboundQueue(inbound_queue_);
         session_manager_->setOutboundQueues(outbound_queues_);
-        session_manager_->setMessagePool(message_pool_);
+        session_manager_->setMessagePool(message_pool_.get());
     }
 
     void TearDown() override
@@ -150,7 +150,7 @@ protected:
     }
 
     FixSessionManager::SessionConfig config_;
-    std::shared_ptr<MessagePool<FixMessage>> message_pool_;
+    std::unique_ptr<MessagePool<FixMessage>> message_pool_;
     std::unique_ptr<FixSessionManager> session_manager_;
 
     // Queue infrastructure for testing
@@ -519,7 +519,7 @@ TEST_F(FixSessionManagerTest, HeartbeatTimerBasic)
     // Reconnect queues to the new session manager
     session_manager_->setInboundQueue(inbound_queue_);
     session_manager_->setOutboundQueues(outbound_queues_);
-    session_manager_->setMessagePool(message_pool_);
+    session_manager_->setMessagePool(message_pool_.get());
 
     session_manager_->start();
 
@@ -559,7 +559,7 @@ protected:
         // Reconnect queues to the new session manager
         session_manager_->setInboundQueue(inbound_queue_);
         session_manager_->setOutboundQueues(outbound_queues_);
-        session_manager_->setMessagePool(message_pool_);
+        session_manager_->setMessagePool(message_pool_.get());
     }
 
     struct PerformanceResult

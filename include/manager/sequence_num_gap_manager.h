@@ -41,7 +41,7 @@ class SequenceNumGapManager
 {
 public:
     SequenceNumGapManager(
-        std::shared_ptr<MessagePool> message_pool,
+        MessagePool *message_pool,
         std::shared_ptr<SessionContext> session_context,
         std::shared_ptr<PriorityQueueContainer> outbound_queues);
 
@@ -82,7 +82,7 @@ private:
     fix_gateway::utils::LockFreeQueue<GapQueueEntry> gap_queue_{kGapQueueSize, "gap_queue"};
 
     // message pool (inject from existing)
-    std::shared_ptr<MessagePool> message_pool_;
+    MessagePool *message_pool_{nullptr};
     std::shared_ptr<SessionContext> session_context_;
     std::shared_ptr<PriorityQueueContainer> outbound_queues_;
 

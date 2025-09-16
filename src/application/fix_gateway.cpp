@@ -11,11 +11,12 @@ namespace fix_gateway::application
     FixGateway::FixGateway(size_t message_pool_size, std::shared_ptr<PriorityQueueContainer> queues)
         : connected_(false)
     {
-        // Create message pool first
-        message_pool_ = std::make_unique<MessagePool<FixMessage>>(message_pool_size);
+        // Create or fetch the global message pool instance
+        auto &global_pool = GlobalMessagePool<FixMessage>::getInstance(message_pool_size);
+        message_pool_ = &global_pool;
 
         // Create FIX parser with message pool
-        fix_parser_ = std::make_unique<StreamFixParser>(message_pool_.get());
+        fix_parser_ = std::make_unique<StreamFixParser>(message_pool_);
 
         // Create TCP connection
         tcp_connection_ = std::make_unique<TcpConnection>();
@@ -320,6 +321,11 @@ namespace fix_gateway::application
 
     MessagePool<FixMessage>::PoolStats FixGateway::getPoolStats() const
     {
+        if (!message_pool_)
+        {
+            return {};
+        }
+
         return message_pool_->getStats();
     }
 
@@ -334,7 +340,7 @@ namespace fix_gateway::application
 
     MessagePool<FixMessage> *FixGateway::getMessagePool() const
     {
-        return message_pool_.get();
+        return message_pool_;
     }
 
     // =================================================================

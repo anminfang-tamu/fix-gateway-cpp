@@ -114,13 +114,12 @@ A production-ready trading system implementing the FIX protocol with sub-microse
 ### Development Build
 
 ```bash
-# Local build (macOS/Linux)
-mkdir build && cd build
-cmake ..
-make
+# Configure and build (macOS/Linux)
+cmake -S . -B build
+cmake --build build
 
-# Run tests
-ctest
+# Run tests with detailed output when failures occur
+ctest --test-dir build --output-on-failure
 ```
 
 ### Production Deployment

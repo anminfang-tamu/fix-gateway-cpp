@@ -81,7 +81,7 @@ namespace fix_gateway::manager
         // Configuration
         void updateHeartbeatInterval(int seconds);
         void setSequenceNumbers(int incoming_seq, int outgoing_seq);
-        void setMessagePool(std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool);
+        void setMessagePool(fix_gateway::common::MessagePool<FixMessage> *message_pool);
 
         // Session stats
         SessionStats getSessionStats() const { return session_stats_; }
@@ -149,7 +149,7 @@ namespace fix_gateway::manager
         std::shared_ptr<SequenceNumGapManager> sequence_num_gap_manager_;
 
         // Message pool for response message creation
-        std::shared_ptr<fix_gateway::common::MessagePool<FixMessage>> message_pool_;
+        fix_gateway::common::MessagePool<FixMessage> *message_pool_{nullptr};
 
         // Session state
         std::atomic<SessionState> session_state_{SessionState::DISCONNECTED};

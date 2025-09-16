@@ -1,0 +1,335 @@
+Start testing: Sep 16 16:27 CDT
+----------------------------------------------------------
+1/5 Testing: MessageRouterTest
+1/5 Test: MessageRouterTest
+Command: "/Users/anminfang/fix-gateway-cpp/build/tests/test_message_router"
+Directory: /Users/anminfang/fix-gateway-cpp/build/tests
+"MessageRouterTest" start time: Sep 16 16:27 CDT
+Output:
+----------------------------------------------------------
+[==========] Running 15 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 15 tests from MessageRouterTest
+[ RUN      ] MessageRouterTest.StartAndStop
+[       OK ] MessageRouterTest.StartAndStop (0 ms)
+[ RUN      ] MessageRouterTest.HandleNullMessage
+[       OK ] MessageRouterTest.HandleNullMessage (0 ms)
+[ RUN      ] MessageRouterTest.CriticalPriorityMessages
+[       OK ] MessageRouterTest.CriticalPriorityMessages (0 ms)
+[ RUN      ] MessageRouterTest.HighPriorityMessages
+[       OK ] MessageRouterTest.HighPriorityMessages (0 ms)
+[ RUN      ] MessageRouterTest.MediumPriorityMessages
+[       OK ] MessageRouterTest.MediumPriorityMessages (0 ms)
+[ RUN      ] MessageRouterTest.LowPriorityMessages
+[       OK ] MessageRouterTest.LowPriorityMessages (0 ms)
+[ RUN      ] MessageRouterTest.UnknownMessageType
+[       OK ] MessageRouterTest.UnknownMessageType (0 ms)
+[ RUN      ] MessageRouterTest.BatchRouting
+[       OK ] MessageRouterTest.BatchRouting (0 ms)
+[ RUN      ] MessageRouterTest.BatchRoutingWithNullArray
+[       OK ] MessageRouterTest.BatchRoutingWithNullArray (0 ms)
+[ RUN      ] MessageRouterTest.StatisticsTracking
+[       OK ] MessageRouterTest.StatisticsTracking (0 ms)
+[ RUN      ] MessageRouterTest.LatencyMeasurement
+[       OK ] MessageRouterTest.LatencyMeasurement (0 ms)
+[ RUN      ] MessageRouterTest.HighThroughputTest
+MessageRouter Throughput: 487567 messages/sec
+Average Routing Latency: 30.97 ns
+[       OK ] MessageRouterTest.HighThroughputTest (2 ms)
+[ RUN      ] MessageRouterTest.ConcurrentRouting
+Concurrent Routing - Messages routed: 400
+Concurrent Routing - Average latency: 92.06 ns
+[       OK ] MessageRouterTest.ConcurrentRouting (0 ms)
+[ RUN      ] MessageRouterTest.QueueFullScenario
+[       OK ] MessageRouterTest.QueueFullScenario (0 ms)
+[ RUN      ] MessageRouterTest.StatisticsReset
+[       OK ] MessageRouterTest.StatisticsReset (0 ms)
+[----------] 15 tests from MessageRouterTest (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 1 test suite ran. (4 ms total)
+[  PASSED  ] 15 tests.
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"MessageRouterTest" end time: Sep 16 16:27 CDT
+"MessageRouterTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/5 Testing: StreamFixParserComprehensiveTest
+2/5 Test: StreamFixParserComprehensiveTest
+Command: "/Users/anminfang/fix-gateway-cpp/build/tests/test_stream_fix_parser_comprehensive"
+Directory: /Users/anminfang/fix-gateway-cpp/build/tests
+"StreamFixParserComprehensiveTest" start time: Sep 16 16:27 CDT
+Output:
+----------------------------------------------------------
+🚀 Starting StreamFixParser Comprehensive Tests with GTest
+Testing: Basic parsing, partial messages, error handling, performance
+[==========] Running 21 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 18 tests from StreamFixParserComprehensiveTest
+[ RUN      ] StreamFixParserComprehensiveTest.ParseCompleteExecutionReport
+[       OK ] StreamFixParserComprehensiveTest.ParseCompleteExecutionReport (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.ParseCompleteHeartbeat
+[       OK ] StreamFixParserComprehensiveTest.ParseCompleteHeartbeat (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.ParseCompleteOrderCancelReject
+[       OK ] StreamFixParserComprehensiveTest.ParseCompleteOrderCancelReject (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.ParseSessionMessages
+[       OK ] StreamFixParserComprehensiveTest.ParseSessionMessages (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.HandlePartialMessageReassembly
+[       OK ] StreamFixParserComprehensiveTest.HandlePartialMessageReassembly (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.HandleMultiplePartialMessages
+[       OK ] StreamFixParserComprehensiveTest.HandleMultiplePartialMessages (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.HandleMalformedBeginString
+[       OK ] StreamFixParserComprehensiveTest.HandleMalformedBeginString (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.HandleInvalidBodyLength
+[       OK ] StreamFixParserComprehensiveTest.HandleInvalidBodyLength (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.HandleChecksumValidation
+[       OK ] StreamFixParserComprehensiveTest.HandleChecksumValidation (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.VerifyInitialState
+[       OK ] StreamFixParserComprehensiveTest.VerifyInitialState (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.VerifyStateTransitions
+[       OK ] StreamFixParserComprehensiveTest.VerifyStateTransitions (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.VerifyStateAfterSuccessfulParse
+[       OK ] StreamFixParserComprehensiveTest.VerifyStateAfterSuccessfulParse (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.CircuitBreakerActivation
+[       OK ] StreamFixParserComprehensiveTest.CircuitBreakerActivation (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.StatisticsTracking
+[       OK ] StreamFixParserComprehensiveTest.StatisticsTracking (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.ConfigurationOptions
+[       OK ] StreamFixParserComprehensiveTest.ConfigurationOptions (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.StressTestRandomMessages
+Stress test results:
+  Total messages: 1000
+  Successful parses: 1000
+  Supported messages: 1000
+  Success rate: 100%
+
+Message type distribution:
+  ExecutionReport: 164
+  Heartbeat: 176
+  OrderCancelReject: 156
+  Reject: 166
+  ResendRequest: 174
+  TestRequest: 164
+[       OK ] StreamFixParserComprehensiveTest.StressTestRandomMessages (3 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.StressTestPartialMessages
+[       OK ] StreamFixParserComprehensiveTest.StressTestPartialMessages (0 ms)
+[ RUN      ] StreamFixParserComprehensiveTest.MemoryPoolExhaustion
+[       OK ] StreamFixParserComprehensiveTest.MemoryPoolExhaustion (0 ms)
+[----------] 18 tests from StreamFixParserComprehensiveTest (5 ms total)
+
+[----------] 3 tests from StreamFixParserPerformanceTest
+[ RUN      ] StreamFixParserPerformanceTest.BenchmarkExecutionReportParsing
+Debug: Successful parses: 1000/1000
+Debug: Successful parses: 10000/10000
+
+=== ExecutionReport Parsing Performance ===
+Iterations: 10000
+Avg parse time: 2806.17 ns
+Min parse time: 1916 ns
+Max parse time: 22209 ns
+Messages/sec: 246033
+Total bytes: 730000
+[       OK ] StreamFixParserPerformanceTest.BenchmarkExecutionReportParsing (43 ms)
+[ RUN      ] StreamFixParserPerformanceTest.BenchmarkHeartbeatParsing
+Debug: Successful parses: 1000/1000
+Debug: Successful parses: 10000/10000
+
+=== Heartbeat Parsing Performance ===
+Iterations: 10000
+Avg parse time: 2138.32 ns
+Min parse time: 1875 ns
+Max parse time: 22500 ns
+Messages/sec: 304525
+Total bytes: 750000
+[       OK ] StreamFixParserPerformanceTest.BenchmarkHeartbeatParsing (36 ms)
+[ RUN      ] StreamFixParserPerformanceTest.BenchmarkExecutionReportVsHeartbeat
+Debug: Successful parses: 10000/10000
+Debug: Successful parses: 10000/10000
+
+=== ExecutionReport vs Heartbeat Comparison ===
+ExecutionReport avg: 2359.28 ns
+Heartbeat avg: 2707.92 ns
+Performance ratio: 0.871252x
+[       OK ] StreamFixParserPerformanceTest.BenchmarkExecutionReportVsHeartbeat (76 ms)
+[----------] 3 tests from StreamFixParserPerformanceTest (156 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 2 test suites ran. (161 ms total)
+[  PASSED  ] 21 tests.
+<end of output>
+Test time =   0.31 sec
+----------------------------------------------------------
+Test Passed.
+"StreamFixParserComprehensiveTest" end time: Sep 16 16:27 CDT
+"StreamFixParserComprehensiveTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/5 Testing: FixSessionManagerTest
+3/5 Test: FixSessionManagerTest
+Command: "/Users/anminfang/fix-gateway-cpp/build/tests/test_fix_session_manager"
+Directory: /Users/anminfang/fix-gateway-cpp/build/tests
+"FixSessionManagerTest" start time: Sep 16 16:27 CDT
+Output:
+----------------------------------------------------------
+🚀 Starting FixSessionManager Tests with GTest
+Testing: Session lifecycle, heartbeats, sequence numbers, performance
+[==========] Running 21 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 19 tests from FixSessionManagerTest
+[ RUN      ] FixSessionManagerTest.InitialConfiguration
+[       OK ] FixSessionManagerTest.InitialConfiguration (0 ms)
+[ RUN      ] FixSessionManagerTest.ConfigurationUpdate
+[       OK ] FixSessionManagerTest.ConfigurationUpdate (0 ms)
+[ RUN      ] FixSessionManagerTest.SupportedMessageTypes
+[       OK ] FixSessionManagerTest.SupportedMessageTypes (0 ms)
+[ RUN      ] FixSessionManagerTest.SessionLifecycle
+[       OK ] FixSessionManagerTest.SessionLifecycle (0 ms)
+[ RUN      ] FixSessionManagerTest.InvalidStateTransitions
+[       OK ] FixSessionManagerTest.InvalidStateTransitions (0 ms)
+[ RUN      ] FixSessionManagerTest.HandleLogonMessage
+[       OK ] FixSessionManagerTest.HandleLogonMessage (0 ms)
+[ RUN      ] FixSessionManagerTest.HandleHeartbeatMessage
+HandleHeartbeatMessage
+[       OK ] FixSessionManagerTest.HandleHeartbeatMessage (0 ms)
+[ RUN      ] FixSessionManagerTest.HandleTestRequestMessage
+[       OK ] FixSessionManagerTest.HandleTestRequestMessage (0 ms)
+[ RUN      ] FixSessionManagerTest.HandleResendRequestMessage
+[       OK ] FixSessionManagerTest.HandleResendRequestMessage (0 ms)
+[ RUN      ] FixSessionManagerTest.HandleRejectMessage
+[       OK ] FixSessionManagerTest.HandleRejectMessage (0 ms)
+[ RUN      ] FixSessionManagerTest.SequenceNumberValidation
+[       OK ] FixSessionManagerTest.SequenceNumberValidation (0 ms)
+[ RUN      ] FixSessionManagerTest.SequenceNumberGap
+[       OK ] FixSessionManagerTest.SequenceNumberGap (0 ms)
+[ RUN      ] FixSessionManagerTest.OutgoingSequenceNumbers
+[       OK ] FixSessionManagerTest.OutgoingSequenceNumbers (0 ms)
+[ RUN      ] FixSessionManagerTest.SessionStatistics
+[       OK ] FixSessionManagerTest.SessionStatistics (0 ms)
+[ RUN      ] FixSessionManagerTest.InvalidMessageHandling
+[       OK ] FixSessionManagerTest.InvalidMessageHandling (0 ms)
+[ RUN      ] FixSessionManagerTest.InvalidSenderCompId
+[       OK ] FixSessionManagerTest.InvalidSenderCompId (0 ms)
+[ RUN      ] FixSessionManagerTest.InvalidTargetCompId
+[       OK ] FixSessionManagerTest.InvalidTargetCompId (0 ms)
+[ RUN      ] FixSessionManagerTest.HeartbeatTimerBasic
+[       OK ] FixSessionManagerTest.HeartbeatTimerBasic (2010 ms)
+[ RUN      ] FixSessionManagerTest.ConcurrentMessageHandling
+Concurrent test: 200/200 successful
+[       OK ] FixSessionManagerTest.ConcurrentMessageHandling (1005 ms)
+[----------] 19 tests from FixSessionManagerTest (3018 ms total)
+
+[----------] 2 tests from FixSessionManagerPerformanceTest
+[ RUN      ] FixSessionManagerPerformanceTest.HeartbeatProcessingPerformance
+
+=== Heartbeat Processing Performance (Release Build) ===
+Iterations: 100
+Successful: 100
+Avg processing time: 113.35 ns
+Min processing time: 83 ns
+Max processing time: 834 ns
+Messages/sec: 5.26316e+06
+[       OK ] FixSessionManagerPerformanceTest.HeartbeatProcessingPerformance (1006 ms)
+[ RUN      ] FixSessionManagerPerformanceTest.TestRequestProcessingPerformance
+
+=== TestRequest Processing Performance ===
+Avg processing time: 19286.7 ns
+Messages/sec: 34590.1
+[       OK ] FixSessionManagerPerformanceTest.TestRequestProcessingPerformance (1001 ms)
+[----------] 2 tests from FixSessionManagerPerformanceTest (2007 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 2 test suites ran. (5025 ms total)
+[  PASSED  ] 21 tests.
+<end of output>
+Test time =   5.19 sec
+----------------------------------------------------------
+Test Passed.
+"FixSessionManagerTest" end time: Sep 16 16:27 CDT
+"FixSessionManagerTest" time elapsed: 00:00:05
+----------------------------------------------------------
+
+Unable to find executable: test_business_logic_manager
+4/5 Testing: BusinessLogicManagerTest
+4/5 Test: BusinessLogicManagerTest
+Command: ""
+Directory: /Users/anminfang/fix-gateway-cpp/build/tests
+"BusinessLogicManagerTest" start time: 
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"BusinessLogicManagerTest" end time: Sep 16 16:27 CDT
+"BusinessLogicManagerTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/5 Testing: SequenceNumGapManagerTest
+5/5 Test: SequenceNumGapManagerTest
+Command: "/Users/anminfang/fix-gateway-cpp/build/tests/test_sequence_num_gap_manager"
+Directory: /Users/anminfang/fix-gateway-cpp/build/tests
+"SequenceNumGapManagerTest" start time: Sep 16 16:27 CDT
+Output:
+----------------------------------------------------------
+Running main() from /private/tmp/googletest-20250430-4705-6kzjyz/googletest-1.17.0/googletest/src/gtest_main.cc
+[==========] Running 20 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 20 tests from SequenceNumGapManagerTest
+[ RUN      ] SequenceNumGapManagerTest.InitializationTest
+[       OK ] SequenceNumGapManagerTest.InitializationTest (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.AddSingleGapEntry
+[       OK ] SequenceNumGapManagerTest.AddSingleGapEntry (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.AddMultipleGapEntries
+[       OK ] SequenceNumGapManagerTest.AddMultipleGapEntries (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.ResolveGapEntry
+[       OK ] SequenceNumGapManagerTest.ResolveGapEntry (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.ResolveNonExistentGap
+[       OK ] SequenceNumGapManagerTest.ResolveNonExistentGap (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.ClearAllGaps
+[       OK ] SequenceNumGapManagerTest.ClearAllGaps (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.GapProcessingTriggersResendRequest
+[       OK ] SequenceNumGapManagerTest.GapProcessingTriggersResendRequest (55 ms)
+[ RUN      ] SequenceNumGapManagerTest.SessionContextSequenceNumberIncrement
+[       OK ] SequenceNumGapManagerTest.SessionContextSequenceNumberIncrement (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.StartStopLifecycle
+[       OK ] SequenceNumGapManagerTest.StartStopLifecycle (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.MultipleStartStopCycles
+[       OK ] SequenceNumGapManagerTest.MultipleStartStopCycles (36 ms)
+[ RUN      ] SequenceNumGapManagerTest.SetCpuAffinity
+[SequenceNumGapManager] Thread pinning not supported for this platform
+[       OK ] SequenceNumGapManagerTest.SetCpuAffinity (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.LargeSequenceNumbers
+[       OK ] SequenceNumGapManagerTest.LargeSequenceNumbers (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.ZeroAndNegativeSequenceNumbers
+[       OK ] SequenceNumGapManagerTest.ZeroAndNegativeSequenceNumbers (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.DuplicateGapEntries
+[       OK ] SequenceNumGapManagerTest.DuplicateGapEntries (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.DuplicatePreventionWithDifferentSequences
+[       OK ] SequenceNumGapManagerTest.DuplicatePreventionWithDifferentSequences (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.ManyGapsPerformance
+[       OK ] SequenceNumGapManagerTest.ManyGapsPerformance (12 ms)
+[ RUN      ] SequenceNumGapManagerTest.ConcurrentGapOperations
+[       OK ] SequenceNumGapManagerTest.ConcurrentGapOperations (1 ms)
+[ RUN      ] SequenceNumGapManagerTest.MessagePoolIntegration
+[       OK ] SequenceNumGapManagerTest.MessagePoolIntegration (1 ms)
+[ RUN      ] SequenceNumGapManagerTest.OutboundQueueIntegration
+[       OK ] SequenceNumGapManagerTest.OutboundQueueIntegration (0 ms)
+[ RUN      ] SequenceNumGapManagerTest.HandleNullPointers
+[       OK ] SequenceNumGapManagerTest.HandleNullPointers (0 ms)
+[----------] 20 tests from SequenceNumGapManagerTest (107 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 1 test suite ran. (107 ms total)
+[  PASSED  ] 20 tests.
+<end of output>
+Test time =   0.30 sec
+----------------------------------------------------------
+Test Passed.
+"SequenceNumGapManagerTest" end time: Sep 16 16:27 CDT
+"SequenceNumGapManagerTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 16 16:27 CDT

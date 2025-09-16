@@ -120,7 +120,7 @@ namespace fix_gateway::application
         // Core components
         std::unique_ptr<network::TcpConnection> tcp_connection_;
         std::unique_ptr<protocol::StreamFixParser> fix_parser_;
-        std::unique_ptr<common::MessagePool<protocol::FixMessage>> message_pool_;
+        common::MessagePool<protocol::FixMessage> *message_pool_{nullptr};
 
         // Message routing
         std::shared_ptr<PriorityQueueContainer> priority_queues_;
